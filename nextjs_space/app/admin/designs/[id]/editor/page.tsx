@@ -35,6 +35,7 @@ interface ColorVariant {
 
 interface LogoPosition {
   productType: string;
+  angle: 'front' | 'back' | 'side';
   x: number;
   y: number;
   scale: number;
@@ -57,10 +58,11 @@ export default function DesignEditorPage() {
   const [selectedAngle, setSelectedAngle] = useState<'front' | 'back' | 'side'>('front');
   const [activeTab, setActiveTab] = useState<'position' | 'colors' | 'preview'>('position');
   
-  // Logo positioning
+  // Logo positioning (keyed by productType-angle)
   const [logoPositions, setLogoPositions] = useState<Record<string, LogoPosition>>({});
   const [currentPosition, setCurrentPosition] = useState<LogoPosition>({
     productType: 'basketball-tshirt',
+    angle: 'front',
     x: 50,
     y: 40,
     scale: 1.0,
@@ -87,19 +89,29 @@ export default function DesignEditorPage() {
   }, [designId]);
   
   useEffect(() => {
-    // Load saved position for current product
-    if (logoPositions[selectedProduct]) {
-      setCurrentPosition(logoPositions[selectedProduct]);
+    // Load saved position for current product and angle
+    const positionKey = `${selectedProduct}-${selectedAngle}`;
+    if (logoPositions[positionKey]) {
+      setCurrentPosition(logoPositions[positionKey]);
     } else {
+      // Set default positions based on angle
+      let defaultY = 40;
+      if (selectedAngle === 'back') {
+        defaultY = 35; // Slightly higher for back view
+      } else if (selectedAngle === 'side') {
+        defaultY = 45; // Slightly lower for side view
+      }
+      
       setCurrentPosition({
         productType: selectedProduct,
+        angle: selectedAngle,
         x: 50,
-        y: 40,
+        y: defaultY,
         scale: 1.0,
         rotation: 0
       });
     }
-  }, [selectedProduct, logoPositions]);
+  }, [selectedProduct, selectedAngle, logoPositions]);
   
   const fetchDesignData = async () => {
     try {
@@ -159,11 +171,12 @@ export default function DesignEditorPage() {
   };
   
   const handleSavePosition = () => {
+    const positionKey = `${selectedProduct}-${selectedAngle}`;
     setLogoPositions(prev => ({
       ...prev,
-      [selectedProduct]: currentPosition
+      [positionKey]: currentPosition
     }));
-    toast.success(`Position saved for ${selectedProduct.replace(/-/g, ' ')}`);
+    toast.success(`Position saved for ${selectedProduct.replace(/-/g, ' ')} (${selectedAngle} view)`);
   };
   
   const handleSaveAll = async () => {
@@ -258,7 +271,17 @@ export default function DesignEditorPage() {
   ];
   
   const getCurrentMockup = () => {
-    return productTypes.find(p => p.id === selectedProduct)?.mockup || '';
+    const product = productTypes.find(p => p.id === selectedProduct);
+    if (!product) return '';
+    
+    // For now, all angles use the front mockup
+    // In the future, we can add back and side mockup templates
+    return product.mockup;
+  };
+  
+  const hasPositionSaved = (productId: string) => {
+    // Check if any angle has a saved position for this product
+    return ['front', 'back', 'side'].some(angle => logoPositions[`${productId}-${angle}`]);
   };
   
   if (loading) {
@@ -372,22 +395,34 @@ export default function DesignEditorPage() {
                         variant={selectedAngle === 'front' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedAngle('front')}
+                        className="relative"
                       >
                         Front View
+                        {logoPositions[`${selectedProduct}-front`] && (
+                          <CheckCircle className="ml-1 h-3 w-3 text-green-500" />
+                        )}
                       </Button>
                       <Button
                         variant={selectedAngle === 'back' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedAngle('back')}
+                        className="relative"
                       >
                         Back View
+                        {logoPositions[`${selectedProduct}-back`] && (
+                          <CheckCircle className="ml-1 h-3 w-3 text-green-500" />
+                        )}
                       </Button>
                       <Button
                         variant={selectedAngle === 'side' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedAngle('side')}
+                        className="relative"
                       >
                         Side View
+                        {logoPositions[`${selectedProduct}-side`] && (
+                          <CheckCircle className="ml-1 h-3 w-3 text-green-500" />
+                        )}
                       </Button>
                     </div>
                     
@@ -439,10 +474,18 @@ export default function DesignEditorPage() {
                         )}
                       </div>
                       
-                      {/* Position coordinates */}
+                      {/* Position coordinates and view info */}
                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
                         X: {currentPosition.x.toFixed(0)}% Y: {currentPosition.y.toFixed(0)}%
                       </div>
+                      <div className="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded z-10 font-medium">
+                        {selectedAngle.toUpperCase()} VIEW
+                      </div>
+                      {selectedAngle !== 'front' && (
+                        <div className="absolute bottom-2 left-2 right-2 bg-blue-500/90 text-white text-xs px-2 py-1 rounded z-10 text-center">
+                          Note: Currently using front mockup template for reference
+                        </div>
+                      )}
                     </div>
                     
                     <Button onClick={handleSavePosition} className="w-full">
@@ -471,7 +514,7 @@ export default function DesignEditorPage() {
                         >
                           <span className="mr-2">{product.icon}</span>
                           {product.name}
-                          {logoPositions[product.id] && (
+                          {hasPositionSaved(product.id) && (
                             <CheckCircle className="ml-auto h-4 w-4 text-green-500" />
                           )}
                         </Button>
@@ -611,14 +654,14 @@ export default function DesignEditorPage() {
                             fill
                             className="object-contain"
                           />
-                          {/* Logo overlay preview */}
-                          {design.imageUrl && logoPositions[product.id] && (
+                          {/* Logo overlay preview (front view) */}
+                          {design.imageUrl && logoPositions[`${product.id}-front`] && (
                             <div 
                               className="absolute"
                               style={{
-                                left: `${logoPositions[product.id].x}%`,
-                                top: `${logoPositions[product.id].y}%`,
-                                transform: `translate(-50%, -50%) scale(${logoPositions[product.id].scale}) rotate(${logoPositions[product.id].rotation}deg)`,
+                                left: `${logoPositions[`${product.id}-front`].x}%`,
+                                top: `${logoPositions[`${product.id}-front`].y}%`,
+                                transform: `translate(-50%, -50%) scale(${logoPositions[`${product.id}-front`].scale}) rotate(${logoPositions[`${product.id}-front`].rotation}deg)`,
                               }}
                             >
                               <Image
@@ -639,12 +682,18 @@ export default function DesignEditorPage() {
                     </div>
                     <div className="text-sm space-y-1">
                       <p className="flex justify-between">
-                        <span className="text-muted-foreground">Position:</span>
+                        <span className="text-muted-foreground">Front Position:</span>
                         <span className="font-medium">
-                          {logoPositions[product.id] ? 
-                            `${logoPositions[product.id].x.toFixed(0)}%, ${logoPositions[product.id].y.toFixed(0)}%` :
-                            'Default'
+                          {logoPositions[`${product.id}-front`] ? 
+                            `${logoPositions[`${product.id}-front`].x.toFixed(0)}%, ${logoPositions[`${product.id}-front`].y.toFixed(0)}%` :
+                            'Not set'
                           }
+                        </span>
+                      </p>
+                      <p className="flex justify-between">
+                        <span className="text-muted-foreground">Views configured:</span>
+                        <span className="font-medium">
+                          {['front', 'back', 'side'].filter(angle => logoPositions[`${product.id}-${angle}`]).length}/3
                         </span>
                       </p>
                       <p className="flex justify-between">

@@ -74,8 +74,39 @@ export async function generateMockupWithLogo(
 
     // Load and process logo
     const logoBuffer = await fs.promises.readFile(logoPath);
-    const logoImage = sharp(logoBuffer);
+    let logoImage = sharp(logoBuffer);
     const logoMetadata = await logoImage.metadata();
+
+    // Remove white background and make it transparent
+    // This uses a threshold approach to remove near-white pixels
+    const processedLogoBuffer = await logoImage
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    
+    const { data, info } = processedLogoBuffer;
+    const channels = info.channels;
+    
+    // Process pixels to remove white background
+    for (let i = 0; i < data.length; i += channels) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      
+      // If pixel is near-white (threshold: 240), make it transparent
+      if (r > 240 && g > 240 && b > 240) {
+        data[i + 3] = 0; // Set alpha to 0 (transparent)
+      }
+    }
+    
+    // Create sharp image from processed buffer
+    logoImage = sharp(data, {
+      raw: {
+        width: info.width,
+        height: info.height,
+        channels: channels
+      }
+    });
 
     // Calculate logo dimensions
     const logoWidth = Math.round((placement.width / 100) * mockupMetadata.width);
@@ -86,6 +117,7 @@ export async function generateMockupWithLogo(
     // Resize logo
     const resizedLogo = await logoImage
       .resize(logoWidth, logoHeight, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png()
       .toBuffer();
 
     // Calculate position

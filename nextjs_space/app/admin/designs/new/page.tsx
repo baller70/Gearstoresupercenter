@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Upload, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 interface AIAnalysis {
   placement: { score: number; feedback: string };
@@ -78,9 +79,16 @@ export default function NewDesignPage() {
       }
 
       const data = await response.json();
-      setMockups(data.mockups || []);
-      setAverageScore(data.design?.averageScore || 0);
-      setUploadComplete(true);
+      
+      // Redirect to editor after successful upload
+      if (data.design?.id) {
+        toast.success('Upload complete! Opening editor...');
+        router.push(`/admin/designs/${data.design.id}/editor`);
+      } else {
+        setMockups(data.mockups || []);
+        setAverageScore(data.design?.averageScore || 0);
+        setUploadComplete(true);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to upload design');
       console.error(err);

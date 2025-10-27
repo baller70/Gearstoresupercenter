@@ -88,7 +88,10 @@ model Product {
   inStock     Boolean  @default(true)
   featured    Boolean  @default(false)
   designId    String?  // Link to uploaded design
+  productType String?  // Product type (basketball-tshirt, basketball-jersey, etc.)
   placement   String?  // Design placement (chest, back, sleeve, etc.)
+  brand       String   @default("Basketball Factory") // Product brand
+  tags        String[] @default([]) // Product tags for search and filtering
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -111,11 +114,31 @@ model Design {
   positionX          Float        @default(50)  // Horizontal position (percentage)
   positionY          Float        @default(35)  // Vertical position (percentage)
   scale              Float        @default(1.0) // Logo scale multiplier
+  logoPositions      Json?        // Stores position data per product type for manual adjustments
+  colorVariants      Json?        // Selected color variants for publishing
   status             DesignStatus @default(PENDING)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
   products Product[]
+}
+
+// AI Learning model - stores learned position preferences per product type
+model LogoPositionLearning {
+  id          String   @id @default(cuid())
+  productType String   // basketball-tshirt, basketball-jersey, etc.
+  brand       String   @default("default") // Brand preference learning
+  x           Float    // Horizontal position
+  y           Float    // Vertical position
+  scale       Float    // Logo scale
+  rotation    Float    @default(0) // Logo rotation
+  timesUsed   Int      @default(1) // How many times this preference was used
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([productType, brand])
+  @@index([productType])
+  @@index([brand])
 }
 
 model CartItem {

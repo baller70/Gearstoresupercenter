@@ -19,6 +19,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { getFeaturedProducts, getProductsByCategory } from "@/lib/products"
 import { ProductGrid } from "@/components/product-grid"
+import ProductRecommendations from "@/components/product-recommendations"
+import LoyaltyDisplay from "@/components/loyalty-display"
 
 export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts()
@@ -219,6 +221,16 @@ export default async function HomePage() {
               </Button>
             </div>
             <ProductGrid products={accessories} />
+          </div>
+
+          {/* AI-Powered Recommendations */}
+          <div className="mt-12">
+            <ProductRecommendations />
+          </div>
+
+          {/* Loyalty Program */}
+          <div className="mt-8 max-w-2xl mx-auto">
+            <LoyaltyDisplay />
           </div>
           
         </div>

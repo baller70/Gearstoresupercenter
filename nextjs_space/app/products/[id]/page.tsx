@@ -9,6 +9,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { AddToCartButton } from "@/components/add-to-cart-button"
+import ProductViewTracker from "@/components/product-view-tracker"
+import ProductRecommendations from "@/components/product-recommendations"
 
 interface ProductPageProps {
   params: {
@@ -43,6 +45,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ProductViewTracker productId={product.id} />
       <Navigation />
       
       <div className="container mx-auto px-4 max-w-7xl py-8">
@@ -158,6 +161,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Recommendations */}
+        <div className="mt-16">
+          <ProductRecommendations title="You Might Also Like" />
         </div>
       </div>
     </div>

@@ -95,6 +95,28 @@ export async function POST(request: NextRequest) {
         where: { userId: user.id }
       })
 
+      // Award loyalty points (10 points per dollar spent)
+      const pointsEarned = Math.floor(total * 10)
+      
+      await tx.loyaltyTransaction.create({
+        data: {
+          userId: user.id,
+          points: pointsEarned,
+          type: 'PURCHASE',
+          description: `Earned ${pointsEarned} points from order #${newOrder.id.slice(-8)}`,
+          orderId: newOrder.id,
+        },
+      })
+
+      await tx.user.update({
+        where: { id: user.id },
+        data: {
+          loyaltyPoints: {
+            increment: pointsEarned,
+          },
+        },
+      })
+
       return newOrder
     })
 

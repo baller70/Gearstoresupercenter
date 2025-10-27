@@ -32,14 +32,29 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName: firstName || null,
-        lastName: lastName || null,
-      }
+    // Create user and award signup bonus in a transaction
+    const user = await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          firstName: firstName || null,
+          lastName: lastName || null,
+          loyaltyPoints: 100, // Welcome bonus
+        }
+      })
+
+      // Create loyalty transaction for signup bonus
+      await tx.loyaltyTransaction.create({
+        data: {
+          userId: newUser.id,
+          points: 100,
+          type: 'SIGNUP',
+          description: 'Welcome bonus! Enjoy 100 points for joining.',
+        },
+      })
+
+      return newUser
     })
 
     // Remove password from response

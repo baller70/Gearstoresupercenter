@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "@/components/session-provider"
 import { Toaster } from "sonner"
+import Chatbot from "@/components/chatbot"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         >
           <SessionProvider>
             {children}
+            <Chatbot />
             <Toaster position="top-right" />
           </SessionProvider>
         </ThemeProvider>

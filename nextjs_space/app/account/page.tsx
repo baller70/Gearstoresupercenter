@@ -13,10 +13,13 @@ import {
   Receipt,
   ShoppingBag,
   Settings,
-  LogOut
+  LogOut,
+  Sparkles,
+  Truck
 } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import LoyaltyDisplay from "@/components/loyalty-display"
 
 export default async function AccountPage() {
   const session = await getServerSession(authOptions)
@@ -40,6 +43,12 @@ export default async function AccountPage() {
         include: { product: true }
       }
     },
+    orderBy: { createdAt: 'desc' },
+    take: 5
+  })
+
+  const customizations = await prisma.productCustomization.findMany({
+    where: { userId: user.id },
     orderBy: { createdAt: 'desc' },
     take: 5
   })
@@ -242,6 +251,89 @@ export default async function AccountPage() {
                           </CardContent>
                         </Card>
                       </Link>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Phase 4 Features */}
+        <div className="grid gap-6 lg:grid-cols-3 mt-6">
+          {/* Loyalty Program */}
+          <div className="lg:col-span-1">
+            <LoyaltyDisplay />
+          </div>
+
+          {/* Custom Design Requests */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Custom Design Requests
+                  </CardTitle>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/customize">New Request</Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!customizations?.length ? (
+                  <div className="text-center py-12 space-y-4">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                      <Sparkles className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">No custom requests yet</h3>
+                      <p className="text-muted-foreground">Create custom basketball apparel with AI assistance</p>
+                    </div>
+                    <Button asChild>
+                      <Link href="/customize">
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Create Custom Design
+                      </Link>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {customizations?.map((customization) => (
+                      <Card key={customization?.id} className="border-2 border-muted/50">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-2 flex-1">
+                              <div className="flex items-center space-x-3">
+                                <div className="font-semibold">
+                                  Request #{customization?.id?.slice(-8)}
+                                </div>
+                                <Badge variant={
+                                  customization?.status === 'COMPLETED' ? 'default' :
+                                  customization?.status === 'REJECTED' ? 'destructive' :
+                                  'secondary'
+                                }>
+                                  {customization?.status}
+                                </Badge>
+                              </div>
+                              <div className="text-sm text-muted-foreground line-clamp-2">
+                                {customization?.notes}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {new Date(customization?.createdAt ?? '').toLocaleDateString()}
+                              </div>
+                            </div>
+                            {customization?.estimatedPrice && (
+                              <div className="text-right ml-4">
+                                <div className="font-bold text-primary">
+                                  {formatPrice(customization?.estimatedPrice)}
+                                </div>
+                                <div className="text-xs text-muted-foreground">Est. Price</div>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}

@@ -93,10 +93,16 @@ export async function POST(request: NextRequest) {
     const colors = BRAND_COLORS[brand] || BRAND_COLORS['Rise as One AAU']
     
     let productsGenerated = 0
+    let errors: string[] = []
+    
+    console.log(`[Upload] Starting product generation for ${garmentTypes.length} garment types x ${colors.length} colors`)
+    console.log(`[Upload] Temp logo path: ${tempLogoPath}`)
     
     for (const garmentType of garmentTypes) {
       for (const color of colors) {
         try {
+          console.log(`[Upload] Generating ${garmentType} in ${color.name} (${color.hex})...`)
+          
           // Generate mockup with logo
           const mockupBuffer = await mockupGenerator.generateMockup(
             tempLogoPath,
@@ -104,17 +110,19 @@ export async function POST(request: NextRequest) {
             color.hex,
             { x: positionX, y: positionY, scale }
           )
+          console.log(`[Upload] Mockup generated, size: ${mockupBuffer.length} bytes`)
           
           // Upload mockup to S3
           const mockupPath = await uploadFile(
             mockupBuffer,
             `products/${design.id}/${garmentType}-${color.name.toLowerCase()}.png`
           )
+          console.log(`[Upload] ✅ Mockup uploaded to S3: ${mockupPath}`)
           
           // Create product
           const productName = `${name} ${garmentType.charAt(0).toUpperCase() + garmentType.slice(1)} - ${color.name}`
           
-          await prisma.product.create({
+          const product = await prisma.product.create({
             data: {
               name: productName,
               description: `Premium ${garmentType} featuring ${name} design in ${color.name}. Perfect for basketball players and fans. Made with high-quality materials for comfort and durability.`,
@@ -129,12 +137,23 @@ export async function POST(request: NextRequest) {
               placement: 'chest',
             }
           })
+          console.log(`[Upload] ✅ Product created: ${product.id} - ${productName}`)
           
           productsGenerated++
         } catch (error) {
-          console.error(`Failed to generate ${garmentType} in ${color.name}:`, error)
+          const errorMsg = `Failed to generate ${garmentType} in ${color.name}: ${error}`
+          console.error(`[Upload] ❌ ${errorMsg}`)
+          console.error(`[Upload] Error details:`, error)
+          errors.push(errorMsg)
         }
       }
+    }
+    
+    if (errors.length > 0) {
+      console.error(`[Upload] ⚠️ Generated ${productsGenerated} products with ${errors.length} errors:`)
+      errors.forEach(err => console.error(`  - ${err}`))
+    } else {
+      console.log(`[Upload] ✅ All ${productsGenerated} products generated successfully!`)
     }
     
     // Clean up temp file

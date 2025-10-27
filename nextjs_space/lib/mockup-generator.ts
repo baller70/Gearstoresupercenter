@@ -44,6 +44,9 @@ export class MockupGenerator {
     color: string,
     customPosition?: MockupPosition
   ): Promise<Buffer> {
+    console.log(`[Mockup Generator] Starting generation for ${garmentType} in ${color}`);
+    console.log(`[Mockup Generator] Logo path: ${logoPath}`);
+    
     try {
       const templatePath = this.garmentTemplates.get(garmentType);
       if (!templatePath) {
@@ -57,17 +60,20 @@ export class MockupGenerator {
       // Load and draw garment base (colored)
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, 1000, 1000);
+      console.log(`[Mockup Generator] Background drawn with color: ${color}`);
 
       // Load logo
       const logo = await loadImage(logoPath);
+      console.log(`[Mockup Generator] Logo loaded successfully (${logo.width}x${logo.height})`);
       
       // Get chest position
       const position = this.getChestPosition(garmentType, customPosition);
 
-      // Calculate logo dimensions with scale
+      // Calculate logo dimensions with scale - Fixed to ensure 250px base size
       const baseLogoSize = 250; // Base size for logo
       const logoWidth = baseLogoSize * position.scale;
       const logoHeight = (logo.height / logo.width) * logoWidth;
+      console.log(`[Mockup Generator] Logo dimensions: ${logoWidth}x${logoHeight}, position: (${position.x}%, ${position.y}%)`);
 
       // Calculate position in pixels
       const x = (canvas.width * position.x) / 100;
@@ -81,14 +87,17 @@ export class MockupGenerator {
         logoWidth,
         logoHeight
       );
+      console.log(`[Mockup Generator] Logo drawn at (${x}, ${y})`);
 
       // Add subtle garment texture/shading
       this.addGarmentDetails(ctx, garmentType, color);
 
-      return canvas.toBuffer('image/png');
+      const buffer = canvas.toBuffer('image/png');
+      console.log(`[Mockup Generator] ✅ Mockup generated successfully, size: ${buffer.length} bytes`);
+      return buffer;
     } catch (error) {
-      console.error('Mockup generation error:', error);
-      throw new Error('Failed to generate mockup');
+      console.error('[Mockup Generator] ❌ Error:', error);
+      throw error; // Re-throw to see the actual error
     }
   }
 

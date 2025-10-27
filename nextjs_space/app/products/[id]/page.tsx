@@ -11,6 +11,8 @@ import { notFound } from "next/navigation"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import ProductViewTracker from "@/components/product-view-tracker"
 import ProductRecommendations from "@/components/product-recommendations"
+import { ProductReviews } from "@/components/product-reviews"
+import { WishlistButton } from "@/components/wishlist-button"
 
 interface ProductPageProps {
   params: {
@@ -134,9 +136,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             ) : null}
 
-            {/* Add to Cart */}
+            {/* Add to Cart & Wishlist */}
             <div className="space-y-4">
-              <AddToCartButton product={product} />
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <AddToCartButton product={product} />
+                </div>
+                <WishlistButton productId={product.id} />
+              </div>
               
               <p className="text-sm text-muted-foreground">
                 {product?.inStock ? 
@@ -161,6 +168,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Reviews */}
+        <div className="mt-16">
+          <ProductReviews productId={product.id} />
         </div>
 
         {/* Recommendations */}

@@ -58,6 +58,11 @@ model User {
   chatMessages ChatMessage[]
   customizations ProductCustomization[]
   loyaltyTransactions LoyaltyTransaction[]
+  reviews Review[]
+  wishlists Wishlist[]
+  discountUsages DiscountUsage[]
+  bulkOrders BulkOrder[]
+  priceAlerts PriceAlert[]
 }
 
 model VerificationToken {
@@ -266,4 +271,216 @@ enum LoyaltyType {
   REVIEW
   SOCIAL_SHARE
   REDEMPTION
+}
+
+// Phase 5: Advanced Commerce & Engagement Models
+
+model Review {
+  id              String   @id @default(cuid())
+  userId          String
+  productId       String
+  rating          Int      // 1-5 stars
+  title           String
+  comment         String   @db.Text
+  photos          String[] // Array of photo URLs
+  verifiedPurchase Boolean @default(false)
+  helpfulCount    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  notes     String?
+  addedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model DiscountCode {
+  id               String         @id @default(cuid())
+  code             String         @unique
+  description      String
+  discountType     DiscountType
+  discountValue    Float          // Percentage or fixed amount
+  minPurchase      Float?         // Minimum purchase amount
+  maxDiscount      Float?         // Maximum discount amount (for percentage)
+  usageLimit       Int?           // Total usage limit
+  usageCount       Int            @default(0)
+  perUserLimit     Int?           // Per user usage limit
+  validFrom        DateTime
+  validUntil       DateTime
+  active           Boolean        @default(true)
+  applicableCategories String[]    // Empty means all categories
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  usages DiscountUsage[]
+
+  @@index([code])
+  @@index([active])
+}
+
+model DiscountUsage {
+  id             String   @id @default(cuid())
+  userId         String
+  discountCodeId String
+  orderId        String
+  discountAmount Float
+  usedAt         DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  discountCode DiscountCode @relation(fields: [discountCodeId], references: [id])
+
+  @@index([userId])
+  @@index([discountCodeId])
+}
+
+model GiftCard {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  initialValue Float
+  balance     Float
+  purchasedBy String?         // User who purchased it
+  status      GiftCardStatus  @default(ACTIVE)
+  expiresAt   DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  transactions GiftCardTransaction[]
+
+  @@index([code])
+  @@index([status])
+}
+
+model GiftCardTransaction {
+  id          String   @id @default(cuid())
+  giftCardId  String
+  userId      String?
+  orderId     String?
+  amount      Float    // Negative for redemption, positive for reload
+  description String
+  createdAt   DateTime @default(now())
+
+  giftCard GiftCard @relation(fields: [giftCardId], references: [id])
+
+  @@index([giftCardId])
+}
+
+model BulkOrder {
+  id          String         @id @default(cuid())
+  userId      String
+  teamName    String
+  status      BulkOrderStatus @default(PENDING)
+  totalAmount Float?
+  notes       String?        @db.Text
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items BulkOrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model BulkOrderItem {
+  id          String @id @default(cuid())
+  bulkOrderId String
+  productId   String
+  playerName  String
+  playerNumber String?
+  size        String
+  color       String
+  quantity    Int    @default(1)
+
+  bulkOrder BulkOrder @relation(fields: [bulkOrderId], references: [id], onDelete: Cascade)
+
+  @@index([bulkOrderId])
+}
+
+model EmailCampaign {
+  id          String              @id @default(cuid())
+  name        String
+  subject     String
+  content     String              @db.Text
+  status      EmailCampaignStatus @default(DRAFT)
+  scheduledFor DateTime?
+  sentAt      DateTime?
+  recipientCount Int?
+  openCount   Int                 @default(0)
+  clickCount  Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([status])
+}
+
+model ShippingOption {
+  id            String  @id @default(cuid())
+  name          String
+  description   String
+  basePrice     Float
+  estimatedDays String  // e.g., "3-5 business days"
+  active        Boolean @default(true)
+  priority      Int     @default(0) // Display order
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PriceAlert {
+  id          String   @id @default(cuid())
+  userId      String
+  productId   String
+  targetPrice Float
+  notified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+  @@index([notified])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+  BOGO
+}
+
+enum GiftCardStatus {
+  ACTIVE
+  REDEEMED
+  EXPIRED
+  CANCELLED
+}
+
+enum BulkOrderStatus {
+  PENDING
+  REVIEWING
+  APPROVED
+  IN_PRODUCTION
+  COMPLETED
+  CANCELLED
+}
+
+enum EmailCampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  CANCELLED
 }

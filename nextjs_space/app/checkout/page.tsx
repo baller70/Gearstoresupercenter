@@ -45,6 +45,10 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [sameAsBilling, setSameAsBilling] = useState(true)
+  const [discountCode, setDiscountCode] = useState('')
+  const [appliedDiscount, setAppliedDiscount] = useState<any>(null)
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const [checkingDiscount, setCheckingDiscount] = useState(false)
 
   const [formData, setFormData] = useState({
     // Shipping Information
@@ -104,7 +108,50 @@ export default function CheckoutPage() {
   const subtotal = cartItems?.reduce((sum, item) => sum + (item?.product?.price ?? 0) * (item?.quantity ?? 0), 0) ?? 0
   const tax = subtotal * 0.08 // 8% tax
   const shipping = subtotal >= 50 ? 0 : 9.99
-  const total = subtotal + tax + shipping
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount)
+  const total = discountedSubtotal + tax + shipping
+
+  const applyDiscountCode = async () => {
+    if (!discountCode.trim()) {
+      toast.error('Please enter a discount code')
+      return
+    }
+
+    setCheckingDiscount(true)
+    try {
+      const categories = [...new Set(cartItems.map(item => 'PERFORMANCE_APPAREL'))] // Simplified
+      const response = await fetch('/api/discounts/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: discountCode,
+          cartTotal: subtotal,
+          cartCategories: categories,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setAppliedDiscount(data.discount)
+        setDiscountAmount(data.discountAmount)
+        toast.success(`Discount applied: ${data.discount.description}`)
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Invalid discount code')
+      }
+    } catch (error) {
+      toast.error('Failed to validate discount code')
+    } finally {
+      setCheckingDiscount(false)
+    }
+  }
+
+  const removeDiscount = () => {
+    setAppliedDiscount(null)
+    setDiscountAmount(0)
+    setDiscountCode('')
+    toast.success('Discount removed')
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -450,12 +497,59 @@ export default function CheckoutPage() {
                     ))}
                   </div>
 
+                  {/* Discount Code */}
+                  <div className="space-y-2 pt-4 border-t">
+                    {!appliedDiscount ? (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Discount code"
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                          onKeyPress={(e) => e.key === 'Enter' && applyDiscountCode()}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={applyDiscountCode}
+                          disabled={checkingDiscount}
+                        >
+                          {checkingDiscount ? 'Applying...' : 'Apply'}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-green-800">
+                            {appliedDiscount.code} applied
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {appliedDiscount.description}
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeDiscount}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Order Totals */}
                   <div className="space-y-2 pt-4 border-t">
                     <div className="flex justify-between text-sm">
                       <span>Subtotal:</span>
                       <span>{formatPrice(subtotal)}</span>
                     </div>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>Discount:</span>
+                        <span>-{formatPrice(discountAmount)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm">
                       <span>Shipping:</span>
                       <span className={shipping === 0 ? "text-green-600" : ""}>

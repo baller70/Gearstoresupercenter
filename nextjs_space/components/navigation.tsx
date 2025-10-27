@@ -13,7 +13,9 @@ import {
   Menu,
   Circle,
   Home,
-  Package
+  Package,
+  Heart,
+  Users
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -128,7 +130,23 @@ export function Navigation() {
           </nav>
 
           {/* Right side actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {/* Wishlist */}
+            {session && (
+              <Link href="/wishlist">
+                <Button variant="ghost" size="icon">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
+            )}
+            
+            {/* Bulk Order */}
+            <Link href="/bulk-order">
+              <Button variant="ghost" size="icon">
+                <Users className="h-5 w-5" />
+              </Button>
+            </Link>
+            
             {/* Shopping Cart */}
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative">
@@ -205,6 +223,27 @@ export function Navigation() {
                       <span>{item?.name}</span>
                     </Link>
                   ))}
+                  
+                  <div className="border-t pt-4">
+                    {session && (
+                      <Link
+                        href="/wishlist"
+                        className="flex items-center space-x-3 text-sm font-medium transition-colors hover:text-primary mb-4"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Heart className="h-4 w-4" />
+                        <span>My Wishlist</span>
+                      </Link>
+                    )}
+                    <Link
+                      href="/bulk-order"
+                      className="flex items-center space-x-3 text-sm font-medium transition-colors hover:text-primary"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Users className="h-4 w-4" />
+                      <span>Bulk Team Order</span>
+                    </Link>
+                  </div>
                   
                   {!session && (
                     <>

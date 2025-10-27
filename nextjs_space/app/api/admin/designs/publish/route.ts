@@ -49,11 +49,52 @@ export async function POST(request: NextRequest) {
 
     let productsCreated = 0;
 
-    // Get logo path
-    const logoPath = path.join(process.cwd(), 'public', design.imageUrl.replace(/^\/+/, ''));
+    // Get logo - it's stored in S3, so we need to download it first
+    let logoPath: string;
     
-    if (!fs.existsSync(logoPath)) {
-      throw new Error('Logo file not found: ' + logoPath);
+    // Check if the imageUrl is an S3 key (doesn't start with / or http)
+    if (!design.imageUrl.startsWith('/') && !design.imageUrl.startsWith('http')) {
+      // Download from S3 to a temporary location
+      const { downloadFile } = await import('@/lib/s3');
+      const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+      const { createS3Client, getBucketConfig } = await import('@/lib/aws-config');
+      
+      const s3Client = createS3Client();
+      const { bucketName } = getBucketConfig();
+      
+      // Download the file content from S3
+      const command = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: design.imageUrl,
+      });
+      
+      const response = await s3Client.send(command);
+      const chunks: Uint8Array[] = [];
+      
+      // @ts-ignore
+      for await (const chunk of response.Body) {
+        chunks.push(chunk);
+      }
+      
+      const buffer = Buffer.concat(chunks);
+      
+      // Save to temporary file
+      const tempDir = path.join(process.cwd(), 'public', 'temp');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      
+      logoPath = path.join(tempDir, `logo-${designId}-${Date.now()}.png`);
+      fs.writeFileSync(logoPath, buffer);
+      
+      console.log(`Downloaded logo from S3 to: ${logoPath}`);
+    } else {
+      // Local file path
+      logoPath = path.join(process.cwd(), 'public', design.imageUrl.replace(/^\/+/, ''));
+      
+      if (!fs.existsSync(logoPath)) {
+        throw new Error('Logo file not found: ' + logoPath);
+      }
     }
 
     // Create products for each type and color combination
@@ -99,6 +140,12 @@ export async function POST(request: NextRequest) {
                 ? productType.type 
                 : `${productType.type}-${angle}`;
               
+              console.log(`Generating ${angle} mockup for ${productType.name} - ${color.name}`, {
+                mockupType,
+                logoPath,
+                placement
+              });
+              
               // Pass color tint to the mockup generator
               const mockupPath = await generateMockupWithLogo(
                 logoPath,
@@ -108,13 +155,23 @@ export async function POST(request: NextRequest) {
                 color // color tint
               );
               
+              console.log(`Generated mockup at path: ${mockupPath}`);
+              
               // Convert absolute path to relative URL
-              const relativePath = mockupPath.replace(process.cwd() + '/public', '');
+              const publicDir = path.join(process.cwd(), 'public');
+              const relativePath = mockupPath.startsWith(publicDir)
+                ? mockupPath.substring(publicDir.length)
+                : mockupPath.replace(process.cwd() + '/public', '');
+              
               mockupImages.push(relativePath);
               
               console.log(`Generated ${angle} mockup for ${productType.name} - ${color.name}: ${relativePath}`);
             } catch (error) {
-              console.error(`Error generating ${angle} mockup:`, error);
+              console.error(`Error generating ${angle} mockup for ${productType.name} - ${color.name}:`, error);
+              // Log the full error stack
+              if (error instanceof Error) {
+                console.error('Error stack:', error.stack);
+              }
             }
           }
 
@@ -157,6 +214,19 @@ export async function POST(request: NextRequest) {
         colorVariants: enabledColors,
       },
     });
+
+    // Clean up temporary logo file if it was downloaded from S3
+    if (!design.imageUrl.startsWith('/') && !design.imageUrl.startsWith('http')) {
+      try {
+        if (fs.existsSync(logoPath)) {
+          fs.unlinkSync(logoPath);
+          console.log(`Cleaned up temporary logo file: ${logoPath}`);
+        }
+      } catch (cleanupError) {
+        console.error('Error cleaning up temp file:', cleanupError);
+        // Don't fail the request if cleanup fails
+      }
+    }
 
     return NextResponse.json({
       success: true,

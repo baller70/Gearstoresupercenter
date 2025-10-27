@@ -10,7 +10,13 @@ const performanceApparelProducts = [
     description: "Premium double-mesh reversible basketball jersey perfect for practices and games. Features moisture-wicking technology, reinforced stitching, and team-ready design. Ideal for youth AAU players.",
     price: 24.99,
     category: "PERFORMANCE_APPAREL",
-    imageUrl: "https://cdn.abacus.ai/images/4b92b36c-740e-42d3-b3cb-5be6dbc6bd3b.png",
+    imageUrl: "https://cdn.abacus.ai/images/d1107149-cee4-4099-9a5d-4f98e071ea89.png",
+    images: [
+      "https://cdn.abacus.ai/images/d1107149-cee4-4099-9a5d-4f98e071ea89.png",
+      "https://cdn.abacus.ai/images/c27a13ae-efdb-434f-a35c-c67bfb6eb3b8.png",
+      "https://cdn.abacus.ai/images/17bd63cf-eb60-4322-b2a4-425d92f52b45.png",
+      "https://cdn.abacus.ai/images/b5b3d83f-b12a-4bd6-af0b-d62cc58107ab.png"
+    ],
     sizes: ["YXS", "YS", "YM", "YL", "YXL"],
     colors: ["Royal Blue", "Gold", "Black", "White"],
     featured: true
@@ -30,7 +36,12 @@ const performanceApparelProducts = [
     description: "Lightweight mesh basketball shorts with moisture-wicking liner. Features deep pockets, reinforced seams, and comfortable waistband. Perfect for practice and games.",
     price: 18.99,
     category: "PERFORMANCE_APPAREL",
-    imageUrl: "https://cdn.abacus.ai/images/9615965f-155d-4063-8eff-e50673330892.png",
+    imageUrl: "https://cdn.abacus.ai/images/c379f271-6294-4b02-bb58-1343f9c8ba7a.png",
+    images: [
+      "https://cdn.abacus.ai/images/c379f271-6294-4b02-bb58-1343f9c8ba7a.png",
+      "https://cdn.abacus.ai/images/e44988a5-296a-459b-a83b-117194bfdd6e.png",
+      "https://cdn.abacus.ai/images/85767312-1ff7-4843-9ebf-f5cc5a13eac3.png"
+    ],
     sizes: ["YXS", "YS", "YM", "YL", "YXL"],
     colors: ["Navy", "Royal Blue", "Black", "Red"]
   },
@@ -87,7 +98,13 @@ const casualWearProducts = [
     description: "Comfortable pullover hoodie perfect for team events and casual wear. Features soft fleece lining, kangaroo pocket, and embroidered team logos. Great for showing team pride.",
     price: 32.99,
     category: "CASUAL_WEAR",
-    imageUrl: "https://cdn.abacus.ai/images/b2931b9b-dc6d-4f09-9b1a-d8e851d4583a.png",
+    imageUrl: "https://cdn.abacus.ai/images/a844263c-18b2-431a-922c-f88e3994d573.png",
+    images: [
+      "https://cdn.abacus.ai/images/a844263c-18b2-431a-922c-f88e3994d573.png",
+      "https://cdn.abacus.ai/images/279a05c9-3c24-4d39-816a-40afd12b07e5.png",
+      "https://cdn.abacus.ai/images/f3973b1c-f702-452d-aab6-75394e4a2500.png",
+      "https://cdn.abacus.ai/images/5533e1a6-7cd7-401c-b471-d8a205c5c547.png"
+    ],
     sizes: ["YXS", "YS", "YM", "YL", "YXL"],
     colors: ["Royal Blue", "Red", "Navy", "Black"],
     featured: true
@@ -151,7 +168,13 @@ const casualWearProducts = [
     description: "Performance training t-shirt with advanced moisture-wicking technology. Perfect for workouts, practice, and active lifestyle. Features anti-odor treatment.",
     price: 13.99,
     category: "CASUAL_WEAR",
-    imageUrl: "https://cdn.abacus.ai/images/e9f5e894-99d8-4241-9f1e-e3ed45edd9f1.png",
+    imageUrl: "https://cdn.abacus.ai/images/083f4419-c795-414c-9328-afb6a8f13869.png",
+    images: [
+      "https://cdn.abacus.ai/images/083f4419-c795-414c-9328-afb6a8f13869.png",
+      "https://cdn.abacus.ai/images/93082bab-a194-4c1f-b0f5-2c6203aecdde.png",
+      "https://cdn.abacus.ai/images/78e45d45-a097-4133-9124-c3526908519b.png",
+      "https://cdn.abacus.ai/images/b7e121c8-4ba3-4cde-939e-2d7a0da60c87.png"
+    ],
     sizes: ["YXS", "YS", "YM", "YL", "YXL"],
     colors: ["Black", "Navy", "Royal Blue", "Red"]
   }
@@ -191,7 +214,13 @@ const accessoryProducts = [
     description: "Spacious duffle bag perfect for team travel and equipment storage. Features multiple compartments, reinforced handles, shoulder strap, and customizable team logos.",
     price: 44.99,
     category: "ACCESSORIES",
-    imageUrl: "https://yeti-webmedia.imgix.net/asset/ae4b650e-d771-46cb-a0ff-82eef8d9ff8f/W/site_studio_Crossroads_Duffel_40L_Red_Bull_3qter_115_B_2400x2400.png",
+    imageUrl: "https://cdn.abacus.ai/images/fa1a7f96-e44c-4398-8ed4-22ed6c994145.png",
+    images: [
+      "https://cdn.abacus.ai/images/fa1a7f96-e44c-4398-8ed4-22ed6c994145.png",
+      "https://cdn.abacus.ai/images/e7ae13bc-8630-4b9e-a24a-2e3c44442bdf.png",
+      "https://cdn.abacus.ai/images/1268e742-496d-414d-9cc3-1ede1e088bcc.png",
+      "https://cdn.abacus.ai/images/dd695ae5-67b1-4e22-9324-9d188a074973.png"
+    ],
     sizes: ["One Size"],
     colors: ["Black", "Navy", "Red", "Royal Blue"]
   },
@@ -230,6 +259,82 @@ const accessoryProducts = [
     imageUrl: "https://m.media-amazon.com/images/I/7154yk3ELIL.jpg",
     sizes: ["One Size"],
     colors: ["Black", "White", "Navy", "Red"]
+  },
+  {
+    name: "Elite Basketball Crew Socks",
+    description: "Performance crew socks designed for basketball players. Features cushioned sole, arch support, moisture-wicking fabric, and reinforced heel and toe. Available in team colors.",
+    price: 14.99,
+    category: "ACCESSORIES",
+    imageUrl: "https://cdn.abacus.ai/images/9aa12fca-cbdd-4063-9675-9ca9289eb969.png",
+    images: [
+      "https://cdn.abacus.ai/images/9aa12fca-cbdd-4063-9675-9ca9289eb969.png",
+      "https://cdn.abacus.ai/images/79144949-6585-4cdf-8b87-9ba6be6a6641.png",
+      "https://cdn.abacus.ai/images/f1d2de65-29b8-42ea-94e9-2275b763a7eb.png",
+      "https://cdn.abacus.ai/images/870ec10c-f87c-4aac-b3e5-08edd915691f.png"
+    ],
+    sizes: ["Youth S", "Youth M", "Youth L"],
+    colors: ["Black", "White", "Navy", "Red"]
+  },
+  {
+    name: "Basketball Training Sweatpants",
+    description: "Comfortable sweatpants perfect for training and warm-ups. Features tapered fit, zippered pockets, elastic cuffs, and moisture-wicking fleece material.",
+    price: 34.99,
+    category: "CASUAL_WEAR",
+    imageUrl: "https://cdn.abacus.ai/images/42cef945-c4d0-4c62-848d-30ceb8520061.png",
+    images: [
+      "https://cdn.abacus.ai/images/42cef945-c4d0-4c62-848d-30ceb8520061.png",
+      "https://cdn.abacus.ai/images/1599afc0-2245-4373-967b-67fd15d9a86f.png",
+      "https://cdn.abacus.ai/images/c5b5f75d-6257-40c6-9027-5c0020912eee.png",
+      "https://cdn.abacus.ai/images/d2203319-73dc-4201-9f09-48c5ca056d7e.png"
+    ],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    colors: ["Black", "Navy", "Royal Blue", "Gray"]
+  },
+  {
+    name: "Compression Shooting Sleeve",
+    description: "Premium compression arm sleeve for basketball players. Provides muscle support, improves circulation, and helps prevent injuries. Features UV protection and moisture-wicking fabric.",
+    price: 16.99,
+    category: "ACCESSORIES",
+    imageUrl: "https://cdn.abacus.ai/images/9c8c3fa5-d6b0-403d-bf20-2c90c9b152bc.png",
+    images: [
+      "https://cdn.abacus.ai/images/9c8c3fa5-d6b0-403d-bf20-2c90c9b152bc.png",
+      "https://cdn.abacus.ai/images/6df7f699-fabe-48c2-8b8c-408398469b16.png",
+      "https://cdn.abacus.ai/images/4bd96afd-4bdb-48a5-8698-634b5d6dffa9.png",
+      "https://cdn.abacus.ai/images/0b67d621-0c3d-45c7-ad5f-0a73cae3ed77.png"
+    ],
+    sizes: ["Youth", "Adult S/M", "Adult L/XL"],
+    colors: ["Black", "White", "Navy", "Red"]
+  },
+  {
+    name: "Moisture-Wicking Basketball Headband",
+    description: "Performance headband designed to keep sweat out of your eyes during intense play. Features elastic stretch fit, absorbent material, and team-ready styling.",
+    price: 9.99,
+    category: "ACCESSORIES",
+    imageUrl: "https://cdn.abacus.ai/images/0e881bdd-f76c-4962-a37c-12c49727d042.png",
+    images: [
+      "https://cdn.abacus.ai/images/0e881bdd-f76c-4962-a37c-12c49727d042.png",
+      "https://cdn.abacus.ai/images/0723d0d7-7d64-4d65-a483-6afe3654bc9d.png",
+      "https://cdn.abacus.ai/images/04c9cb01-111a-457c-aa0a-a4ebacca6667.png",
+      "https://cdn.abacus.ai/images/49aaa857-4dee-4081-b357-87dbd75ba80f.png"
+    ],
+    sizes: ["One Size"],
+    colors: ["Black", "White", "Navy", "Red", "Royal Blue"]
+  },
+  {
+    name: "Pro Basketball High-Top Sneakers",
+    description: "High-performance basketball sneakers designed for elite players. Features superior ankle support, responsive cushioning, excellent traction, and durable construction for competitive play.",
+    price: 89.99,
+    category: "ACCESSORIES",
+    imageUrl: "https://cdn.abacus.ai/images/177f6d49-8db3-476e-927d-24aa6b82380a.png",
+    images: [
+      "https://cdn.abacus.ai/images/177f6d49-8db3-476e-927d-24aa6b82380a.png",
+      "https://cdn.abacus.ai/images/c23b01e2-da04-47b4-a5d7-51b44e875572.png",
+      "https://cdn.abacus.ai/images/583e9484-e889-4cc0-8fa2-2e70308cdc0f.png",
+      "https://cdn.abacus.ai/images/c2ba83e6-d3c7-4c45-bc6a-cb5a2fd3c1e7.png"
+    ],
+    sizes: ["Youth 3", "Youth 4", "Youth 5", "Youth 6", "Youth 7"],
+    colors: ["Black/Red", "White/Black", "Navy/White", "Red/White"],
+    featured: true
   }
 ]
 

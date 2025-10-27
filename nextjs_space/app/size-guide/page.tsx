@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { Navigation } from '@/components/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -109,19 +110,22 @@ export default function SizeGuidePage() {
   }, {} as Record<string, SizeGuideItem[]>);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Size Guide</h1>
-        <p className="text-muted-foreground">
-          Find your perfect fit with our AI-powered sizing assistant
-        </p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Size Guide</h1>
+          <p className="text-muted-foreground">
+            Find your perfect fit with our AI-powered sizing assistant
+          </p>
+        </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="find-size">Find Your Size</TabsTrigger>
-          <TabsTrigger value="size-charts">Size Charts</TabsTrigger>
-        </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 max-w-md">
+            <TabsTrigger value="find-size">Find Your Size</TabsTrigger>
+            <TabsTrigger value="size-charts">Size Charts</TabsTrigger>
+          </TabsList>
 
         <TabsContent value="find-size">
           <Card>
@@ -301,7 +305,8 @@ export default function SizeGuidePage() {
             </div>
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import ProductViewTracker from "@/components/product-view-tracker"
 import ProductRecommendations from "@/components/product-recommendations"
 import { ProductReviews } from "@/components/product-reviews"
 import { WishlistButton } from "@/components/wishlist-button"
+import { ProductImageGallery } from "@/components/product-image-gallery"
 
 interface ProductPageProps {
   params: {
@@ -64,24 +65,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="grid lg:grid-cols-2 gap-12">
           
-          {/* Product Image */}
+          {/* Product Image Gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
-              <Image
-                src={product?.imageUrl ?? ''}
-                alt={product?.name ?? 'Product image'}
-                fill
-                className="object-cover"
-                priority
+            <div className="relative">
+              <ProductImageGallery 
+                images={product?.images?.length > 0 ? product.images : [product?.imageUrl ?? '']}
+                productName={product?.name ?? 'Product'}
               />
               {product?.featured && (
-                <Badge className="absolute top-4 left-4 bg-primary">
+                <Badge className="absolute top-4 left-4 bg-primary z-10 shadow-lg">
                   <Star className="w-3 h-3 mr-1" />
                   Featured
                 </Badge>
               )}
               {!product?.inStock && (
-                <Badge variant="secondary" className="absolute top-4 right-4">
+                <Badge variant="secondary" className="absolute top-4 right-4 z-10 shadow-lg">
                   Out of Stock
                 </Badge>
               )}

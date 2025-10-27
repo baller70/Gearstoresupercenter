@@ -80,6 +80,7 @@ model Product {
   price       Float
   category    Category
   imageUrl    String
+  images      String[] @default([]) // Multiple product images for gallery
   sizes       String[] // JSON array of available sizes
   colors      String[] // JSON array of available colors
   stock       Int      @default(100) // Quantity in stock

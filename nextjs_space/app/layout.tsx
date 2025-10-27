@@ -1,13 +1,28 @@
 
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Audiowide, Saira, Russo_One } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "@/components/session-provider"
 import { Toaster } from "sonner"
 import Chatbot from "@/components/chatbot"
 
-const inter = Inter({ subsets: ["latin"] })
+const audiowide = Audiowide({ 
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-audiowide"
+})
+
+const saira = Saira({ 
+  subsets: ["latin"],
+  variable: "--font-saira"
+})
+
+const russoOne = Russo_One({ 
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-russo-one"
+})
 
 export const dynamic = "force-dynamic"
 
@@ -41,11 +56,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${saira.variable} ${audiowide.variable} ${russoOne.variable} font-sans`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <SessionProvider>

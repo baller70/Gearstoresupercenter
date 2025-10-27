@@ -263,20 +263,64 @@ export default function DesignEditorPage() {
   };
   
   const productTypes = [
-    { id: 'basketball-tshirt', name: 'T-Shirt', icon: '👕', mockup: '/mockups/basketball_tshirt_mockup.png' },
-    { id: 'basketball-jersey', name: 'Jersey', icon: '🎽', mockup: '/mockups/basketball_jersey_mockup.png' },
-    { id: 'basketball-hoodie', name: 'Hoodie', icon: '🧥', mockup: '/mockups/basketball_hoodie_mockup.png' },
-    { id: 'basketball-sweatshirt', name: 'Sweatshirt', icon: '👔', mockup: '/mockups/basketball_sweatshirt_mockup.png' },
-    { id: 'basketball-shorts', name: 'Shorts', icon: '🩳', mockup: '/mockups/basketball_shorts_mockup.png' },
+    { 
+      id: 'basketball-tshirt', 
+      name: 'T-Shirt', 
+      icon: '👕', 
+      mockups: {
+        front: '/mockups/basketball_tshirt_mockup.png',
+        back: '/mockups/basketball_tshirt_back_mockup.png',
+        side: '/mockups/basketball_tshirt_side_mockup.png'
+      }
+    },
+    { 
+      id: 'basketball-jersey', 
+      name: 'Jersey', 
+      icon: '🎽', 
+      mockups: {
+        front: '/mockups/basketball_jersey_mockup.png',
+        back: '/mockups/basketball_jersey_back_mockup.png',
+        side: '/mockups/basketball_jersey_side_mockup.png'
+      }
+    },
+    { 
+      id: 'basketball-hoodie', 
+      name: 'Hoodie', 
+      icon: '🧥', 
+      mockups: {
+        front: '/mockups/basketball_hoodie_mockup.png',
+        back: '/mockups/basketball_hoodie_back_mockup.png',
+        side: '/mockups/basketball_hoodie_side_mockup.png'
+      }
+    },
+    { 
+      id: 'basketball-sweatshirt', 
+      name: 'Sweatshirt', 
+      icon: '👔', 
+      mockups: {
+        front: '/mockups/basketball_sweatshirt_mockup.png',
+        back: '/mockups/basketball_sweatshirt_back_mockup.png',
+        side: '/mockups/basketball_sweatshirt_side_mockup.png'
+      }
+    },
+    { 
+      id: 'basketball-shorts', 
+      name: 'Shorts', 
+      icon: '🩳', 
+      mockups: {
+        front: '/mockups/basketball_shorts_mockup.png',
+        back: '/mockups/basketball_shorts_back_mockup.png',
+        side: '/mockups/basketball_shorts_side_mockup.png'
+      }
+    },
   ];
   
   const getCurrentMockup = () => {
     const product = productTypes.find(p => p.id === selectedProduct);
     if (!product) return '';
     
-    // For now, all angles use the front mockup
-    // In the future, we can add back and side mockup templates
-    return product.mockup;
+    // Return the correct mockup based on the selected angle
+    return product.mockups[selectedAngle] || product.mockups.front;
   };
   
   const hasPositionSaved = (productId: string) => {
@@ -646,10 +690,10 @@ export default function DesignEditorPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="aspect-square relative bg-white rounded-lg border overflow-hidden">
-                      {product.mockup ? (
+                      {product.mockups?.front ? (
                         <div className="relative w-full h-full p-4">
                           <Image
-                            src={product.mockup}
+                            src={product.mockups.front}
                             alt={`${product.name} mockup`}
                             fill
                             className="object-contain"

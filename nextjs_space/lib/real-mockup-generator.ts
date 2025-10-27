@@ -17,6 +17,7 @@ interface MockupConfig {
 }
 
 const MOCKUP_CONFIGS: Record<string, MockupConfig> = {
+  // Front views
   'basketball-tshirt': {
     name: 'Basketball T-Shirt',
     imagePath: 'public/mockups/basketball_tshirt_mockup.png',
@@ -41,6 +42,60 @@ const MOCKUP_CONFIGS: Record<string, MockupConfig> = {
     name: 'Basketball Shorts',
     imagePath: 'public/mockups/basketball_shorts_mockup.png',
     defaultPlacement: { x: 50, y: 25, width: 15 }
+  },
+  
+  // Back views
+  'basketball-tshirt-back': {
+    name: 'Basketball T-Shirt (Back)',
+    imagePath: 'public/mockups/basketball_tshirt_back_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 20 }
+  },
+  'basketball-hoodie-back': {
+    name: 'Basketball Hoodie (Back)',
+    imagePath: 'public/mockups/basketball_hoodie_back_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 18 }
+  },
+  'basketball-sweatshirt-back': {
+    name: 'Basketball Sweatshirt (Back)',
+    imagePath: 'public/mockups/basketball_sweatshirt_back_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 18 }
+  },
+  'basketball-jersey-back': {
+    name: 'Basketball Jersey (Back)',
+    imagePath: 'public/mockups/basketball_jersey_back_mockup.png',
+    defaultPlacement: { x: 50, y: 40, width: 22 }
+  },
+  'basketball-shorts-back': {
+    name: 'Basketball Shorts (Back)',
+    imagePath: 'public/mockups/basketball_shorts_back_mockup.png',
+    defaultPlacement: { x: 50, y: 25, width: 15 }
+  },
+  
+  // Side views
+  'basketball-tshirt-side': {
+    name: 'Basketball T-Shirt (Side)',
+    imagePath: 'public/mockups/basketball_tshirt_side_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 15 }
+  },
+  'basketball-hoodie-side': {
+    name: 'Basketball Hoodie (Side)',
+    imagePath: 'public/mockups/basketball_hoodie_side_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 13 }
+  },
+  'basketball-sweatshirt-side': {
+    name: 'Basketball Sweatshirt (Side)',
+    imagePath: 'public/mockups/basketball_sweatshirt_side_mockup.png',
+    defaultPlacement: { x: 50, y: 35, width: 13 }
+  },
+  'basketball-jersey-side': {
+    name: 'Basketball Jersey (Side)',
+    imagePath: 'public/mockups/basketball_jersey_side_mockup.png',
+    defaultPlacement: { x: 50, y: 40, width: 16 }
+  },
+  'basketball-shorts-side': {
+    name: 'Basketball Shorts (Side)',
+    imagePath: 'public/mockups/basketball_shorts_side_mockup.png',
+    defaultPlacement: { x: 50, y: 25, width: 12 }
   }
 };
 
@@ -78,7 +133,7 @@ export async function generateMockupWithLogo(
     const logoMetadata = await logoImage.metadata();
 
     // Remove white background and make it transparent
-    // This uses a threshold approach to remove near-white pixels
+    // This uses a more aggressive threshold approach to remove near-white pixels
     const processedLogoBuffer = await logoImage
       .ensureAlpha()
       .raw()
@@ -87,15 +142,25 @@ export async function generateMockupWithLogo(
     const { data, info } = processedLogoBuffer;
     const channels = info.channels;
     
-    // Process pixels to remove white background
+    // Process pixels to remove white background with aggressive threshold
     for (let i = 0; i < data.length; i += channels) {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
       
-      // If pixel is near-white (threshold: 240), make it transparent
-      if (r > 240 && g > 240 && b > 240) {
-        data[i + 3] = 0; // Set alpha to 0 (transparent)
+      // More aggressive threshold: remove pixels that are light gray to white (>220)
+      // Also handle partial transparency - make light pixels progressively transparent
+      if (r > 220 && g > 220 && b > 220) {
+        const brightness = (r + g + b) / 3;
+        // Full transparency for very bright pixels (>245)
+        if (brightness > 245) {
+          data[i + 3] = 0;
+        }
+        // Partial transparency for lighter pixels (220-245)
+        else {
+          const alpha = Math.max(0, ((245 - brightness) / 25) * 255);
+          data[i + 3] = Math.min(data[i + 3], alpha);
+        }
       }
     }
     

@@ -2,14 +2,51 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GetObjectCommand } from '@aws-sdk/client-s3'
 import { createS3Client, getBucketConfig } from '@/lib/aws-config'
+import fs from 'fs'
+import path from 'path'
 
-// This endpoint serves images from S3 with fresh signed URLs on each request
+// This endpoint serves images from S3 OR local files with fresh signed URLs on each request
 // This solves the expiration issue while keeping S3 objects private
 export async function GET(
   request: NextRequest,
   { params }: { params: { path: string[] } }
 ) {
   try {
+    // Reconstruct the key/path from the path segments
+    const key = params.path.join('/')
+    
+    console.log(`[Image Proxy] Fetching image: ${key}`)
+    
+    // Check if this is a local generated mockup
+    if (key.startsWith('generated-mockups/')) {
+      const localPath = path.join(process.cwd(), 'public', key)
+      
+      console.log(`[Image Proxy] Checking local file: ${localPath}`)
+      
+      if (fs.existsSync(localPath)) {
+        console.log(`[Image Proxy] Serving local file: ${localPath}`)
+        
+        const buffer = fs.readFileSync(localPath)
+        const contentType = getContentTypeFromKey(key)
+        
+        return new NextResponse(buffer, {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'public, max-age=86400', // Cache for 24 hours
+            'Content-Length': buffer.length.toString(),
+          },
+        })
+      } else {
+        console.error(`[Image Proxy] Local file not found: ${localPath}`)
+        return NextResponse.json(
+          { error: 'Image not found locally' },
+          { status: 404 }
+        )
+      }
+    }
+    
+    // Otherwise, fetch from S3
     const s3Client = createS3Client()
     const { bucketName } = getBucketConfig()
     
@@ -20,10 +57,7 @@ export async function GET(
       )
     }
     
-    // Reconstruct the S3 key from the path segments
-    const key = params.path.join('/')
-    
-    console.log(`[Image Proxy] Fetching image: ${key}`)
+    console.log(`[Image Proxy] Fetching from S3: ${key}`)
     
     // Get the object from S3
     const command = new GetObjectCommand({
@@ -35,7 +69,7 @@ export async function GET(
     
     if (!response.Body) {
       return NextResponse.json(
-        { error: 'Image not found' },
+        { error: 'Image not found in S3' },
         { status: 404 }
       )
     }

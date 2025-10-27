@@ -122,61 +122,63 @@ export async function POST(request: NextRequest) {
           // Generate mockup images for front, back, and side views
           const mockupImages: string[] = [];
           
-          for (const angle of ['front', 'back', 'side']) {
-            const positionKey = `${productType.type}-${angle}`;
-            const savedPosition = positions?.[positionKey];
-            
-            // Use saved position or defaults
-            const placement = savedPosition ? {
-              x: savedPosition.x,
-              y: savedPosition.y,
-              width: savedPosition.scale * 20, // Convert scale to width percentage
-              rotation: savedPosition.rotation,
-            } : undefined;
-            
-            try {
-              // Generate mockup with logo using the specific angle
-              const mockupType = angle === 'front' 
-                ? productType.type 
-                : `${productType.type}-${angle}`;
-              
-              console.log(`Generating ${angle} mockup for ${productType.name} - ${color.name}`, {
-                mockupType,
-                logoPath,
-                placement
-              });
-              
-              // Pass color tint to the mockup generator
-              const mockupPath = await generateMockupWithLogo(
-                logoPath,
-                mockupType,
-                placement,
-                undefined, // outputPath (auto-generated)
-                color // color tint
-              );
-              
-              console.log(`Generated mockup at path: ${mockupPath}`);
-              
-              // Convert absolute path to relative URL
-              const publicDir = path.join(process.cwd(), 'public');
-              const relativePath = mockupPath.startsWith(publicDir)
-                ? mockupPath.substring(publicDir.length)
-                : mockupPath.replace(process.cwd() + '/public', '');
-              
-              mockupImages.push(relativePath);
-              
-              console.log(`Generated ${angle} mockup for ${productType.name} - ${color.name}: ${relativePath}`);
-            } catch (error) {
-              console.error(`Error generating ${angle} mockup for ${productType.name} - ${color.name}:`, error);
-              // Log the full error stack
-              if (error instanceof Error) {
-                console.error('Error stack:', error.stack);
-              }
-            }
+          // Only generate mockup for the front view to start
+          const angle = 'front';
+          const positionKey = `${productType.type}-${angle}`;
+          const savedPosition = positions?.[positionKey];
+          
+          // Use saved position or defaults
+          const placement = savedPosition ? {
+            x: savedPosition.x,
+            y: savedPosition.y,
+            width: savedPosition.scale * 20, // Convert scale to width percentage
+            rotation: savedPosition.rotation,
+          } : undefined;
+          
+          // Generate mockup with logo
+          const mockupType = productType.type;
+          
+          console.log(`[Publish] Generating mockup for ${productType.name} - ${color.name}`, {
+            mockupType,
+            logoPath,
+            placement,
+            colorHex: color.hex
+          });
+          
+          // Pass color tint to the mockup generator
+          const mockupPath = await generateMockupWithLogo(
+            logoPath,
+            mockupType,
+            placement,
+            undefined, // outputPath (auto-generated)
+            color // color tint
+          );
+          
+          console.log(`[Publish] Generated mockup at absolute path: ${mockupPath}`);
+          
+          // Convert absolute path to relative URL
+          const publicDir = path.join(process.cwd(), 'public');
+          let relativePath: string;
+          
+          if (mockupPath.startsWith(publicDir)) {
+            relativePath = mockupPath.substring(publicDir.length);
+          } else if (mockupPath.startsWith('/home/ubuntu/basketball_ecommerce_platform/nextjs_space/public')) {
+            relativePath = mockupPath.replace('/home/ubuntu/basketball_ecommerce_platform/nextjs_space/public', '');
+          } else {
+            relativePath = mockupPath.replace(process.cwd() + '/public', '');
           }
+          
+          // Ensure path starts with /
+          if (!relativePath.startsWith('/')) {
+            relativePath = '/' + relativePath;
+          }
+          
+          mockupImages.push(relativePath);
+          
+          console.log(`[Publish] Mockup relative path: ${relativePath}`);
 
-          // Use first mockup as main image, all mockups in images array
-          const mainImage = mockupImages.length > 0 ? mockupImages[0] : design.imageUrl;
+          // Use mockup image as both main image and gallery image
+          const mainImage = relativePath;
           
           const product = await prisma.product.create({
             data: {
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
               category: productType.category,
               brand: design.brand || 'Basketball Factory',
               imageUrl: mainImage,
-              images: mockupImages.length > 0 ? mockupImages : [design.imageUrl],
+              images: mockupImages,
               inStock: true,
               featured: false,
               tags: ['basketball', 'custom-design', productType.type, color.name.toLowerCase()],

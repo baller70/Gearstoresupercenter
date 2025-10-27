@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Ruler } from 'lucide-react';
 
 interface SizeGuideItem {
@@ -121,13 +120,27 @@ export default function SizeGuidePage() {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="find-size">Find Your Size</TabsTrigger>
-            <TabsTrigger value="size-charts">Size Charts</TabsTrigger>
-          </TabsList>
+        <div className="space-y-6">
+          <div className="grid w-full grid-cols-2 max-w-md gap-2 p-1 bg-muted rounded-lg">
+            <Button
+              type="button"
+              variant={activeTab === 'find-size' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('find-size')}
+              className="w-full"
+            >
+              Find Your Size
+            </Button>
+            <Button
+              type="button"
+              variant={activeTab === 'size-charts' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('size-charts')}
+              className="w-full"
+            >
+              Size Charts
+            </Button>
+          </div>
 
-        <TabsContent value="find-size">
+        {activeTab === 'find-size' && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -258,10 +271,10 @@ export default function SizeGuidePage() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
-        <TabsContent value="size-charts">
-          {loading ? (
+        {activeTab === 'size-charts' && (
+          loading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
@@ -303,9 +316,9 @@ export default function SizeGuidePage() {
                 </Card>
               ))}
             </div>
-          )}
-        </TabsContent>
-        </Tabs>
+          )
+        )}
+        </div>
       </div>
     </div>
   );

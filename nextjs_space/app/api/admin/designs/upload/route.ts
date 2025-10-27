@@ -2,10 +2,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { uploadFile } from '@/lib/s3'
+import { uploadFile, downloadFile } from '@/lib/s3'
 import { prisma } from '@/lib/db'
+import { mockupGenerator } from '@/lib/mockup-generator'
+import path from 'path'
+import fs from 'fs/promises'
+import os from 'os'
+
+// Brand color definitions
+const BRAND_COLORS: Record<string, Array<{ name: string; hex: string }>> = {
+  'Rise as One AAU': [
+    { name: 'Black', hex: '#000000' },
+    { name: 'White', hex: '#FFFFFF' },
+    { name: 'Red', hex: '#DC2626' },
+    { name: 'Grey', hex: '#6B7280' }
+  ],
+  'The Basketball Factory Inc': [
+    { name: 'White', hex: '#FFFFFF' },
+    { name: 'Black', hex: '#000000' },
+    { name: 'Navy', hex: '#1E3A8A' },
+    { name: 'Gold', hex: '#F59E0B' }
+  ]
+};
 
 export async function POST(request: NextRequest) {
+  let tempLogoPath: string | null = null;
+  
   try {
     const session = await getServerSession(authOptions)
     
@@ -20,6 +42,9 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File
     const name = formData.get('name') as string
     const brand = formData.get('brand') as string || 'Rise as One AAU'
+    const positionX = parseFloat(formData.get('positionX') as string) || 50
+    const positionY = parseFloat(formData.get('positionY') as string) || 35
+    const scale = parseFloat(formData.get('scale') as string) || 1.0
     
     if (!file) {
       return NextResponse.json(
@@ -40,30 +65,108 @@ export async function POST(request: NextRequest) {
     // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // Upload to S3
-    const cloud_storage_path = await uploadFile(buffer, file.name)
+    // Upload logo to S3
+    const logoStoragePath = await uploadFile(buffer, `designs/${Date.now()}-${file.name}`)
     
     // Create design record in database
     const design = await prisma.design.create({
       data: {
         name: name || file.name,
         brand: brand,
-        imageUrl: cloud_storage_path,
-        colors: [], // Will be populated by analysis
+        imageUrl: logoStoragePath,
+        colors: BRAND_COLORS[brand]?.map(c => c.hex) || [],
         basketballElements: null,
-        status: 'PENDING',
+        positionX,
+        positionY,
+        scale,
+        status: 'APPROVED',
       },
     })
+    
+    // Download logo to temp file for mockup generation
+    const tempDir = os.tmpdir()
+    tempLogoPath = path.join(tempDir, `logo-${design.id}${path.extname(file.name)}`)
+    await fs.writeFile(tempLogoPath, buffer)
+    
+    // Generate products in all brand colors
+    const garmentTypes = ['tshirt', 'jersey', 'hoodie']
+    const colors = BRAND_COLORS[brand] || BRAND_COLORS['Rise as One AAU']
+    
+    let productsGenerated = 0
+    
+    for (const garmentType of garmentTypes) {
+      for (const color of colors) {
+        try {
+          // Generate mockup with logo
+          const mockupBuffer = await mockupGenerator.generateMockup(
+            tempLogoPath,
+            garmentType,
+            color.hex,
+            { x: positionX, y: positionY, scale }
+          )
+          
+          // Upload mockup to S3
+          const mockupPath = await uploadFile(
+            mockupBuffer,
+            `products/${design.id}/${garmentType}-${color.name.toLowerCase()}.png`
+          )
+          
+          // Create product
+          const productName = `${name} ${garmentType.charAt(0).toUpperCase() + garmentType.slice(1)} - ${color.name}`
+          
+          await prisma.product.create({
+            data: {
+              name: productName,
+              description: `Premium ${garmentType} featuring ${name} design in ${color.name}. Perfect for basketball players and fans. Made with high-quality materials for comfort and durability.`,
+              price: garmentType === 'hoodie' ? 64.99 : garmentType === 'jersey' ? 54.99 : 39.99,
+              imageUrl: mockupPath,
+              images: [mockupPath],
+              category: garmentType === 'hoodie' ? 'CASUAL_WEAR' : 'PERFORMANCE_APPAREL',
+              sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+              colors: [color.hex],
+              featured: false,
+              designId: design.id,
+              placement: 'chest',
+            }
+          })
+          
+          productsGenerated++
+        } catch (error) {
+          console.error(`Failed to generate ${garmentType} in ${color.name}:`, error)
+        }
+      }
+    }
+    
+    // Clean up temp file
+    if (tempLogoPath) {
+      try {
+        await fs.unlink(tempLogoPath)
+      } catch (error) {
+        console.error('Failed to clean up temp file:', error)
+      }
+    }
     
     return NextResponse.json({
       success: true,
       designId: design.id,
-      imageUrl: cloud_storage_path,
+      imageUrl: logoStoragePath,
+      productsGenerated,
+      message: `Successfully generated ${productsGenerated} products in ${colors.length} colors across ${garmentTypes.length} garment types`
     })
   } catch (error) {
     console.error('Design upload error:', error)
+    
+    // Clean up temp file on error
+    if (tempLogoPath) {
+      try {
+        await fs.unlink(tempLogoPath)
+      } catch (cleanupError) {
+        console.error('Failed to clean up temp file:', cleanupError)
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to upload design' },
+      { error: 'Failed to upload design and generate products' },
       { status: 500 }
     )
   }

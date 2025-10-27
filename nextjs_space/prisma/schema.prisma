@@ -104,6 +104,9 @@ model Design {
   imageUrl           String       // Uploaded design file URL
   colors             String[]     // Extracted colors from design
   basketballElements String?      @db.Text // JSON with AI analysis results
+  positionX          Float        @default(50)  // Horizontal position (percentage)
+  positionY          Float        @default(35)  // Vertical position (percentage)
+  scale              Float        @default(1.0) // Logo scale multiplier
   status             DesignStatus @default(PENDING)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt

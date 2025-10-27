@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { generateProductMockup } from '@/lib/mockup-generator'
+import { mockupGenerator } from '@/lib/mockup-generator'
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,13 +77,9 @@ export async function POST(request: NextRequest) {
       for (const template of templates) {
         console.log(`Generating mockups for ${template.name}...`)
         
-        // Generate product mockup images (multiple color variations with logo)
-        const mockupImages = await generateProductMockup(
-          design.name,
-          template.name,
-          design.imageUrl,
-          design.brand || 'Rise as One AAU'
-        )
+        // Note: Products are now automatically generated on upload with precise positioning
+        // This endpoint is kept for manual regeneration if needed
+        // For now, create basic product entries - mockups would need to be regenerated separately
         
         const product = await prisma.product.create({
           data: {
@@ -91,8 +87,8 @@ export async function POST(request: NextRequest) {
             description: `Premium ${template.name} featuring custom ${design.name} design. ${analysis.designStyle ? `${analysis.designStyle} style.` : ''} Perfect for basketball players and fans.`,
             price: template.basePrice,
             category,
-            imageUrl: mockupImages[0], // Use first generated mockup as main image
-            images: mockupImages, // Use all generated mockups in gallery
+            imageUrl: design.imageUrl, // Use design logo as placeholder
+            images: [design.imageUrl],
             sizes: template.sizes,
             colors: brandColors,
             inStock: true,

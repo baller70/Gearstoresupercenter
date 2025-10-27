@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { LogoPositionPreview } from '@/components/logo-position-preview'
 import { toast } from 'sonner'
 import { Upload, Loader2, CheckCircle2, Sparkles } from 'lucide-react'
 
@@ -23,6 +24,8 @@ export default function NewDesignPage() {
   const [generating, setGenerating] = useState(false)
   const [designId, setDesignId] = useState('')
   const [analysis, setAnalysis] = useState<any>(null)
+  const [logoPosition, setLogoPosition] = useState({ x: 50, y: 35, scale: 1 })
+  const [showPositioning, setShowPositioning] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState({
     PERFORMANCE_APPAREL: true,
     CASUAL_WEAR: true,
@@ -33,6 +36,7 @@ export default function NewDesignPage() {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0]
       setFile(selectedFile)
+      setShowPositioning(true)
       
       // Auto-fill name from filename if empty
       if (!name) {
@@ -55,6 +59,9 @@ export default function NewDesignPage() {
       formData.append('file', file)
       formData.append('name', name)
       formData.append('brand', brand)
+      formData.append('positionX', logoPosition.x.toString())
+      formData.append('positionY', logoPosition.y.toString())
+      formData.append('scale', logoPosition.scale.toString())
       
       const response = await fetch('/api/admin/designs/upload', {
         method: 'POST',
@@ -67,7 +74,7 @@ export default function NewDesignPage() {
       
       const data = await response.json()
       setDesignId(data.designId)
-      toast.success('Design uploaded successfully')
+      toast.success(`Design uploaded! ${data.productsGenerated || 0} products generated in brand colors`)
       
       // Automatically start analysis
       handleAnalyze(data.designId)
@@ -265,10 +272,39 @@ export default function NewDesignPage() {
                 ) : (
                   <>
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload Design
+                    Upload & Generate Products
                   </>
                 )}
               </Button>
+              
+              {showPositioning && file && (
+                <div className="pt-4 border-t">
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">
+                          What happens when you upload:
+                        </p>
+                        <ul className="text-sm text-blue-700 mt-2 space-y-1 list-disc list-inside">
+                          <li>Logo positioned perfectly on chest area</li>
+                          <li>Products generated in all {brand === 'Rise as One AAU' ? '4' : '4'} brand colors</li>
+                          <li>T-Shirts, Jerseys, and Hoodies created automatically</li>
+                          <li>Use "AI Optimize" below to perfect positioning</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <LogoPositionPreview
+                    logoFile={file}
+                    garmentType="tshirt"
+                    brand={brand === 'Rise as One AAU' ? 'rise-as-one' : 'basketball-factory'}
+                    onPositionChange={setLogoPosition}
+                    onAnalyze={() => {}}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
           

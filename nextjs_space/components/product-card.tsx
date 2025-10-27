@@ -103,7 +103,7 @@ export function ProductCard({ product }: ProductCardProps) {
           
           <CardFooter className="p-4 pt-0">
             <Button 
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full bg-white text-foreground border-2 border-primary hover:bg-primary hover:text-white transition-colors"
               onClick={handleAddToCart}
               disabled={!product?.inStock}
             >

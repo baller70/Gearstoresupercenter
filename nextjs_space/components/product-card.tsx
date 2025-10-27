@@ -80,7 +80,7 @@ export function ProductCard({ product }: ProductCardProps) {
           
           <CardContent className="p-4">
             <div className="space-y-2">
-              <h3 className="font-semibold line-clamp-2 hover-orange transition-colors">
+              <h3 className="font-semibold line-clamp-2 hover-gold transition-colors">
                 {product?.name}
               </h3>
               <p className="text-sm text-muted-foreground line-clamp-2">

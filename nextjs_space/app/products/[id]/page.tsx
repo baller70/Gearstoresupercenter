@@ -1,19 +1,21 @@
+'use client'
 
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { getProductById, formatPrice, getCategoryDisplayName } from "@/lib/products"
+import { formatPrice, getCategoryDisplayName } from "@/lib/products"
 import { ShoppingCart, Star, ArrowLeft, Truck, Shield, RotateCcw } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { notFound } from "next/navigation"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import ProductViewTracker from "@/components/product-view-tracker"
 import ProductRecommendations from "@/components/product-recommendations"
 import { ProductReviews } from "@/components/product-reviews"
 import { WishlistButton } from "@/components/wishlist-button"
 import { ProductImageGallery } from "@/components/product-image-gallery"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 interface ProductPageProps {
   params: {
@@ -21,11 +23,55 @@ interface ProductPageProps {
   }
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductById(params?.id)
+export default function ProductPage({ params }: ProductPageProps) {
+  const router = useRouter()
+  const [product, setProduct] = useState<any>(null)
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`/api/products/${params?.id}`)
+        if (!res.ok) {
+          router.push('/404')
+          return
+        }
+        const data = await res.json()
+        setProduct(data)
+        
+        // Set default selections
+        if (data?.colors?.length > 0) {
+          setSelectedColor(data.colors[0])
+        }
+        if (data?.sizes?.length > 0) {
+          setSelectedSize(data.sizes[0])
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error)
+        router.push('/404')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [params?.id, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 max-w-7xl py-8">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    )
+  }
 
   if (!product) {
-    notFound()
+    return null
   }
 
   const features = [
@@ -111,10 +157,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="space-y-3">
                 <h3 className="font-semibold">Available Colors:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.colors.map((color) => (
-                    <Badge key={color} variant="outline" className="text-sm">
+                  {product.colors.map((color: string) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all border-2 ${
+                        selectedColor === color
+                          ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                          : 'bg-background text-foreground border-border hover:border-primary/50'
+                      }`}
+                    >
                       {color}
-                    </Badge>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -125,10 +179,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="space-y-3">
                 <h3 className="font-semibold">Available Sizes:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
-                    <Badge key={size} variant="outline" className="text-sm">
+                  {product.sizes.map((size: string) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all border-2 ${
+                        selectedSize === size
+                          ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                          : 'bg-background text-foreground border-border hover:border-primary/50'
+                      }`}
+                    >
                       {size}
-                    </Badge>
+                    </button>
                   ))}
                 </div>
               </div>

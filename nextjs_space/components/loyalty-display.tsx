@@ -47,7 +47,7 @@ export default function LoyaltyDisplay() {
   const getTierInfo = (pts: number) => {
     if (pts >= 1000) return { name: 'Gold', icon: Trophy, color: 'text-yellow-500' };
     if (pts >= 500) return { name: 'Silver', icon: Star, color: 'text-gray-400' };
-    return { name: 'Bronze', icon: Gift, color: 'text-orange-500' };
+    return { name: 'Bronze', icon: Gift, color: 'text-[#C8B273]' };
   };
 
   const tier = getTierInfo(points);

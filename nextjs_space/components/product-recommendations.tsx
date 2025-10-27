@@ -5,16 +5,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProductCard } from './product-card';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-  category?: string;
-  inStock?: boolean;
-  [key: string]: any;
-}
+import { Product } from '@prisma/client';
 
 interface RecommendationsProps {
   title?: string;

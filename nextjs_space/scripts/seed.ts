@@ -17,7 +17,7 @@ const performanceApparelProducts = [
       "https://cdn.abacus.ai/images/17bd63cf-eb60-4322-b2a4-425d92f52b45.png",
       "https://cdn.abacus.ai/images/b5b3d83f-b12a-4bd6-af0b-d62cc58107ab.png"
     ],
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Royal Blue", "Gold", "Black", "White"],
     featured: true
   },
@@ -27,7 +27,7 @@ const performanceApparelProducts = [
     price: 34.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://cdn.abacus.ai/images/fa90fc76-74e5-4593-a31a-7e541b8aacdd.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Navy", "Red", "Royal Blue", "Black"],
     featured: true
   },
@@ -42,7 +42,7 @@ const performanceApparelProducts = [
       "https://cdn.abacus.ai/images/e44988a5-296a-459b-a83b-117194bfdd6e.png",
       "https://cdn.abacus.ai/images/85767312-1ff7-4843-9ebf-f5cc5a13eac3.png"
     ],
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Navy", "Royal Blue", "Black", "Red"]
   },
   {
@@ -51,7 +51,7 @@ const performanceApparelProducts = [
     price: 22.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://m.media-amazon.com/images/I/71SaYW3CpOL._UY350_.jpg",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Navy", "Royal Blue", "Red"]
   },
   {
@@ -60,7 +60,7 @@ const performanceApparelProducts = [
     price: 16.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://cdn.abacus.ai/images/a9ffe5e4-7507-483e-a827-5440023d5d21.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Royal Blue/White", "Navy/Gold", "Black/Red"]
   },
   {
@@ -69,7 +69,7 @@ const performanceApparelProducts = [
     price: 19.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://cdn.abacus.ai/images/875a1a9e-9575-4ba0-8b8b-72fd8a52d5ad.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Royal Blue", "Navy", "White"]
   },
   {
@@ -78,7 +78,7 @@ const performanceApparelProducts = [
     price: 29.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://cdn.abacus.ai/images/809c45bd-41a3-447c-a23c-cc3f253cc5bb.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Navy", "White", "Black", "Royal Blue"]
   },
   {
@@ -87,7 +87,7 @@ const performanceApparelProducts = [
     price: 24.99,
     category: "PERFORMANCE_APPAREL",
     imageUrl: "https://cdn.abacus.ai/images/b2bd123c-77d4-46ed-8c3e-629a43a8700c.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Gold", "Navy", "Royal Blue"]
   }
 ]
@@ -105,7 +105,7 @@ const casualWearProducts = [
       "https://cdn.abacus.ai/images/f3973b1c-f702-452d-aab6-75394e4a2500.png",
       "https://cdn.abacus.ai/images/5533e1a6-7cd7-401c-b471-d8a205c5c547.png"
     ],
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Royal Blue", "Red", "Navy", "Black"],
     featured: true
   },
@@ -115,7 +115,7 @@ const casualWearProducts = [
     price: 34.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/1b01aebc-a9c7-4632-a256-2f7293162a0a.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Navy", "Royal Blue", "Red"]
   },
   {
@@ -124,7 +124,7 @@ const casualWearProducts = [
     price: 29.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/4dd4e714-e360-4076-8a8d-4da4d2b36a0f.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Red", "Gold", "Navy", "Black"]
   },
   {
@@ -133,7 +133,7 @@ const casualWearProducts = [
     price: 14.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/597181b2-89d7-4f3a-9fa1-37ff9b42a45a.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Royal Blue", "Black", "Red", "White"]
   },
   {
@@ -142,7 +142,7 @@ const casualWearProducts = [
     price: 9.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/f1833551-1459-40d2-915f-5078f5a58fc5.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Navy", "White", "Black", "Royal Blue"]
   },
   {
@@ -151,7 +151,7 @@ const casualWearProducts = [
     price: 12.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/233ecb06-bd82-4bfa-9359-4c56fc799aa8.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Royal Blue", "Navy", "Red"]
   },
   {
@@ -160,7 +160,7 @@ const casualWearProducts = [
     price: 16.99,
     category: "CASUAL_WEAR",
     imageUrl: "https://cdn.abacus.ai/images/bad51334-4640-4e61-a68f-7a2c7b7354ae.png",
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Red", "Gold", "Black", "White"]
   },
   {
@@ -175,7 +175,7 @@ const casualWearProducts = [
       "https://cdn.abacus.ai/images/78e45d45-a097-4133-9124-c3526908519b.png",
       "https://cdn.abacus.ai/images/b7e121c8-4ba3-4cde-939e-2d7a0da60c87.png"
     ],
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Navy", "Royal Blue", "Red"]
   }
 ]
@@ -287,7 +287,7 @@ const accessoryProducts = [
       "https://cdn.abacus.ai/images/c5b5f75d-6257-40c6-9027-5c0020912eee.png",
       "https://cdn.abacus.ai/images/d2203319-73dc-4201-9f09-48c5ca056d7e.png"
     ],
-    sizes: ["YXS", "YS", "YM", "YL", "YXL"],
+    sizes: ["YXS", "YS", "YM", "YL", "YXL", "S", "M", "L", "XL", "XXL"],
     colors: ["Black", "Navy", "Royal Blue", "Gray"]
   },
   {

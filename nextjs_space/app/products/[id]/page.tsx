@@ -232,12 +232,12 @@ export default function ProductPage({ params }: ProductPageProps) {
                 )}
                 
                 {/* Adult Sizes */}
-                {product.sizes.some((s: string) => ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].includes(s)) && (
+                {product.sizes.some((s: string) => ['S', 'M', 'L', 'XL', 'XXL'].includes(s)) && (
                   <div className="space-y-2">
                     <h3 className="text-sm font-medium text-muted-foreground">Adult Sizes</h3>
                     <div className="flex flex-wrap gap-2">
                       {product.sizes
-                        .filter((size: string) => ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].includes(size))
+                        .filter((size: string) => ['S', 'M', 'L', 'XL', 'XXL'].includes(size))
                         .map((size: string) => (
                           <button
                             key={size}

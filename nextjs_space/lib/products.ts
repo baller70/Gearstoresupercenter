@@ -1,33 +1,36 @@
 
 import { prisma } from "@/lib/db"
 import { Category } from "@prisma/client"
-import { downloadFile } from "@/lib/s3"
+import { getImageProxyUrl } from "@/lib/s3"
 
-async function convertS3PathToSignedUrl(imageUrl: string): Promise<string> {
+function convertS3PathToProxyUrl(imageUrl: string): string {
   // If it's already a full URL, return as is
   if (imageUrl.startsWith('http')) {
     return imageUrl
   }
   
-  // Otherwise, it's an S3 key, so get signed URL
-  try {
-    return await downloadFile(imageUrl)
-  } catch (error) {
-    console.error('Error converting S3 path to signed URL:', error)
+  // If it's already a proxy URL, return as is
+  if (imageUrl.startsWith('/api/images/')) {
     return imageUrl
   }
+  
+  // Otherwise, it's an S3 key, convert to proxy URL
+  return getImageProxyUrl(imageUrl)
 }
 
-async function processProductImages(products: any[]) {
-  return await Promise.all(
-    products.map(async (product) => {
-      const signedUrl = await convertS3PathToSignedUrl(product.imageUrl)
-      return {
-        ...product,
-        imageUrl: signedUrl
-      }
-    })
-  )
+function processProductImages(products: any[]) {
+  return products.map((product) => {
+    const proxyUrl = convertS3PathToProxyUrl(product.imageUrl)
+    
+    // Also process the images array if it exists
+    const images = product.images?.map((img: string) => convertS3PathToProxyUrl(img)) || [proxyUrl]
+    
+    return {
+      ...product,
+      imageUrl: proxyUrl,
+      images: images
+    }
+  })
 }
 
 export async function getAllProducts() {
@@ -35,7 +38,7 @@ export async function getAllProducts() {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' }
     })
-    return await processProductImages(products ?? [])
+    return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching all products:', error)
     return []
@@ -49,7 +52,7 @@ export async function getFeaturedProducts() {
       orderBy: { createdAt: 'desc' },
       take: 6
     })
-    return await processProductImages(products ?? [])
+    return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching featured products:', error)
     return []
@@ -63,7 +66,7 @@ export async function getProductsByCategory(category: Category, limit?: number) 
       orderBy: { createdAt: 'desc' },
       ...(limit && { take: limit })
     })
-    return await processProductImages(products ?? [])
+    return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching products by category:', error)
     return []
@@ -77,10 +80,13 @@ export async function getProductById(id: string) {
     })
     if (!product) return null
     
-    const signedUrl = await convertS3PathToSignedUrl(product.imageUrl)
+    const proxyUrl = convertS3PathToProxyUrl(product.imageUrl)
+    const images = product.images?.map((img: string) => convertS3PathToProxyUrl(img)) || [proxyUrl]
+    
     return {
       ...product,
-      imageUrl: signedUrl
+      imageUrl: proxyUrl,
+      images: images
     }
   } catch (error) {
     console.error('Error fetching product by ID:', error)
@@ -99,7 +105,7 @@ export async function searchProducts(query: string) {
       },
       orderBy: { createdAt: 'desc' }
     })
-    return await processProductImages(products ?? [])
+    return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error searching products:', error)
     return []

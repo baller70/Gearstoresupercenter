@@ -58,6 +58,7 @@ model User {
   chatMessages ChatMessage[]
   customizations ProductCustomization[]
   loyaltyTransactions LoyaltyTransaction[]
+  userDesigns UserDesign[]
   reviews Review[]
   wishlists Wishlist[]
   discountUsages DiscountUsage[]
@@ -721,4 +722,41 @@ enum FitType {
   REGULAR
   RELAXED
   OVERSIZED
+}
+
+model UserDesign {
+  id               String   @id @default(cuid())
+  userId           String
+  name             String
+  brand            String   @default("Rise as One AAU")
+  logoUrl          String   // S3 path to uploaded logo
+  status           String   @default("UPLOADED") // UPLOADED, PROCESSING, READY, COMPLETED
+  mockupsGenerated Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mockups          UserMockup[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model UserMockup {
+  id            String   @id @default(cuid())
+  designId      String
+  productType   String   // tshirt, hoodie, jersey, etc.
+  angle         String   // front, back, side, etc.
+  color         String   // red, black, white, grey
+  mockupUrl     String   // S3 path to generated mockup
+  positionX     Float    @default(50)
+  positionY     Float    @default(35)
+  scale         Float    @default(1.0)
+  approved      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  design        UserDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  @@index([designId])
 }

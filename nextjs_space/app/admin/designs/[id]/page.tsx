@@ -11,7 +11,7 @@ import { Slider } from '@/components/ui/slider'
 import Link from 'next/link'
 import { ArrowLeft, RefreshCw, Sparkles } from 'lucide-react'
 import { prisma } from '@/lib/db'
-import { downloadFile } from '@/lib/s3'
+import { getImageProxyUrl } from '@/lib/s3'
 import Image from 'next/image'
 
 export default async function DesignEditPage({ params }: { params: { id: string } }) {
@@ -36,29 +36,16 @@ export default async function DesignEditPage({ params }: { params: { id: string 
     redirect('/admin/designs')
   }
   
-  // Get signed URL for the design logo
-  let logoSignedUrl = null
-  try {
-    logoSignedUrl = await downloadFile(design.imageUrl)
-  } catch (error) {
-    console.error('Error getting signed URL for design logo:', error)
-  }
+  // Get proxy URL for the design logo
+  const logoProxyUrl = getImageProxyUrl(design.imageUrl)
   
-  // Get signed URLs for all product mockups
-  const productsWithUrls = await Promise.all(
-    design.products.map(async (product) => {
-      let signedUrl = null
-      try {
-        signedUrl = await downloadFile(product.imageUrl)
-      } catch (error) {
-        console.error(`Error getting signed URL for product ${product.id}:`, error)
-      }
-      return {
-        ...product,
-        signedUrl,
-      }
-    })
-  )
+  // Get proxy URLs for all product mockups
+  const productsWithUrls = design.products.map((product) => {
+    return {
+      ...product,
+      proxyUrl: getImageProxyUrl(product.imageUrl),
+    }
+  })
   
   return (
     <div className="min-h-screen bg-background">
@@ -89,9 +76,9 @@ export default async function DesignEditPage({ params }: { params: { id: string 
             </CardHeader>
             <CardContent>
               <div className="aspect-square relative bg-muted rounded-lg overflow-hidden">
-                {logoSignedUrl ? (
+                {logoProxyUrl ? (
                   <Image
-                    src={logoSignedUrl}
+                    src={logoProxyUrl}
                     alt={design.name}
                     fill
                     className="object-contain p-4"
@@ -258,9 +245,9 @@ export default async function DesignEditPage({ params }: { params: { id: string 
               {productsWithUrls.map((product) => (
                 <Card key={product.id} className="overflow-hidden">
                   <div className="aspect-square relative bg-muted">
-                    {product.signedUrl ? (
+                    {product.proxyUrl ? (
                       <Image
-                        src={product.signedUrl}
+                        src={product.proxyUrl}
                         alt={product.name}
                         fill
                         className="object-cover"

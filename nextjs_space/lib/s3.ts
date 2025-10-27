@@ -16,7 +16,7 @@ export async function uploadFile(buffer: Buffer, fileName: string): Promise<stri
     throw new Error("AWS_BUCKET_NAME is not configured")
   }
   
-  const key = `${folderPrefix}designs/${Date.now()}-${fileName}`
+  const key = `${folderPrefix}${fileName}`
   
   const command = new PutObjectCommand({
     Bucket: bucketName,
@@ -27,7 +27,7 @@ export async function uploadFile(buffer: Buffer, fileName: string): Promise<stri
   
   await s3Client.send(command)
   
-  return key // Return cloud_storage_path
+  return key // Return cloud_storage_path (S3 key)
 }
 
 export async function downloadFile(key: string): Promise<string> {
@@ -67,6 +67,23 @@ export async function renameFile(oldKey: string, newKey: string): Promise<void> 
   // S3 doesn't have a rename operation, so we need to copy and delete
   // For simplicity, we'll just return the old key since design files don't need renaming
   throw new Error("Rename operation not supported")
+}
+
+/**
+ * Convert S3 key to proxy URL that won't expire
+ * This is used for displaying images in the frontend
+ */
+export function getImageProxyUrl(key: string): string {
+  // Remove any leading slashes and folder prefix
+  const cleanKey = key.replace(/^\/+/, '')
+  return `/api/images/${cleanKey}`
+}
+
+/**
+ * Get direct download URL (for admin or temporary use)
+ */
+export async function getDownloadUrl(key: string): Promise<string> {
+  return downloadFile(key)
 }
 
 function getContentType(fileName: string): string {

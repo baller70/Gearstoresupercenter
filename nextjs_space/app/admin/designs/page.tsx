@@ -11,7 +11,7 @@ import { Plus, Image as ImageIcon, Package, Calendar, DollarSign, TrendingUp } f
 import { prisma } from '@/lib/db'
 import { DesignActions } from '@/components/design-actions'
 import Image from 'next/image'
-import { downloadFile } from '@/lib/s3'
+import { getImageProxyUrl } from '@/lib/s3'
 
 export default async function DesignsPage() {
   const session = await getServerSession(authOptions)
@@ -49,19 +49,14 @@ export default async function DesignsPage() {
       })
     })
     
-    // Get signed URL for the design image
-    let signedUrl = null
-    try {
-      signedUrl = await downloadFile(design.imageUrl)
-    } catch (error) {
-      console.error('Error getting signed URL for design:', error)
-    }
+    // Get proxy URL for the design image (no expiration)
+    const proxyUrl = getImageProxyUrl(design.imageUrl)
     
     return {
       ...design,
       totalRevenue,
       totalUnitsSold,
-      signedUrl,
+      proxyUrl,
     }
   }))
   
@@ -106,9 +101,9 @@ export default async function DesignsPage() {
             {designsWithMetrics.map((design) => (
               <Card key={design.id} className="overflow-hidden">
                 <div className="aspect-square relative bg-muted">
-                  {design.signedUrl ? (
+                  {design.proxyUrl ? (
                     <Image
-                      src={design.signedUrl}
+                      src={design.proxyUrl}
                       alt={design.name}
                       fill
                       className="object-contain p-4"

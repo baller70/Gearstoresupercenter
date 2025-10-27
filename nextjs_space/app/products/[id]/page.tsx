@@ -155,44 +155,105 @@ export default function ProductPage({ params }: ProductPageProps) {
             {/* Colors */}
             {product?.colors?.length ? (
               <div className="space-y-3">
-                <h3 className="font-semibold">Available Colors:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.colors.map((color: string) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all border-2 ${
-                        selectedColor === color
-                          ? 'bg-primary text-primary-foreground border-primary shadow-md'
-                          : 'bg-background text-foreground border-border hover:border-primary/50'
-                      }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
+                <h2 className="font-semibold text-lg">Available Colors:</h2>
+                <div className="flex flex-wrap gap-3">
+                  {product.colors.map((color: string) => {
+                    // Map color names to hex codes
+                    const colorMap: Record<string, string> = {
+                      'Black': '#000000',
+                      'White': '#FFFFFF',
+                      'Red': '#DC2626',
+                      'Blue': '#2563EB',
+                      'Navy': '#1E3A8A',
+                      'Gold': '#C8B273',
+                      'Yellow': '#EAB308',
+                      'Green': '#16A34A',
+                      'Purple': '#9333EA',
+                      'Orange': '#EA580C',
+                      'Gray': '#6B7280',
+                      'Silver': '#9CA3AF',
+                      'Royal Blue': '#1D4ED8',
+                      'Maroon': '#991B1B'
+                    }
+                    const hexColor = colorMap[color] || '#C8B273'
+                    const isLightColor = ['White', 'Yellow', 'Gold', 'Silver'].includes(color)
+                    
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`group relative w-16 h-16 rounded-md transition-all border-2 ${
+                          selectedColor === color
+                            ? 'border-[#C8B273] border-4 scale-110'
+                            : 'border-gray-300 hover:border-[#C8B273]'
+                        }`}
+                        style={{ backgroundColor: hexColor }}
+                        title={color}
+                      >
+                        <span className={`absolute inset-0 flex items-center justify-center text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity ${
+                          isLightColor ? 'text-black' : 'text-white'
+                        }`}>
+                          {color}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             ) : null}
 
             {/* Sizes */}
             {product?.sizes?.length ? (
-              <div className="space-y-3">
-                <h3 className="font-semibold">Available Sizes:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size: string) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all border-2 ${
-                        selectedSize === size
-                          ? 'bg-primary text-primary-foreground border-primary shadow-md'
-                          : 'bg-background text-foreground border-border hover:border-primary/50'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+              <div className="space-y-4">
+                <h2 className="font-semibold text-lg">Available Sizes:</h2>
+                
+                {/* Youth Sizes */}
+                {product.sizes.some((s: string) => ['YXS', 'YS', 'YM', 'YL', 'YXL'].includes(s)) && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Youth Sizes</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.sizes
+                        .filter((size: string) => ['YXS', 'YS', 'YM', 'YL', 'YXL'].includes(size))
+                        .map((size: string) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-6 py-3 rounded-md text-sm font-medium transition-all border-2 ${
+                              selectedSize === size
+                                ? 'bg-[#C8B273] text-white border-[#C8B273] shadow-md scale-105'
+                                : 'bg-white text-foreground border-[#C8B273] hover:bg-[#C8B273] hover:text-white'
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Adult Sizes */}
+                {product.sizes.some((s: string) => ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].includes(s)) && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">Adult Sizes</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.sizes
+                        .filter((size: string) => ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].includes(size))
+                        .map((size: string) => (
+                          <button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-6 py-3 rounded-md text-sm font-medium transition-all border-2 ${
+                              selectedSize === size
+                                ? 'bg-[#C8B273] text-white border-[#C8B273] shadow-md scale-105'
+                                : 'bg-white text-foreground border-[#C8B273] hover:bg-[#C8B273] hover:text-white'
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : null}
 

@@ -40,7 +40,7 @@
     @apply bg-white text-foreground font-sans;
   }
   h1, h2 {
-    @apply font-heading;
+    @apply font-heading uppercase;
   }
   h3 {
     @apply font-display;

@@ -33,15 +33,38 @@ const LOGO_PLACEMENTS: Record<string, { top: number; left: number; width: number
 }
 
 /**
+ * Get brand-specific color variations
+ */
+function getBrandColors(brand: string) {
+  if (brand === 'The Basketball Factory Inc') {
+    return [
+      { name: 'White', tint: { r: 255, g: 255, b: 255 } },
+      { name: 'Black', tint: { r: 0, g: 0, b: 0 } },
+      { name: 'Navy', tint: { r: 0, g: 32, b: 96 } },
+      { name: 'Gold', tint: { r: 255, g: 215, b: 0 } },
+    ]
+  } else {
+    // Default: Rise as One AAU
+    return [
+      { name: 'Black', tint: { r: 0, g: 0, b: 0 } },
+      { name: 'White', tint: { r: 255, g: 255, b: 255 } },
+      { name: 'Red', tint: { r: 220, g: 20, b: 60 } },
+      { name: 'Grey', tint: { r: 128, g: 128, b: 128 } },
+    ]
+  }
+}
+
+/**
  * Generate product mockup by compositing logo onto base product template
  */
 export async function generateProductMockup(
   designName: string,
   productType: string,
-  logoCloudPath: string
+  logoCloudPath: string,
+  brand: string = 'Rise as One AAU'
 ): Promise<string[]> {
   try {
-    console.log(`Generating mockup for ${productType} with design ${designName}`)
+    console.log(`Generating mockup for ${productType} with design ${designName} for brand ${brand}`)
     
     // Get the base template for this product type
     const templatePath = PRODUCT_TEMPLATES[productType] || '/mockups/tshirt-template.png'
@@ -76,13 +99,8 @@ export async function generateProductMockup(
       })
       .toBuffer()
     
-    // Generate 4 color variations
-    const colors = [
-      { name: 'navy', tint: { r: 0, g: 32, b: 96 } },
-      { name: 'royal', tint: { r: 0, g: 102, b: 204 } },
-      { name: 'black', tint: { r: 0, g: 0, b: 0 } },
-      { name: 'white', tint: { r: 255, g: 255, b: 255 } },
-    ]
+    // Get brand-specific color variations
+    const colors = getBrandColors(brand)
     
     const mockupImages: string[] = []
     

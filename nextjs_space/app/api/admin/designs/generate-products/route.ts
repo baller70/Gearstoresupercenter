@@ -40,6 +40,11 @@ export async function POST(request: NextRequest) {
     const analysis = design.basketballElements ? JSON.parse(design.basketballElements) : {}
     const placementSuggestions = analysis.placementSuggestions || {}
     
+    // Get brand-specific colors
+    const brandColors = design.brand === 'The Basketball Factory Inc'
+      ? ['White', 'Black', 'Navy', 'Gold']
+      : ['Black', 'White', 'Red', 'Grey']
+    
     // Product templates for each category
     const productTemplates: Record<string, any[]> = {
       'PERFORMANCE_APPAREL': [
@@ -76,11 +81,9 @@ export async function POST(request: NextRequest) {
         const mockupImages = await generateProductMockup(
           design.name,
           template.name,
-          design.imageUrl
+          design.imageUrl,
+          design.brand || 'Rise as One AAU'
         )
-        
-        // Create color variations
-        const colors = design.colors.length > 0 ? design.colors : ['Navy Blue', 'Royal Blue', 'Black', 'White']
         
         const product = await prisma.product.create({
           data: {
@@ -91,7 +94,7 @@ export async function POST(request: NextRequest) {
             imageUrl: mockupImages[0], // Use first generated mockup as main image
             images: mockupImages, // Use all generated mockups in gallery
             sizes: template.sizes,
-            colors,
+            colors: brandColors,
             inStock: true,
             featured: false,
             designId: design.id,

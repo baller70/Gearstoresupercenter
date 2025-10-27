@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File
     const name = formData.get('name') as string
+    const brand = formData.get('brand') as string || 'Rise as One AAU'
     
     if (!file) {
       return NextResponse.json(
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
     const design = await prisma.design.create({
       data: {
         name: name || file.name,
+        brand: brand,
         imageUrl: cloud_storage_path,
         colors: [], // Will be populated by analysis
         basketballElements: null,

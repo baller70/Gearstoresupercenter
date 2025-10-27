@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
 import { Upload, Loader2, CheckCircle2, Sparkles } from 'lucide-react'
 
@@ -16,6 +17,7 @@ export default function NewDesignPage() {
   const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [name, setName] = useState('')
+  const [brand, setBrand] = useState('Rise as One AAU')
   const [uploading, setUploading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -52,6 +54,7 @@ export default function NewDesignPage() {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('name', name)
+      formData.append('brand', brand)
       
       const response = await fetch('/api/admin/designs/upload', {
         method: 'POST',
@@ -191,6 +194,29 @@ export default function NewDesignPage() {
                   placeholder="e.g., Rise as One Logo 2024"
                   disabled={uploading || analyzing || generating}
                 />
+              </div>
+              
+              <div>
+                <Label>Brand</Label>
+                <RadioGroup
+                  value={brand}
+                  onValueChange={setBrand}
+                  disabled={uploading || analyzing || generating}
+                  className="mt-2 space-y-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Rise as One AAU" id="brand-rise" />
+                    <Label htmlFor="brand-rise" className="font-normal cursor-pointer">
+                      Rise as One AAU (4 colors: Black, White, Red, Grey)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="The Basketball Factory Inc" id="brand-factory" />
+                    <Label htmlFor="brand-factory" className="font-normal cursor-pointer">
+                      The Basketball Factory Inc (3 colors: White, Black, Navy, Gold)
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
               
               <div>

@@ -69,14 +69,14 @@ export default function DesignEditorPage() {
     rotation: 0
   });
   
-  // Color variants
+  // Color variants - Default to Rise as One colors
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([
+    { name: 'Red', hex: '#DC2626', enabled: true },
+    { name: 'Gray', hex: '#6B7280', enabled: true },
     { name: 'White', hex: '#FFFFFF', enabled: true },
     { name: 'Black', hex: '#000000', enabled: true },
     { name: 'Navy', hex: '#001F3F', enabled: false },
-    { name: 'Red', hex: '#FF4136', enabled: false },
     { name: 'Royal Blue', hex: '#0074D9', enabled: false },
-    { name: 'Gray', hex: '#AAAAAA', enabled: false },
   ]);
   
   // Canvas ref for drag and drop
@@ -500,21 +500,28 @@ export default function DesignEditorPage() {
                       
                       {/* Logo position indicator */}
                       <div 
-                        className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center bg-white/80 shadow-lg transition-all duration-100 pointer-events-none"
+                        className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center shadow-lg transition-all duration-100 pointer-events-none"
                         style={{
                           left: `${currentPosition.x}%`,
                           top: `${currentPosition.y}%`,
                           transform: `translate(-50%, -50%) scale(${currentPosition.scale}) rotate(${currentPosition.rotation}deg)`,
+                          backgroundColor: 'transparent',
                         }}
                       >
                         {design.imageUrl && (
-                          <Image
-                            src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
-                            alt="Logo"
-                            width={80}
-                            height={80}
-                            className="object-contain"
-                          />
+                          <div className="relative w-full h-full flex items-center justify-center">
+                            <Image
+                              src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
+                              alt="Logo"
+                              width={80}
+                              height={80}
+                              className="object-contain"
+                              style={{
+                                mixBlendMode: 'multiply',
+                                filter: 'contrast(1.1)',
+                              }}
+                            />
+                          </div>
                         )}
                       </div>
                       

@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { generateMockupWithLogo } from '@/lib/real-mockup-generator';
+import path from 'path';
+import fs from 'fs';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,12 +39,22 @@ export async function POST(request: NextRequest) {
       { type: 'basketball-shorts', name: 'Basketball Shorts', category: 'PERFORMANCE_APPAREL' as const, price: 34.99 },
     ];
 
-    const enabledColors = colorVariants || [
+    // Default to Red, Gray, White, Black for Rise as One
+    const enabledColors = colorVariants && colorVariants.length > 0 ? colorVariants : [
+      { name: 'Red', hex: '#DC2626' },
+      { name: 'Gray', hex: '#6B7280' },
       { name: 'White', hex: '#FFFFFF' },
       { name: 'Black', hex: '#000000' },
     ];
 
     let productsCreated = 0;
+
+    // Get logo path
+    const logoPath = path.join(process.cwd(), 'public', design.imageUrl.replace(/^\/+/, ''));
+    
+    if (!fs.existsSync(logoPath)) {
+      throw new Error('Logo file not found: ' + logoPath);
+    }
 
     // Create products for each type and color combination
     for (const productType of productTypes) {
@@ -65,15 +78,55 @@ export async function POST(request: NextRequest) {
             continue;
           }
 
+          // Generate mockup images for front, back, and side views
+          const mockupImages: string[] = [];
+          
+          for (const angle of ['front', 'back', 'side']) {
+            const positionKey = `${productType.type}-${angle}`;
+            const savedPosition = positions?.[positionKey];
+            
+            // Use saved position or defaults
+            const placement = savedPosition ? {
+              x: savedPosition.x,
+              y: savedPosition.y,
+              width: savedPosition.scale * 20, // Convert scale to width percentage
+              rotation: savedPosition.rotation,
+            } : undefined;
+            
+            try {
+              // Generate mockup with logo using the specific angle
+              const mockupType = angle === 'front' 
+                ? productType.type 
+                : `${productType.type}-${angle}`;
+              
+              const mockupPath = await generateMockupWithLogo(
+                logoPath,
+                mockupType,
+                placement
+              );
+              
+              // Convert absolute path to relative URL
+              const relativePath = mockupPath.replace(process.cwd() + '/public', '');
+              mockupImages.push(relativePath);
+              
+              console.log(`Generated ${angle} mockup for ${productType.name} - ${color.name}: ${relativePath}`);
+            } catch (error) {
+              console.error(`Error generating ${angle} mockup:`, error);
+            }
+          }
+
+          // Use first mockup as main image, all mockups in images array
+          const mainImage = mockupImages.length > 0 ? mockupImages[0] : design.imageUrl;
+          
           const product = await prisma.product.create({
             data: {
               name: `${design.name} - ${productType.name}`,
-              description: `Premium ${productType.name.toLowerCase()} featuring ${design.name} design in ${color.name}. Perfect for basketball teams and fans.`,
+              description: `Premium ${productType.name.toLowerCase()} featuring ${design.name} design in ${color.name}. Perfect for basketball teams and fans. High-quality materials with custom logo placement.`,
               price: productType.price,
               category: productType.category,
               brand: design.brand || 'Basketball Factory',
-              imageUrl: design.imageUrl, // Placeholder, will be updated with mockup
-              images: [design.imageUrl],
+              imageUrl: mainImage,
+              images: mockupImages.length > 0 ? mockupImages : [design.imageUrl],
               inStock: true,
               featured: false,
               tags: ['basketball', 'custom-design', productType.type, color.name.toLowerCase()],
@@ -85,6 +138,7 @@ export async function POST(request: NextRequest) {
           });
 
           productsCreated++;
+          console.log(`Created product: ${product.name} with ${mockupImages.length} mockup images`);
         } catch (error) {
           console.error(`Error creating product for ${productType.name} - ${color.name}:`, error);
         }
@@ -103,7 +157,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Published ${productsCreated} products to store`,
+      message: `Published ${productsCreated} products to store with mockup images`,
       productsCreated,
     });
 

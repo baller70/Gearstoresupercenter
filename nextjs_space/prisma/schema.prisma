@@ -103,8 +103,11 @@ model Design {
   name               String
   brand              String?      // Brand name (Rise as One AAU or The Basketball Factory Inc)
   imageUrl           String       // Uploaded design file URL
+  logoUrl            String?      // Original logo URL
   colors             String[]     // Extracted colors from design
   basketballElements String?      @db.Text // JSON with AI analysis results
+  aiAnalysis         String?      @db.Text // JSON with Vision AI analysis results
+  averageScore       Float?       // Average score from AI analysis
   positionX          Float        @default(50)  // Horizontal position (percentage)
   positionY          Float        @default(35)  // Vertical position (percentage)
   scale              Float        @default(1.0) // Logo scale multiplier

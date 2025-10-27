@@ -412,7 +412,7 @@ export default function DesignEditorPage() {
                       >
                         {design.imageUrl && (
                           <Image
-                            src={design.imageUrl}
+                            src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
                             alt="Logo"
                             width={80}
                             height={80}

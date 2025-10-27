@@ -4,8 +4,10 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateAllMockups } from '@/lib/real-mockup-generator';
+import { uploadFile } from '@/lib/s3';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,20 +43,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Logo file and design name are required' }, { status: 400 });
     }
 
-    // Save logo temporarily
+    // Save logo to S3
     const logoBuffer = Buffer.from(await logoFile.arrayBuffer());
-    const tempLogoPath = path.join(process.cwd(), 'public/temp', `logo-${Date.now()}.png`);
+    const logoFileExtension = path.extname(logoFile.name) || '.png';
+    const logoS3Key = await uploadFile(
+      logoBuffer,
+      `designs/${Date.now()}-${designName.replace(/[^a-zA-Z0-9]/g, '-')}${logoFileExtension}`
+    );
     
-    // Ensure temp directory exists
-    const tempDir = path.dirname(tempLogoPath);
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
+    console.log('[Upload with AI] Logo uploaded to S3:', logoS3Key);
     
+    // Create temp logo file for mockup generation (will be deleted after use)
+    const tempLogoPath = path.join(os.tmpdir(), `logo-${Date.now()}${logoFileExtension}`);
     await fs.promises.writeFile(tempLogoPath, logoBuffer);
 
     // Generate mockups with the logo
-    console.log('Generating mockups...');
+    console.log('[Upload with AI] Generating mockups...');
     const mockupPaths = await generateAllMockups(tempLogoPath);
     
     console.log('Mockups generated:', mockupPaths);
@@ -133,23 +137,26 @@ Respond with raw JSON only.`
       ? scores.reduce((sum, score) => sum + score, 0) / scores.length 
       : 0;
 
-    // Save design to database
+    // Save design to database with S3 key
     const design = await prisma.design.create({
       data: {
         name: designName,
-        logoUrl: `/temp/${path.basename(tempLogoPath)}`,
-        imageUrl: `/temp/${path.basename(tempLogoPath)}`,
+        logoUrl: logoS3Key,
+        imageUrl: logoS3Key,
         status: averageScore >= 7 ? 'APPROVED' : 'PENDING',
         aiAnalysis: JSON.stringify(analyses),
         averageScore: averageScore
       }
     });
+    
+    console.log('[Upload with AI] Design created:', design.id);
 
     // Clean up temp logo
     try {
       await fs.promises.unlink(tempLogoPath);
+      console.log('[Upload with AI] Temp logo cleaned up');
     } catch (e) {
-      console.error('Failed to clean up temp logo:', e);
+      console.error('[Upload with AI] Failed to clean up temp logo:', e);
     }
 
     return NextResponse.json({

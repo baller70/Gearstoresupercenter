@@ -73,7 +73,8 @@ export default function NewDesignPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        const errorMessage = errorData.message || errorData.error || 'Upload failed';
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

@@ -31,10 +31,30 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
-    if (!session?.user || session.user.role !== 'ADMIN') {
+    console.log('[Upload] Session check:', {
+      hasSession: !!session,
+      hasUser: !!session?.user,
+      userEmail: session?.user?.email,
+      userRole: session?.user?.role
+    })
+    
+    if (!session?.user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { 
+          error: 'Authentication required',
+          message: 'Please sign in to upload designs. Use admin@basketballfactory.com / admin123 for admin access.'
+        },
         { status: 401 }
+      )
+    }
+    
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { 
+          error: 'Unauthorized',
+          message: `Access denied. Admin role required. Current role: ${session.user.role || 'none'}`
+        },
+        { status: 403 }
       )
     }
     

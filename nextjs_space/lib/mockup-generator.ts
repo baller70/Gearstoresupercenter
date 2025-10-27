@@ -17,19 +17,26 @@ const PRODUCT_TEMPLATES: Record<string, string> = {
   'Wristbands (Pair)': '/mockups/tshirt-template.png',
 }
 
-// Logo placement configurations for different product types
-const LOGO_PLACEMENTS: Record<string, { top: number; left: number; width: number; height: number }> = {
-  'Basketball Jersey': { top: 300, left: 950, width: 600, height: 600 },
-  'Shooting Shirt': { top: 120, left: 80, width: 100, height: 100 },
-  'Basketball Shorts': { top: 100, left: 200, width: 200, height: 200 },
-  'Compression Shirt': { top: 120, left: 80, width: 100, height: 100 },
-  'Basketball Hoodie': { top: 600, left: 950, width: 700, height: 700 },
-  'Basketball T-Shirt': { top: 120, left: 80, width: 100, height: 100 },
-  'Joggers': { top: 100, left: 200, width: 200, height: 200 },
-  'Basketball Cap': { top: 120, left: 80, width: 100, height: 100 },
-  'Gym Bag': { top: 120, left: 80, width: 100, height: 100 },
-  'Headband': { top: 120, left: 80, width: 100, height: 100 },
-  'Wristbands (Pair)': { top: 120, left: 80, width: 100, height: 100 },
+// Logo placement configurations - using percentages of template dimensions for better responsiveness
+interface LogoPlacement {
+  topPercent: number;      // Percentage from top (0-100)
+  leftPercent: number;     // Percentage from left (0-100)
+  widthPercent: number;    // Percentage of template width (0-100)
+  maxWidth: number;        // Maximum width in pixels
+}
+
+const LOGO_PLACEMENTS: Record<string, LogoPlacement> = {
+  'Basketball Jersey': { topPercent: 25, leftPercent: 50, widthPercent: 15, maxWidth: 250 },
+  'Shooting Shirt': { topPercent: 20, leftPercent: 50, widthPercent: 12, maxWidth: 180 },
+  'Basketball Shorts': { topPercent: 15, leftPercent: 25, widthPercent: 10, maxWidth: 120 },
+  'Compression Shirt': { topPercent: 20, leftPercent: 50, widthPercent: 12, maxWidth: 180 },
+  'Basketball Hoodie': { topPercent: 30, leftPercent: 50, widthPercent: 15, maxWidth: 250 },
+  'Basketball T-Shirt': { topPercent: 20, leftPercent: 50, widthPercent: 12, maxWidth: 180 },
+  'Joggers': { topPercent: 15, leftPercent: 25, widthPercent: 10, maxWidth: 120 },
+  'Basketball Cap': { topPercent: 35, leftPercent: 50, widthPercent: 20, maxWidth: 150 },
+  'Gym Bag': { topPercent: 40, leftPercent: 50, widthPercent: 25, maxWidth: 300 },
+  'Headband': { topPercent: 45, leftPercent: 50, widthPercent: 30, maxWidth: 180 },
+  'Wristbands (Pair)': { topPercent: 45, leftPercent: 35, widthPercent: 15, maxWidth: 100 },
 }
 
 /**
@@ -68,7 +75,9 @@ export async function generateProductMockup(
     
     // Get the base template for this product type
     const templatePath = PRODUCT_TEMPLATES[productType] || '/mockups/tshirt-template.png'
-    const logoPlacement = LOGO_PLACEMENTS[productType] || { top: 120, left: 80, width: 100, height: 100 }
+    const placementConfig = LOGO_PLACEMENTS[productType] || { 
+      topPercent: 20, leftPercent: 50, widthPercent: 12, maxWidth: 180 
+    }
     
     // Download the logo from S3
     let logoUrl: string
@@ -91,9 +100,31 @@ export async function generateProductMockup(
     const logoBuffer = Buffer.from(await logoResponse.arrayBuffer())
     const templateBuffer = Buffer.from(await templateResponse.arrayBuffer())
     
-    // Resize logo to fit placement area
+    // Get template metadata to calculate positions
+    const templateMetadata = await sharp(templateBuffer).metadata()
+    const templateWidth = templateMetadata.width || 1000
+    const templateHeight = templateMetadata.height || 1000
+    
+    // Calculate logo dimensions based on percentage of template width
+    const logoWidth = Math.min(
+      Math.round(templateWidth * (placementConfig.widthPercent / 100)),
+      placementConfig.maxWidth
+    )
+    
+    // Get logo metadata to maintain aspect ratio
+    const logoMetadata = await sharp(logoBuffer).metadata()
+    const logoAspectRatio = (logoMetadata.width || 1) / (logoMetadata.height || 1)
+    const logoHeight = Math.round(logoWidth / logoAspectRatio)
+    
+    // Calculate position based on percentages (centered on the specified point)
+    const logoTop = Math.round((templateHeight * placementConfig.topPercent) / 100 - logoHeight / 2)
+    const logoLeft = Math.round((templateWidth * placementConfig.leftPercent) / 100 - logoWidth / 2)
+    
+    console.log(`Template: ${templateWidth}x${templateHeight}, Logo will be: ${logoWidth}x${logoHeight} at (${logoLeft}, ${logoTop})`)
+    
+    // Resize logo to calculated dimensions
     const resizedLogo = await sharp(logoBuffer)
-      .resize(logoPlacement.width, logoPlacement.height, { 
+      .resize(logoWidth, logoHeight, { 
         fit: 'inside',
         background: { r: 255, g: 255, b: 255, alpha: 0 }
       })
@@ -110,22 +141,22 @@ export async function generateProductMockup(
         let coloredTemplate = sharp(templateBuffer)
         
         // For non-white colors, apply a tint
-        if (color.name !== 'white') {
+        if (color.name.toLowerCase() !== 'white') {
           coloredTemplate = coloredTemplate.tint(color.tint)
         }
         
-        // Composite the logo onto the template
+        // Composite the logo onto the template at calculated position
         const mockupBuffer = await coloredTemplate
           .composite([{
             input: resizedLogo,
-            top: logoPlacement.top,
-            left: logoPlacement.left,
+            top: Math.max(0, logoTop),
+            left: Math.max(0, logoLeft),
           }])
           .png()
           .toBuffer()
         
         // Upload the generated mockup to S3
-        const mockupFileName = `mockup-${designName}-${productType}-${color.name}-${Date.now()}.png`
+        const mockupFileName = `mockup-${designName.replace(/\s+/g, '-')}-${productType.replace(/\s+/g, '-')}-${color.name}-${Date.now()}.png`
         const mockupCloudPath = await uploadFile(mockupBuffer, mockupFileName)
         
         // Get signed URL for the mockup

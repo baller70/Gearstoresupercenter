@@ -72,6 +72,7 @@ model Product {
   imageUrl    String
   sizes       String[] // JSON array of available sizes
   colors      String[] // JSON array of available colors
+  stock       Int      @default(100) // Quantity in stock
   inStock     Boolean  @default(true)
   featured    Boolean  @default(false)
   designId    String?  // Link to uploaded design

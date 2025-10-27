@@ -148,6 +148,51 @@ export default async function AdminPage() {
           </Card>
         </div>
 
+        {/* Quick Links */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Link href="/admin/analytics">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <TrendingUp className="mr-2 h-5 w-5 text-blue-600" />
+                  Analytics Dashboard
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  View real-time sales, revenue trends, and performance metrics
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/customers">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <Users className="mr-2 h-5 w-5 text-purple-600" />
+                  Customer Insights
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Analyze customer behavior, order history, and lifetime value
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/inventory">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <Package className="mr-2 h-5 w-5 text-orange-600" />
+                  Inventory Management
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Monitor stock levels, reorder suggestions, and sales velocity
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+        </div>
+
         {/* AI Design Management Section */}
         <Card className="mb-8 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
           <CardHeader>

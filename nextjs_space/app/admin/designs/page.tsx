@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { Plus, Image as ImageIcon, Package, Calendar } from 'lucide-react'
+import { Plus, Image as ImageIcon, Package, Calendar, DollarSign, TrendingUp } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { DesignActions } from '@/components/design-actions'
 
@@ -21,16 +21,37 @@ export default async function DesignsPage() {
   const designs = await prisma.design.findMany({
     include: {
       products: {
-        select: {
-          id: true,
-          name: true,
-          category: true,
+        include: {
+          orderItems: {
+            include: {
+              order: true,
+            },
+          },
         },
       },
     },
     orderBy: {
       createdAt: 'desc',
     },
+  })
+  
+  // Calculate performance metrics for each design
+  const designsWithMetrics = designs.map(design => {
+    let totalRevenue = 0
+    let totalUnitsSold = 0
+    
+    design.products.forEach(product => {
+      product.orderItems.forEach(item => {
+        totalRevenue += item.price * item.quantity
+        totalUnitsSold += item.quantity
+      })
+    })
+    
+    return {
+      ...design,
+      totalRevenue,
+      totalUnitsSold,
+    }
   })
   
   return (
@@ -53,7 +74,7 @@ export default async function DesignsPage() {
           </Button>
         </div>
         
-        {designs.length === 0 ? (
+        {designsWithMetrics.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">
               <ImageIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
@@ -71,7 +92,7 @@ export default async function DesignsPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {designs.map((design) => (
+            {designsWithMetrics.map((design) => (
               <Card key={design.id} className="overflow-hidden">
                 <div className="aspect-square relative bg-muted">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -141,6 +162,28 @@ export default async function DesignsPage() {
                       ) : (
                         <span className="text-sm text-muted-foreground">No products generated</span>
                       )}
+                    </div>
+                    
+                    {/* Performance Metrics */}
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1 flex items-center">
+                          <DollarSign className="h-3 w-3 mr-1" />
+                          Revenue
+                        </div>
+                        <div className="text-lg font-bold">
+                          ${design.totalRevenue.toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1 flex items-center">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          Units Sold
+                        </div>
+                        <div className="text-lg font-bold">
+                          {design.totalUnitsSold}
+                        </div>
+                      </div>
                     </div>
                     
                     <DesignActions designId={design.id} currentStatus={design.status} />

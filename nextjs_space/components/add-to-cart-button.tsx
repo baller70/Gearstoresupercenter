@@ -81,7 +81,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
       {/* Add to Cart Button */}
       <Button 
         size="lg"
-        className="w-full bg-primary hover:bg-primary/90"
+        className="w-full"
         onClick={handleAddToCart}
         disabled={!product?.inStock || isLoading}
       >

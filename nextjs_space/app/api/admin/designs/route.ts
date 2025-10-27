@@ -16,6 +16,33 @@ export async function GET(request: NextRequest) {
       )
     }
     
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    
+    if (id) {
+      // Get single design
+      const design = await prisma.design.findUnique({
+        where: { id },
+        include: {
+          products: {
+            orderBy: {
+              name: 'asc',
+            },
+          },
+        },
+      })
+      
+      if (!design) {
+        return NextResponse.json(
+          { error: 'Design not found' },
+          { status: 404 }
+        )
+      }
+      
+      return NextResponse.json(design)
+    }
+    
+    // Get all designs
     const designs = await prisma.design.findMany({
       include: {
         products: {

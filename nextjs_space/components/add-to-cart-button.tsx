@@ -81,7 +81,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
       {/* Add to Cart Button */}
       <Button 
         size="lg"
-        className="w-full"
+        className="w-full bg-white text-foreground border-2 border-primary hover:bg-primary hover:text-white transition-colors"
         onClick={handleAddToCart}
         disabled={!product?.inStock || isLoading}
       >

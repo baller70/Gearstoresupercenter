@@ -1,5 +1,5 @@
 
-import { PrismaClient, Category } from '@prisma/client'
+import { PrismaClient, Category, FitType } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -288,8 +288,127 @@ async function main() {
     })
   }
 
+  // Seed Phase 6: Size Guides
+  console.log('📏 Seeding Size Guides...')
+  await prisma.sizeGuide.deleteMany({})
+  
+  const sizeGuides = [
+    // Performance Apparel - Regular Fit
+    { category: Category.PERFORMANCE_APPAREL, sizeName: 'XS', chest: '32-34"', waist: '26-28"', length: '27"', fitType: FitType.REGULAR },
+    { category: Category.PERFORMANCE_APPAREL, sizeName: 'S', chest: '34-36"', waist: '28-30"', length: '28"', fitType: FitType.REGULAR },
+    { category: Category.PERFORMANCE_APPAREL, sizeName: 'M', chest: '38-40"', waist: '31-33"', length: '29"', fitType: FitType.REGULAR },
+    { category: Category.PERFORMANCE_APPAREL, sizeName: 'L', chest: '42-44"', waist: '34-36"', length: '30"', fitType: FitType.REGULAR },
+    { category: Category.PERFORMANCE_APPAREL, sizeName: 'XL', chest: '46-48"', waist: '38-40"', length: '31"', fitType: FitType.REGULAR },
+    { category: Category.PERFORMANCE_APPAREL, sizeName: '2XL', chest: '50-52"', waist: '42-44"', length: '32"', fitType: FitType.REGULAR },
+    
+    // Casual Wear - Regular Fit
+    { category: Category.CASUAL_WEAR, sizeName: 'XS', chest: '32-34"', waist: '26-28"', length: '27"', fitType: FitType.REGULAR },
+    { category: Category.CASUAL_WEAR, sizeName: 'S', chest: '34-36"', waist: '28-30"', length: '28"', fitType: FitType.REGULAR },
+    { category: Category.CASUAL_WEAR, sizeName: 'M', chest: '38-40"', waist: '31-33"', length: '29"', fitType: FitType.REGULAR },
+    { category: Category.CASUAL_WEAR, sizeName: 'L', chest: '42-44"', waist: '34-36"', length: '30"', fitType: FitType.REGULAR },
+    { category: Category.CASUAL_WEAR, sizeName: 'XL', chest: '46-48"', waist: '38-40"', length: '31"', fitType: FitType.REGULAR },
+    { category: Category.CASUAL_WEAR, sizeName: '2XL', chest: '50-52"', waist: '42-44"', length: '32"', fitType: FitType.REGULAR },
+  ]
+
+  for (const guide of sizeGuides) {
+    await prisma.sizeGuide.create({ data: guide })
+  }
+
+  // Seed Shipping Options
+  console.log('🚚 Seeding Shipping Options...')
+  await prisma.shippingOption.deleteMany({})
+  
+  const shippingOptions = [
+    {
+      name: 'Standard Shipping',
+      description: 'Economical ground shipping',
+      basePrice: 5.99,
+      estimatedDays: '5-7 business days',
+      active: true,
+      priority: 1,
+    },
+    {
+      name: 'Express Shipping',
+      description: 'Faster delivery for urgent orders',
+      basePrice: 12.99,
+      estimatedDays: '2-3 business days',
+      active: true,
+      priority: 2,
+    },
+    {
+      name: 'Next Day Air',
+      description: 'Overnight delivery',
+      basePrice: 24.99,
+      estimatedDays: '1 business day',
+      active: true,
+      priority: 3,
+    },
+  ]
+
+  for (const option of shippingOptions) {
+    await prisma.shippingOption.create({ data: option })
+  }
+
+  // Seed Tax Rates
+  console.log('💰 Seeding Tax Rates...')
+  await prisma.taxRate.deleteMany({})
+  
+  const taxRates = [
+    {
+      state: 'CA',
+      county: null,
+      city: null,
+      zipCode: null,
+      rate: 0.0725,
+      type: 'STATE',
+      active: true,
+      effectiveFrom: new Date('2024-01-01'),
+      effectiveTo: null,
+    },
+    {
+      state: 'NY',
+      county: null,
+      city: null,
+      zipCode: null,
+      rate: 0.04,
+      type: 'STATE',
+      active: true,
+      effectiveFrom: new Date('2024-01-01'),
+      effectiveTo: null,
+    },
+    {
+      state: 'TX',
+      county: null,
+      city: null,
+      zipCode: null,
+      rate: 0.0625,
+      type: 'STATE',
+      active: true,
+      effectiveFrom: new Date('2024-01-01'),
+      effectiveTo: null,
+    },
+    {
+      state: 'FL',
+      county: null,
+      city: null,
+      zipCode: null,
+      rate: 0.06,
+      type: 'STATE',
+      active: true,
+      effectiveFrom: new Date('2024-01-01'),
+      effectiveTo: null,
+    },
+  ]
+
+  for (const rate of taxRates) {
+    await prisma.taxRate.create({ data: rate })
+  }
+
   console.log('🎉 Database seeded successfully!')
   console.log(`📊 Total products created: ${performanceApparelProducts.length + casualWearProducts.length + accessoryProducts.length}`)
+  console.log(`📏 Size guides: ${sizeGuides.length}`)
+  console.log(`🚚 Shipping options: ${shippingOptions.length}`)
+  console.log(`💰 Tax rates: ${taxRates.length}`)
 }
 
 main()

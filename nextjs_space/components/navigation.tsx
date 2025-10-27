@@ -98,6 +98,7 @@ export function Navigation() {
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Performance Apparel", href: "/products?category=PERFORMANCE_APPAREL", icon: Package },
+    { name: "Size Guide", href: "/size-guide", icon: Package },
     { name: "Casual Wear", href: "/products?category=CASUAL_WEAR", icon: Package },
     { name: "Accessories", href: "/products?category=ACCESSORIES", icon: Package },
   ]
@@ -175,6 +176,12 @@ export function Navigation() {
                     <Link href="/account" className="flex items-center">
                       <User className="mr-2 h-4 w-4" />
                       My Account
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/returns" className="flex items-center">
+                      <Package className="mr-2 h-4 w-4" />
+                      Returns & Refunds
                     </Link>
                   </DropdownMenuItem>
                   {session?.user?.role === 'ADMIN' && (

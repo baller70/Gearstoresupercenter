@@ -149,7 +149,7 @@ export default async function AdminPage() {
         </div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
           <Link href="/admin/analytics">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>
@@ -159,6 +159,20 @@ export default async function AdminPage() {
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   View real-time sales, revenue trends, and performance metrics
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/business-intelligence">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <TrendingUp className="mr-2 h-5 w-5 text-green-600" />
+                  Business Intelligence
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  AI-powered forecasting, customer LTV, and cohort analysis
                 </p>
               </CardHeader>
             </Card>
@@ -187,6 +201,20 @@ export default async function AdminPage() {
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Monitor stock levels, reorder suggestions, and sales velocity
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/abandoned-carts">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <ShoppingBag className="mr-2 h-5 w-5 text-red-600" />
+                  Abandoned Carts
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Track and recover abandoned shopping carts
                 </p>
               </CardHeader>
             </Card>

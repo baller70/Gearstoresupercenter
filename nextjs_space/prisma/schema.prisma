@@ -484,3 +484,236 @@ enum EmailCampaignStatus {
   SENT
   CANCELLED
 }
+
+// Phase 6: Production Readiness Models
+
+model Return {
+  id            String       @id @default(cuid())
+  orderId       String
+  userId        String
+  reason        ReturnReason
+  description   String       @db.Text
+  status        ReturnStatus @default(PENDING)
+  refundAmount  Float?
+  refundMethod  String?      // Original payment method, gift card, etc.
+  returnLabel   String?      // S3 URL for return label
+  trackingNumber String?
+  requestedAt   DateTime     @default(now())
+  processedAt   DateTime?
+  completedAt   DateTime?
+
+  items ReturnItem[]
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+}
+
+model ReturnItem {
+  id        String @id @default(cuid())
+  returnId  String
+  productId String
+  quantity  Int
+  reason    String?
+
+  return Return @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+  @@index([returnId])
+}
+
+model Shipment {
+  id              String         @id @default(cuid())
+  orderId         String         @unique
+  carrier         String         // UPS, FedEx, USPS, etc.
+  trackingNumber  String?
+  shippingMethod  String
+  shippingCost    Float
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+  status          ShipmentStatus @default(PENDING)
+  labelUrl        String?        // Shipping label URL
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  trackingEvents TrackingEvent[]
+
+  @@index([orderId])
+  @@index([trackingNumber])
+}
+
+model TrackingEvent {
+  id          String   @id @default(cuid())
+  shipmentId  String
+  status      String   // In Transit, Out for Delivery, Delivered, etc.
+  location    String
+  description String
+  timestamp   DateTime
+  createdAt   DateTime @default(now())
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+}
+
+model TaxRate {
+  id          String   @id @default(cuid())
+  state       String
+  county      String?
+  city        String?
+  zipCode     String?
+  rate        Float    // Decimal format (e.g., 0.0825 for 8.25%)
+  type        String   // STATE, COUNTY, CITY
+  active      Boolean  @default(true)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([state, zipCode])
+  @@index([active])
+}
+
+model ProductComparison {
+  id          String   @id @default(cuid())
+  userId      String?
+  sessionId   String   // For anonymous users
+  productIds  String[] // Array of product IDs (max 4)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+model SizeGuide {
+  id          String   @id @default(cuid())
+  category    Category
+  sizeName    String   // S, M, L, XL, etc.
+  chest       String   // Measurement in inches
+  waist       String
+  hip         String?
+  length      String
+  weight      String?  // Recommended weight range
+  height      String?  // Recommended height range
+  fitType     FitType  @default(REGULAR)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+model CustomerFit {
+  id          String   @id @default(cuid())
+  userId      String
+  height      Float    // In inches
+  weight      Float    // In pounds
+  chest       Float?   // In inches
+  waist       Float?
+  preferredFit FitType @default(REGULAR)
+  shirtSize   String?
+  shortsSize  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId])
+}
+
+model AbandonedCart {
+  id              String   @id @default(cuid())
+  userId          String?
+  sessionId       String   // For anonymous users
+  email           String
+  cartValue       Float
+  itemCount       Int
+  recovered       Boolean  @default(false)
+  emailSent       Boolean  @default(false)
+  emailSentAt     DateTime?
+  recoveredAt     DateTime?
+  recoveredOrderId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([email])
+  @@index([recovered])
+  @@index([emailSent])
+}
+
+model CustomerSegment {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  criteria    String   @db.Text // JSON with segment rules
+  userCount   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+}
+
+model SalesForecast {
+  id          String   @id @default(cuid())
+  forecastDate DateTime
+  category    Category?
+  productId   String?
+  predictedSales Float
+  confidence  Float    // 0-1
+  actualSales Float?
+  factors     String?  @db.Text // JSON with influencing factors
+  createdAt   DateTime @default(now())
+
+  @@index([forecastDate])
+  @@index([category])
+}
+
+model CustomerLifetimeValue {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  totalSpent          Float
+  orderCount          Int
+  avgOrderValue       Float
+  predictedLTV        Float
+  segment             String   // HIGH_VALUE, MEDIUM_VALUE, LOW_VALUE, AT_RISK
+  lastPurchaseDate    DateTime?
+  daysSinceLastPurchase Int?
+  calculatedAt        DateTime @default(now())
+
+  @@index([segment])
+  @@index([predictedLTV])
+}
+
+enum ReturnReason {
+  WRONG_SIZE
+  DEFECTIVE
+  NOT_AS_DESCRIBED
+  CHANGED_MIND
+  ORDERED_WRONG_ITEM
+  QUALITY_ISSUE
+  OTHER
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RETURN_RECEIVED
+  REFUND_PROCESSED
+  COMPLETED
+}
+
+enum ShipmentStatus {
+  PENDING
+  LABEL_CREATED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  EXCEPTION
+  RETURNED
+}
+
+enum FitType {
+  SLIM
+  REGULAR
+  RELAXED
+  OVERSIZED
+}

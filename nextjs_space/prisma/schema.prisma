@@ -74,11 +74,27 @@ model Product {
   colors      String[] // JSON array of available colors
   inStock     Boolean  @default(true)
   featured    Boolean  @default(false)
+  designId    String?  // Link to uploaded design
+  placement   String?  // Design placement (chest, back, sleeve, etc.)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  design     Design?    @relation(fields: [designId], references: [id])
   cartItems  CartItem[]
   orderItems OrderItem[]
+}
+
+model Design {
+  id                 String       @id @default(cuid())
+  name               String
+  imageUrl           String       // Uploaded design file URL
+  colors             String[]     // Extracted colors from design
+  basketballElements String?      @db.Text // JSON with AI analysis results
+  status             DesignStatus @default(PENDING)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  products Product[]
 }
 
 model CartItem {
@@ -157,4 +173,10 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum DesignStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

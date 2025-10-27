@@ -16,7 +16,9 @@ import {
   DollarSign,
   Eye,
   Edit,
-  Plus
+  Plus,
+  Palette,
+  Sparkles
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -30,19 +32,23 @@ export default async function AdminPage() {
   }
 
   // Get admin stats
-  const [products, orders, users] = await Promise.all([
+  const [products, orders, users, designs] = await Promise.all([
     prisma.product.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.order.findMany({ 
       include: { orderItems: true },
       orderBy: { createdAt: 'desc' } 
     }),
-    prisma.user.findMany({ orderBy: { createdAt: 'desc' } })
+    prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.design.findMany({ orderBy: { createdAt: 'desc' } })
   ])
 
   const stats = {
     totalProducts: products?.length ?? 0,
     totalOrders: orders?.length ?? 0,
     totalUsers: users?.length ?? 0,
+    totalDesigns: designs?.length ?? 0,
+    approvedDesigns: designs?.filter(d => d?.status === 'APPROVED')?.length ?? 0,
+    pendingDesigns: designs?.filter(d => d?.status === 'PENDING')?.length ?? 0,
     totalRevenue: orders?.reduce((sum, order) => sum + (order?.total ?? 0), 0) ?? 0,
     pendingOrders: orders?.filter(order => order?.status === 'PENDING')?.length ?? 0,
     outOfStockProducts: products?.filter(product => !product?.inStock)?.length ?? 0
@@ -141,6 +147,53 @@ export default async function AdminPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* AI Design Management Section */}
+        <Card className="mb-8 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center">
+                  <Sparkles className="mr-2 h-5 w-5 text-primary" />
+                  AI Design System
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Upload designs and let AI automatically generate products across all categories
+                </p>
+              </div>
+              <Button asChild>
+                <Link href="/admin/designs/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Upload Design
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <p className="text-2xl font-bold">{stats.totalDesigns}</p>
+                <p className="text-sm text-muted-foreground">Total Designs</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-2xl font-bold text-green-600">{stats.approvedDesigns}</p>
+                <p className="text-sm text-muted-foreground">Approved</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-2xl font-bold text-yellow-600">{stats.pendingDesigns}</p>
+                <p className="text-sm text-muted-foreground">Pending Review</p>
+              </div>
+            </div>
+            <div className="mt-6">
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/admin/designs">
+                  <Palette className="mr-2 h-4 w-4" />
+                  Manage All Designs
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid lg:grid-cols-2 gap-8">
           

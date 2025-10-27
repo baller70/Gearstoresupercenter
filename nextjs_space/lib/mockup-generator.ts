@@ -1,5 +1,6 @@
 
 import { Canvas, Image as CanvasImage, createCanvas, loadImage } from 'canvas';
+import path from 'path';
 
 interface MockupPosition {
   x: number; // percentage from left
@@ -9,11 +10,23 @@ interface MockupPosition {
 
 export class MockupGenerator {
   private garmentTemplates: Map<string, string> = new Map([
-    ['tshirt', '/mockups/tshirt-template.png'],
-    ['jersey', '/mockups/jersey-template.png'],
-    ['hoodie', '/mockups/hoodie-template.png'],
-    ['shorts', '/mockups/shorts-template.png']
+    ['tshirt', 'tshirt-template.png'],
+    ['jersey', 'jersey-template.png'],
+    ['hoodie', 'hoodie-template.png'],
+    ['shorts', 'shorts-template.png']
   ]);
+
+  /**
+   * Get absolute path to template file
+   */
+  private getTemplatePath(garmentType: string): string {
+    const templateFile = this.garmentTemplates.get(garmentType);
+    if (!templateFile) {
+      throw new Error(`No template found for garment type: ${garmentType}`);
+    }
+    // Templates are in public/mockups/ directory
+    return path.join(process.cwd(), 'public', 'mockups', templateFile);
+  }
 
   /**
    * Get precise chest positioning for logo placement
@@ -36,6 +49,19 @@ export class MockupGenerator {
   }
 
   /**
+   * Apply color tint to grayscale template
+   */
+  private applyColorTint(ctx: any, width: number, height: number, color: string) {
+    // Set blend mode to multiply for color tinting
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Reset blend mode
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  /**
    * Generate a mockup with logo positioned on chest area
    */
   async generateMockup(
@@ -48,19 +74,25 @@ export class MockupGenerator {
     console.log(`[Mockup Generator] Logo path: ${logoPath}`);
     
     try {
-      const templatePath = this.garmentTemplates.get(garmentType);
-      if (!templatePath) {
-        throw new Error(`No template found for garment type: ${garmentType}`);
-      }
+      const templatePath = this.getTemplatePath(garmentType);
+      console.log(`[Mockup Generator] Template path: ${templatePath}`);
 
-      // Create canvas
-      const canvas = createCanvas(1000, 1000);
+      // Load garment template
+      const template = await loadImage(templatePath);
+      console.log(`[Mockup Generator] Template loaded successfully (${template.width}x${template.height})`);
+
+      // Create canvas matching template size
+      const canvas = createCanvas(template.width, template.height);
       const ctx = canvas.getContext('2d');
 
-      // Load and draw garment base (colored)
+      // Fill background with solid color first
       ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 1000, 1000);
-      console.log(`[Mockup Generator] Background drawn with color: ${color}`);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the template on top (it will blend with the background color)
+      ctx.globalAlpha = 1.0;
+      ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
+      console.log(`[Mockup Generator] Garment template drawn`);
 
       // Load logo
       const logo = await loadImage(logoPath);
@@ -69,8 +101,8 @@ export class MockupGenerator {
       // Get chest position
       const position = this.getChestPosition(garmentType, customPosition);
 
-      // Calculate logo dimensions with scale - Fixed to ensure 250px base size
-      const baseLogoSize = 250; // Base size for logo
+      // Calculate logo dimensions with scale - base size proportional to canvas
+      const baseLogoSize = canvas.width * 0.25; // Logo is 25% of canvas width
       const logoWidth = baseLogoSize * position.scale;
       const logoHeight = (logo.height / logo.width) * logoWidth;
       console.log(`[Mockup Generator] Logo dimensions: ${logoWidth}x${logoHeight}, position: (${position.x}%, ${position.y}%)`);
@@ -89,9 +121,6 @@ export class MockupGenerator {
       );
       console.log(`[Mockup Generator] Logo drawn at (${x}, ${y})`);
 
-      // Add subtle garment texture/shading
-      this.addGarmentDetails(ctx, garmentType, color);
-
       const buffer = canvas.toBuffer('image/png');
       console.log(`[Mockup Generator] ✅ Mockup generated successfully, size: ${buffer.length} bytes`);
       return buffer;
@@ -99,41 +128,6 @@ export class MockupGenerator {
       console.error('[Mockup Generator] ❌ Error:', error);
       throw error; // Re-throw to see the actual error
     }
-  }
-
-  /**
-   * Add garment-specific details and shading
-   */
-  private addGarmentDetails(ctx: any, garmentType: string, color: string) {
-    // Add subtle shadows and highlights based on garment type
-    ctx.globalAlpha = 0.1;
-
-    // Collar area shadow
-    if (garmentType === 'tshirt' || garmentType === 'jersey') {
-      const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-      gradient.addColorStop(0, '#000000');
-      gradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 1000, 200);
-    }
-
-    // Sleeve shadows
-    if (garmentType === 'tshirt' || garmentType === 'jersey') {
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 200, 150, 400); // Left sleeve
-      ctx.fillRect(850, 200, 150, 400); // Right sleeve
-    }
-
-    // Hood shadow
-    if (garmentType === 'hoodie') {
-      const gradient = ctx.createRadialGradient(500, 150, 50, 500, 150, 300);
-      gradient.addColorStop(0, '#000000');
-      gradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(200, 0, 600, 300);
-    }
-
-    ctx.globalAlpha = 1.0;
   }
 
   /**

@@ -97,7 +97,6 @@ export function Navigation() {
 
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
-    { name: "Design Studio", href: "/design-studio", icon: Package },
     { name: "Performance Apparel", href: "/products?category=PERFORMANCE_APPAREL", icon: Package },
     { name: "Size Guide", href: "/size-guide", icon: Package },
     { name: "Casual Wear", href: "/products?category=CASUAL_WEAR", icon: Package },

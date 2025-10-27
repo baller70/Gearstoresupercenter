@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { uploadFile, downloadFile } from '@/lib/s3'
 import { prisma } from '@/lib/db'
-import { mockupGenerator } from '@/lib/mockup-generator'
+import { advancedMockupGenerator } from '@/lib/advanced-mockup-generator'
 import path from 'path'
 import fs from 'fs/promises'
 import os from 'os'
@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
         try {
           console.log(`[Upload] Generating ${garmentType} in ${color.name} (${color.hex})...`)
           
-          // Generate mockup with logo
-          const mockupBuffer = await mockupGenerator.generateMockup(
+          // Generate mockup with logo using advanced generator
+          const mockupBuffer = await advancedMockupGenerator.generateMockup(
             tempLogoPath,
             garmentType,
             color.hex,

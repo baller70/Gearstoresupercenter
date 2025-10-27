@@ -1,13 +1,41 @@
 
 import { prisma } from "@/lib/db"
 import { Category } from "@prisma/client"
+import { downloadFile } from "@/lib/s3"
+
+async function convertS3PathToSignedUrl(imageUrl: string): Promise<string> {
+  // If it's already a full URL, return as is
+  if (imageUrl.startsWith('http')) {
+    return imageUrl
+  }
+  
+  // Otherwise, it's an S3 key, so get signed URL
+  try {
+    return await downloadFile(imageUrl)
+  } catch (error) {
+    console.error('Error converting S3 path to signed URL:', error)
+    return imageUrl
+  }
+}
+
+async function processProductImages(products: any[]) {
+  return await Promise.all(
+    products.map(async (product) => {
+      const signedUrl = await convertS3PathToSignedUrl(product.imageUrl)
+      return {
+        ...product,
+        imageUrl: signedUrl
+      }
+    })
+  )
+}
 
 export async function getAllProducts() {
   try {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' }
     })
-    return products ?? []
+    return await processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching all products:', error)
     return []
@@ -21,7 +49,7 @@ export async function getFeaturedProducts() {
       orderBy: { createdAt: 'desc' },
       take: 6
     })
-    return products ?? []
+    return await processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching featured products:', error)
     return []
@@ -35,7 +63,7 @@ export async function getProductsByCategory(category: Category, limit?: number) 
       orderBy: { createdAt: 'desc' },
       ...(limit && { take: limit })
     })
-    return products ?? []
+    return await processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching products by category:', error)
     return []
@@ -47,7 +75,13 @@ export async function getProductById(id: string) {
     const product = await prisma.product.findUnique({
       where: { id }
     })
-    return product ?? null
+    if (!product) return null
+    
+    const signedUrl = await convertS3PathToSignedUrl(product.imageUrl)
+    return {
+      ...product,
+      imageUrl: signedUrl
+    }
   } catch (error) {
     console.error('Error fetching product by ID:', error)
     return null
@@ -65,7 +99,7 @@ export async function searchProducts(query: string) {
       },
       orderBy: { createdAt: 'desc' }
     })
-    return products ?? []
+    return await processProductImages(products ?? [])
   } catch (error) {
     console.error('Error searching products:', error)
     return []

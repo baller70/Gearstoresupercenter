@@ -10,6 +10,8 @@ import Link from 'next/link'
 import { Plus, Image as ImageIcon, Package, Calendar, DollarSign, TrendingUp } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { DesignActions } from '@/components/design-actions'
+import Image from 'next/image'
+import { downloadFile } from '@/lib/s3'
 
 export default async function DesignsPage() {
   const session = await getServerSession(authOptions)
@@ -35,8 +37,8 @@ export default async function DesignsPage() {
     },
   })
   
-  // Calculate performance metrics for each design
-  const designsWithMetrics = designs.map(design => {
+  // Calculate performance metrics for each design and get signed URLs
+  const designsWithMetrics = await Promise.all(designs.map(async (design) => {
     let totalRevenue = 0
     let totalUnitsSold = 0
     
@@ -47,12 +49,21 @@ export default async function DesignsPage() {
       })
     })
     
+    // Get signed URL for the design image
+    let signedUrl = null
+    try {
+      signedUrl = await downloadFile(design.imageUrl)
+    } catch (error) {
+      console.error('Error getting signed URL for design:', error)
+    }
+    
     return {
       ...design,
       totalRevenue,
       totalUnitsSold,
+      signedUrl,
     }
-  })
+  }))
   
   return (
     <div className="min-h-screen bg-background">
@@ -95,9 +106,19 @@ export default async function DesignsPage() {
             {designsWithMetrics.map((design) => (
               <Card key={design.id} className="overflow-hidden">
                 <div className="aspect-square relative bg-muted">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
-                  </div>
+                  {design.signedUrl ? (
+                    <Image
+                      src={design.signedUrl}
+                      alt={design.name}
+                      fill
+                      className="object-contain p-4"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
                 <CardHeader>
                   <div className="flex items-start justify-between">

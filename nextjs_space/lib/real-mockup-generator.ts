@@ -16,6 +16,21 @@ interface MockupConfig {
   defaultPlacement: LogoPlacement;
 }
 
+interface ColorTint {
+  hex: string;
+  name: string;
+}
+
+// Helper function to convert hex to RGB
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 255, g: 255, b: 255 };
+}
+
 const MOCKUP_CONFIGS: Record<string, MockupConfig> = {
   // Front views
   'basketball-tshirt': {
@@ -99,11 +114,77 @@ const MOCKUP_CONFIGS: Record<string, MockupConfig> = {
   }
 };
 
+/**
+ * Apply color tint to a mockup image
+ * This function tints white/light areas of the mockup to the specified color
+ * while preserving shadows, highlights, and texture details
+ */
+async function applyColorTint(
+  mockupBuffer: Buffer,
+  color: ColorTint
+): Promise<Buffer> {
+  const targetColor = hexToRgb(color.hex);
+  
+  // For white color, return original mockup (no tinting needed)
+  if (color.hex.toUpperCase() === '#FFFFFF' || color.hex.toUpperCase() === '#FFF') {
+    return mockupBuffer;
+  }
+  
+  // Load the mockup image and get raw pixel data
+  const mockupImage = sharp(mockupBuffer);
+  const { data, info } = await mockupImage
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  
+  const channels = info.channels;
+  
+  // Process each pixel to apply color tint
+  for (let i = 0; i < data.length; i += channels) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+    
+    // Calculate brightness (grayscale value)
+    const brightness = (r + g + b) / 3;
+    
+    // Only tint light pixels (brightness > 180 = white/light gray areas)
+    // This preserves shadows and details while coloring the garment
+    if (brightness > 180 && a > 0) {
+      // Calculate how "white" the pixel is (0 = not white, 1 = pure white)
+      const whiteness = (brightness - 180) / 75;
+      
+      // Blend the target color with the original, weighted by whiteness
+      // More white pixels get more color, slightly gray pixels get less
+      const tintStrength = Math.min(whiteness, 0.85); // Max 85% tint to preserve texture
+      
+      data[i] = Math.round(r * (1 - tintStrength) + targetColor.r * tintStrength);
+      data[i + 1] = Math.round(g * (1 - tintStrength) + targetColor.g * tintStrength);
+      data[i + 2] = Math.round(b * (1 - tintStrength) + targetColor.b * tintStrength);
+    }
+  }
+  
+  // Convert back to PNG buffer
+  const tintedBuffer = await sharp(data, {
+    raw: {
+      width: info.width,
+      height: info.height,
+      channels: channels
+    }
+  })
+    .png()
+    .toBuffer();
+  
+  return tintedBuffer;
+}
+
 export async function generateMockupWithLogo(
   logoPath: string,
   mockupType: string,
   customPlacement?: Partial<LogoPlacement>,
-  outputPath?: string
+  outputPath?: string,
+  colorTint?: ColorTint
 ): Promise<string> {
   try {
     const config = MOCKUP_CONFIGS[mockupType];
@@ -119,7 +200,13 @@ export async function generateMockupWithLogo(
 
     // Load mockup image
     const mockupFullPath = path.join(process.cwd(), config.imagePath);
-    const mockupBuffer = await fs.promises.readFile(mockupFullPath);
+    let mockupBuffer = await fs.promises.readFile(mockupFullPath);
+    
+    // Apply color tint if specified
+    if (colorTint) {
+      mockupBuffer = await applyColorTint(mockupBuffer, colorTint);
+    }
+    
     const mockupImage = sharp(mockupBuffer);
     const mockupMetadata = await mockupImage.metadata();
 

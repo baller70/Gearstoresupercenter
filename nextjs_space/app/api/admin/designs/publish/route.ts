@@ -99,10 +99,13 @@ export async function POST(request: NextRequest) {
                 ? productType.type 
                 : `${productType.type}-${angle}`;
               
+              // Pass color tint to the mockup generator
               const mockupPath = await generateMockupWithLogo(
                 logoPath,
                 mockupType,
-                placement
+                placement,
+                undefined, // outputPath (auto-generated)
+                color // color tint
               );
               
               // Convert absolute path to relative URL

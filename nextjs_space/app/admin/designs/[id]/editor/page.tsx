@@ -69,6 +69,10 @@ export default function DesignEditorPage() {
     rotation: 0
   });
   
+  // Logo visibility and transparency
+  const [logoVisible, setLogoVisible] = useState(true);
+  const [logoOpacity, setLogoOpacity] = useState(1.0);
+  
   // Color variants - Default to Rise as One colors
   const [colorVariants, setColorVariants] = useState<ColorVariant[]>([
     { name: 'Red', hex: '#DC2626', enabled: true },
@@ -499,31 +503,34 @@ export default function DesignEditorPage() {
                       )}
                       
                       {/* Logo position indicator */}
-                      <div 
-                        className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center shadow-lg transition-all duration-100 pointer-events-none"
-                        style={{
-                          left: `${currentPosition.x}%`,
-                          top: `${currentPosition.y}%`,
-                          transform: `translate(-50%, -50%) scale(${currentPosition.scale}) rotate(${currentPosition.rotation}deg)`,
-                          backgroundColor: 'transparent',
-                        }}
-                      >
-                        {design.imageUrl && (
-                          <div className="relative w-full h-full flex items-center justify-center">
-                            <Image
-                              src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
-                              alt="Logo"
-                              width={80}
-                              height={80}
-                              className="object-contain"
-                              style={{
-                                mixBlendMode: 'multiply',
-                                filter: 'contrast(1.1)',
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      {logoVisible && (
+                        <div 
+                          className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center shadow-lg transition-all duration-100 pointer-events-none"
+                          style={{
+                            left: `${currentPosition.x}%`,
+                            top: `${currentPosition.y}%`,
+                            transform: `translate(-50%, -50%) scale(${currentPosition.scale}) rotate(${currentPosition.rotation}deg)`,
+                            backgroundColor: 'transparent',
+                            opacity: logoOpacity,
+                          }}
+                        >
+                          {design.imageUrl && (
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              <Image
+                                src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
+                                alt="Logo"
+                                width={80}
+                                height={80}
+                                className="object-contain"
+                                style={{
+                                  mixBlendMode: 'multiply',
+                                  filter: 'contrast(1.1)',
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
                       
                       {/* Position coordinates and view info */}
                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
@@ -603,20 +610,55 @@ export default function DesignEditorPage() {
                       />
                     </div>
                     
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentPosition(prev => ({
-                        ...prev,
-                        scale: 1.0,
-                        rotation: 0,
-                        x: 50,
-                        y: 40
-                      }))}
-                      className="w-full"
-                    >
-                      <RotateCw className="mr-2 h-4 w-4" />
-                      Reset
-                    </Button>
+                    <div>
+                      <Label>Transparency: {Math.round(logoOpacity * 100)}%</Label>
+                      <Slider
+                        value={[logoOpacity]}
+                        onValueChange={([value]) => setLogoOpacity(value)}
+                        min={0.1}
+                        max={1.0}
+                        step={0.05}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setCurrentPosition(prev => ({
+                            ...prev,
+                            scale: 1.0,
+                            rotation: 0,
+                            x: 50,
+                            y: 40
+                          }));
+                          setLogoOpacity(1.0);
+                        }}
+                        className="flex-1"
+                      >
+                        <RotateCw className="mr-2 h-4 w-4" />
+                        Reset
+                      </Button>
+                      
+                      <Button
+                        variant="destructive"
+                        onClick={() => setLogoVisible(!logoVisible)}
+                        className="flex-1"
+                      >
+                        {logoVisible ? (
+                          <>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Hide Logo
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Show Logo
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -629,7 +671,7 @@ export default function DesignEditorPage() {
               <CardHeader>
                 <CardTitle>Color Variants</CardTitle>
                 <CardDescription>
-                  Select which colors to generate for each product. Each enabled color will create a separate product variant.
+                  Select which garment colors you want. Each enabled color will generate actual colored mockups and create separate products in your store (e.g., Red T-Shirt, Gray T-Shirt, Black T-Shirt).
                 </CardDescription>
               </CardHeader>
               <CardContent>

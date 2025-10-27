@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -16,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
-import { CheckCircle2, XCircle, Trash2, Loader2 } from 'lucide-react'
+import { CheckCircle2, XCircle, Trash2, Loader2, Edit } from 'lucide-react'
 
 interface DesignActionsProps {
   designId: string
@@ -74,71 +75,85 @@ export function DesignActions({ designId, currentStatus }: DesignActionsProps) {
   }
   
   return (
-    <div className="flex gap-2">
-      {currentStatus !== 'APPROVED' && (
-        <Button
-          size="sm"
-          variant="default"
-          onClick={() => handleStatusChange('APPROVED')}
-          disabled={loading}
-          className="flex-1"
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              <CheckCircle2 className="mr-1 h-4 w-4" />
-              Approve
-            </>
-          )}
-        </Button>
-      )}
+    <div className="space-y-2">
+      <Button
+        size="sm"
+        variant="default"
+        className="w-full"
+        asChild
+      >
+        <Link href={`/admin/designs/${designId}/editor`}>
+          <Edit className="mr-2 h-4 w-4" />
+          Open Editor
+        </Link>
+      </Button>
       
-      {currentStatus !== 'REJECTED' && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => handleStatusChange('REJECTED')}
-          disabled={loading}
-          className="flex-1"
-        >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              <XCircle className="mr-1 h-4 w-4" />
-              Reject
-            </>
-          )}
-        </Button>
-      )}
-      
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
+      <div className="flex gap-2">
+        {currentStatus !== 'APPROVED' && (
           <Button
             size="sm"
-            variant="destructive"
+            variant="default"
+            onClick={() => handleStatusChange('APPROVED')}
             disabled={loading}
+            className="flex-1"
           >
-            <Trash2 className="h-4 w-4" />
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <CheckCircle2 className="mr-1 h-4 w-4" />
+                Approve
+              </>
+            )}
           </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the design and all associated products.
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        )}
+        
+        {currentStatus !== 'REJECTED' && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleStatusChange('REJECTED')}
+            disabled={loading}
+            className="flex-1"
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <XCircle className="mr-1 h-4 w-4" />
+                Reject
+              </>
+            )}
+          </Button>
+        )}
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              size="sm"
+              variant="destructive"
+              disabled={loading}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete the design and all associated products.
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   )
 }

@@ -250,12 +250,16 @@ export default function DesignEditorPage() {
   };
   
   const productTypes = [
-    { id: 'basketball-tshirt', name: 'T-Shirt', icon: '👕' },
-    { id: 'basketball-jersey', name: 'Jersey', icon: '🎽' },
-    { id: 'basketball-hoodie', name: 'Hoodie', icon: '🧥' },
-    { id: 'basketball-sweatshirt', name: 'Sweatshirt', icon: '👔' },
-    { id: 'basketball-shorts', name: 'Shorts', icon: '🩳' },
+    { id: 'basketball-tshirt', name: 'T-Shirt', icon: '👕', mockup: '/mockups/basketball_tshirt_mockup.png' },
+    { id: 'basketball-jersey', name: 'Jersey', icon: '🎽', mockup: '/mockups/basketball_jersey_mockup.png' },
+    { id: 'basketball-hoodie', name: 'Hoodie', icon: '🧥', mockup: '/mockups/basketball_hoodie_mockup.png' },
+    { id: 'basketball-sweatshirt', name: 'Sweatshirt', icon: '👔', mockup: '/mockups/basketball_sweatshirt_mockup.png' },
+    { id: 'basketball-shorts', name: 'Shorts', icon: '🩳', mockup: '/mockups/basketball_shorts_mockup.png' },
   ];
+  
+  const getCurrentMockup = () => {
+    return productTypes.find(p => p.id === selectedProduct)?.mockup || '';
+  };
   
   if (loading) {
     return (
@@ -390,20 +394,34 @@ export default function DesignEditorPage() {
                     {/* Canvas */}
                     <div 
                       ref={canvasRef}
-                      className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border-2 border-dashed border-gray-300 cursor-crosshair"
+                      className="relative aspect-square bg-white rounded-lg border-2 border-dashed border-gray-300 cursor-crosshair overflow-hidden"
                       onMouseDown={handleCanvasMouseDown}
                       onMouseMove={handleCanvasMouseMove}
                       onMouseUp={handleCanvasMouseUp}
                       onMouseLeave={handleCanvasMouseUp}
                     >
-                      {/* Product silhouette placeholder */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                        <Package className="h-48 w-48 text-gray-400" />
-                      </div>
+                      {/* Product mockup background */}
+                      {getCurrentMockup() ? (
+                        <div className="absolute inset-0 flex items-center justify-center p-8">
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={getCurrentMockup()}
+                              alt={`${selectedProduct} mockup`}
+                              fill
+                              className="object-contain"
+                              priority
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                          <Package className="h-48 w-48 text-gray-400" />
+                        </div>
+                      )}
                       
                       {/* Logo position indicator */}
                       <div 
-                        className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center bg-white/80 shadow-lg transition-all duration-100"
+                        className="absolute w-24 h-24 border-2 border-primary rounded-lg flex items-center justify-center bg-white/80 shadow-lg transition-all duration-100 pointer-events-none"
                         style={{
                           left: `${currentPosition.x}%`,
                           top: `${currentPosition.y}%`,
@@ -422,7 +440,7 @@ export default function DesignEditorPage() {
                       </div>
                       
                       {/* Position coordinates */}
-                      <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
                         X: {currentPosition.x.toFixed(0)}% Y: {currentPosition.y.toFixed(0)}%
                       </div>
                     </div>
@@ -584,10 +602,40 @@ export default function DesignEditorPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="aspect-square relative bg-muted rounded-lg">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Package className="h-24 w-24 text-muted-foreground/30" />
-                      </div>
+                    <div className="aspect-square relative bg-white rounded-lg border overflow-hidden">
+                      {product.mockup ? (
+                        <div className="relative w-full h-full p-4">
+                          <Image
+                            src={product.mockup}
+                            alt={`${product.name} mockup`}
+                            fill
+                            className="object-contain"
+                          />
+                          {/* Logo overlay preview */}
+                          {design.imageUrl && logoPositions[product.id] && (
+                            <div 
+                              className="absolute"
+                              style={{
+                                left: `${logoPositions[product.id].x}%`,
+                                top: `${logoPositions[product.id].y}%`,
+                                transform: `translate(-50%, -50%) scale(${logoPositions[product.id].scale}) rotate(${logoPositions[product.id].rotation}deg)`,
+                              }}
+                            >
+                              <Image
+                                src={`/api/images/${design.imageUrl.replace(/^\/+/, '')}`}
+                                alt="Logo preview"
+                                width={60}
+                                height={60}
+                                className="object-contain"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Package className="h-24 w-24 text-muted-foreground/30" />
+                        </div>
+                      )}
                     </div>
                     <div className="text-sm space-y-1">
                       <p className="flex justify-between">

@@ -93,6 +93,8 @@ model Product {
   placement   String?  // Design placement (chest, back, sleeve, etc.)
   brand       String   @default("Basketball Factory") // Product brand
   tags        String[] @default([]) // Product tags for search and filtering
+  sku         String?  // Product SKU for inventory tracking and POD integration
+  metadata    Json?    // Additional metadata for POD providers and other integrations
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -78,3 +78,112 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+/**
+ * POST /wc-api/v3/products
+ * Create a new product (legacy endpoint)
+ */
+export async function POST(request: NextRequest) {
+  console.log('[WooCommerce API - Legacy] POST /wc-api/v3/products');
+  
+  // Verify authentication
+  const auth = await verifyWooCommerceAuth(request);
+  if (!auth.valid) {
+    return createUnauthorizedResponse();
+  }
+  
+  try {
+    const body = await request.json();
+    console.log('[WooCommerce API - Legacy] Product data received:', JSON.stringify(body, null, 2));
+    
+    // Extract product data from WooCommerce format
+    const {
+      name,
+      type = 'simple',
+      status = 'publish',
+      description = '',
+      short_description = '',
+      sku = '',
+      regular_price,
+      sale_price,
+      price,
+      categories = [],
+      images = [],
+      attributes = [],
+      variations = [],
+      meta_data = []
+    } = body;
+    
+    // Validate required fields
+    if (!name) {
+      return NextResponse.json(
+        {
+          code: 'woocommerce_rest_product_invalid_name',
+          message: 'Product name is required',
+          data: { status: 400 }
+        },
+        { status: 400 }
+      );
+    }
+    
+    // Extract POD metadata
+    const podProvider = meta_data?.find((m: any) => m.key === '_pod_provider')?.value || 'jetprint';
+    const podProductId = meta_data?.find((m: any) => m.key === '_pod_product_id')?.value;
+    const podVariantId = meta_data?.find((m: any) => m.key === '_pod_variant_id')?.value;
+    
+    // Determine final price
+    const finalPrice = price || sale_price || regular_price || '0';
+    
+    // Process images - extract URLs
+    const imageUrls = images.map((img: any) => img.src || img.url || img).filter(Boolean);
+    const mainImage = imageUrls[0] || '';
+    
+    // Process categories - extract names
+    const categoryNames = categories.map((cat: any) => cat.name || cat).filter(Boolean);
+    
+    // Create the product
+    const product = await prisma.product.create({
+      data: {
+        name,
+        description: description || short_description || '',
+        price: parseFloat(finalPrice),
+        category: (categoryNames.join(', ') || 'POD Products') as any, // Cast to any to handle Category enum
+        imageUrl: mainImage,
+        images: imageUrls,
+        stock: status === 'publish' ? 100 : 0,
+        sku: sku || `${podProvider}-${Date.now()}`,
+        // Store POD metadata in JSON fields
+        metadata: {
+          podProvider,
+          podProductId,
+          podVariantId,
+          type,
+          status,
+          regularPrice: regular_price,
+          salePrice: sale_price,
+          categories: categoryNames,
+          attributes: attributes,
+          variations: variations,
+          metaData: meta_data
+        }
+      }
+    });
+    
+    console.log(`[WooCommerce API - Legacy] ✅ Created product: ${product.id} - ${product.name}`);
+    
+    // Map to WooCommerce format and return
+    const wcProduct = mapProductToWooCommerce(product);
+    
+    return NextResponse.json(wcProduct, { status: 201 });
+  } catch (error) {
+    console.error('[WooCommerce API - Legacy] Error creating product:', error);
+    return NextResponse.json(
+      {
+        code: 'woocommerce_rest_error',
+        message: error instanceof Error ? error.message : 'Failed to create product',
+        data: { status: 500 }
+      },
+      { status: 500 }
+    );
+  }
+}

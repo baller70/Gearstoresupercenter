@@ -76,11 +76,46 @@ export default function WooCommerceIntegration() {
     }
   };
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(label);
-    toast.success(`${label} copied to clipboard!`);
-    setTimeout(() => setCopied(null), 2000);
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      // Try modern Clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        setCopied(label);
+        toast.success(`${label} copied to clipboard!`);
+        setTimeout(() => setCopied(null), 2000);
+        return;
+      }
+    } catch (clipboardError) {
+      console.log('Clipboard API failed, trying fallback method');
+    }
+
+    // Fallback method for iframe or non-secure contexts
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      textArea.remove();
+      
+      if (successful) {
+        setCopied(label);
+        toast.success(`${label} copied to clipboard!`);
+        setTimeout(() => setCopied(null), 2000);
+      } else {
+        throw new Error('Copy command failed');
+      }
+    } catch (fallbackError) {
+      console.error('Failed to copy:', fallbackError);
+      // Show the text in a prompt as last resort
+      toast.info(`Please copy manually: ${text.substring(0, 50)}...`);
+    }
   };
 
   if (loading) {

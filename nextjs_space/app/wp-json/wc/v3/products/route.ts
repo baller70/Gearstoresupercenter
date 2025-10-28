@@ -280,3 +280,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+/**
+ * PUT /wp-json/wc/v3/products (bulk update - not commonly used)
+ * PATCH /wp-json/wc/v3/products (bulk update - not commonly used)
+ * Note: Individual product updates go to /wp-json/wc/v3/products/[id]
+ */
+export async function PUT(request: NextRequest) {
+  return NextResponse.json(
+    {
+      code: 'rest_no_route',
+      message: 'No route was found matching the URL and request method. Use PUT /wp-json/wc/v3/products/{id} to update a specific product.',
+      data: { status: 404 }
+    },
+    { status: 404 }
+  );
+}
+
+export async function PATCH(request: NextRequest) {
+  return PUT(request);
+}

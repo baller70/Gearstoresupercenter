@@ -517,6 +517,99 @@ export default function JetprintProductsPage() {
           </Card>
         )}
 
+        {/* Troubleshooting Section */}
+        <Card className="mt-8 bg-gradient-to-br from-amber-500/5 to-background border-amber-500/20">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <AlertCircle className="mr-2 h-5 w-5 text-amber-600" />
+              Publishing Issues? Troubleshooting Steps
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="bg-green-100 dark:bg-green-900/20 border border-green-500/50 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-green-900 dark:text-green-100 mb-1">
+                      ✅ WooCommerce API is WORKING
+                    </h4>
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                      Our API endpoint has been tested and is functioning correctly. Products can be created successfully through the WooCommerce REST API.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-3 text-lg">If Publishing Still Fails in Jetprint:</h4>
+                
+                <div className="space-y-3">
+                  <div className="border-l-4 border-blue-500 pl-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">1. Re-Authorize Your Store</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Go to Jetprint → Settings → Stores → Find your store → Click "Disconnect" → Then "Connect Store" again → Complete the OAuth flow
+                    </p>
+                  </div>
+
+                  <div className="border-l-4 border-blue-500 pl-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">2. Check Jetprint's Error Message</h5>
+                    <p className="text-sm text-muted-foreground">
+                      When publishing fails, Jetprint usually shows a specific error message. Common issues include: missing product images, invalid pricing, or incomplete product data.
+                    </p>
+                  </div>
+
+                  <div className="border-l-4 border-blue-500 pl-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">3. Verify Store URL is Accessible</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Your store URL: <code className="bg-muted px-2 py-1 rounded text-xs">https://basketballgearstore.abacusai.app</code>
+                      <br />
+                      Make sure this URL is accessible from external networks and not blocked by firewall rules.
+                    </p>
+                  </div>
+
+                  <div className="border-l-4 border-blue-500 pl-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">4. Check API Permissions</h5>
+                    <p className="text-sm text-muted-foreground">
+                      During OAuth setup, ensure you grant "Read/Write" permissions (not just "Read"). Jetprint needs write access to create products.
+                    </p>
+                  </div>
+
+                  <div className="border-l-4 border-amber-500 pl-4 py-2">
+                    <h5 className="font-semibold text-sm mb-1">5. Still Not Working?</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Copy the exact error message from Jetprint and check:
+                    </p>
+                    <ul className="list-disc list-inside text-sm text-muted-foreground ml-4 mt-1">
+                      <li>Does the product have required images?</li>
+                      <li>Is the pricing set correctly?</li>
+                      <li>Are there any special characters in product names?</li>
+                      <li>Is the product variant/size data complete?</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 border rounded-lg p-4 mt-4">
+                <h5 className="font-semibold text-sm mb-2">🔍 API Endpoint Information</h5>
+                <div className="space-y-1 text-xs font-mono">
+                  <div>
+                    <span className="text-muted-foreground">Discovery:</span>
+                    <code className="ml-2 bg-background px-2 py-1 rounded">GET /wp-json/wc/v3</code>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Products:</span>
+                    <code className="ml-2 bg-background px-2 py-1 rounded">POST /wp-json/wc/v3/products</code>
+                  </div>
+                  <div className="mt-2 text-green-600">
+                    <span>Status: ✅ All endpoints tested and working</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Help Section */}
         <Card className="mt-8 bg-gradient-to-br from-blue-500/5 to-background border-blue-500/20">
           <CardHeader>

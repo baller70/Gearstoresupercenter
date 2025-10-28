@@ -236,9 +236,22 @@ export async function POST(request: NextRequest) {
     });
     
     console.log(`[WooCommerce API] ✅ Created product: ${product.id} - ${product.name}`);
+    console.log(`[WooCommerce API] Product metadata stored:`, JSON.stringify(product.metadata, null, 2));
     
     // Map to WooCommerce format and return
     const wcProduct = mapProductToWooCommerce(product);
+    
+    // Explicitly log the critical fields that Jetprint needs
+    console.log(`[WooCommerce API] Response includes:`);
+    console.log(`  - id: ${wcProduct.id}`);
+    console.log(`  - status: "${wcProduct.status}" (type: ${typeof wcProduct.status})`);
+    console.log(`  - sku: "${wcProduct.sku}"`);
+    console.log(`  - type: "${wcProduct.type}"`);
+    
+    // Verify status field exists and is not undefined
+    if (wcProduct.status === undefined) {
+      console.error(`[WooCommerce API] ❌ WARNING: status field is undefined in response!`);
+    }
     
     // Log success to debugger
     await logToDebugger({

@@ -179,9 +179,21 @@ export async function PUT(
     });
     
     console.log(`[WooCommerce API] ✅ Updated product: ${updatedProduct.id} - ${updatedProduct.name}`);
+    console.log(`[WooCommerce API] Updated metadata:`, JSON.stringify(updatedProduct.metadata, null, 2));
     
     // Map to WooCommerce format and return
     const wcProduct = mapProductToWooCommerce(updatedProduct);
+    
+    // Log critical response fields
+    console.log(`[WooCommerce API] Update response includes:`);
+    console.log(`  - id: ${wcProduct.id}`);
+    console.log(`  - status: "${wcProduct.status}" (type: ${typeof wcProduct.status})`);
+    console.log(`  - sku: "${wcProduct.sku}"`);
+    
+    // Verify status field
+    if (wcProduct.status === undefined) {
+      console.error(`[WooCommerce API] ❌ WARNING: status field is undefined in update response!`);
+    }
     
     return NextResponse.json(wcProduct);
   } catch (error) {

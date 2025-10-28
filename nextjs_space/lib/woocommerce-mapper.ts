@@ -148,12 +148,21 @@ export function mapWooCommerceStatus(wcStatus: string): string {
  * Map our Product to WooCommerce Product format
  */
 export function mapProductToWooCommerce(product: Product): any {
-  // Extract metadata
-  const metadata = (product.metadata as any) || {};
-  const productStatus = metadata.status || (product.inStock ? 'publish' : 'draft');
-  const productType = metadata.type || 'simple';
-  const salePrice = metadata.salePrice || '';
-  const regularPrice = metadata.regularPrice || product.price.toString();
+  // Extract metadata - ensure it's always an object
+  const metadata = (product.metadata && typeof product.metadata === 'object' ? product.metadata : {}) as any;
+  
+  // Explicitly determine status - ensure it's always a valid string
+  let productStatus = 'draft';
+  if (metadata.status && typeof metadata.status === 'string') {
+    productStatus = metadata.status;
+  } else if (product.inStock === true) {
+    productStatus = 'publish';
+  }
+  
+  // Ensure other fields have valid defaults
+  const productType = (metadata.type && typeof metadata.type === 'string') ? metadata.type : 'simple';
+  const salePrice = (metadata.salePrice && typeof metadata.salePrice === 'string') ? metadata.salePrice : '';
+  const regularPrice = (metadata.regularPrice && typeof metadata.regularPrice === 'string') ? metadata.regularPrice : product.price.toString();
   
   return {
     id: product.id,

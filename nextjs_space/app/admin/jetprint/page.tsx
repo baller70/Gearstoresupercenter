@@ -1,64 +1,141 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { prisma } from "@/lib/db"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
 import { formatPrice } from "@/lib/products"
 import { 
   Package,
   ExternalLink,
   Eye,
   Edit,
-  Trash2,
   RefreshCw,
   AlertCircle,
-  CheckCircle,
-  Link as LinkIcon
+  Link as LinkIcon,
+  CheckCircle2
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { redirect } from "next/navigation"
+import { toast } from 'sonner'
 
-export default async function JetprintProductsPage() {
-  const session = await getServerSession(authOptions)
+interface Product {
+  id: string;
+  name: string;
+  imageUrl: string;
+  category: string;
+  price: number;
+  inStock: boolean;
+  designId: string | null;
+  design?: {
+    id: string;
+    name: string;
+    logoUrl: string;
+    status: string;
+  };
+}
 
-  if (!session || session?.user?.role !== 'ADMIN') {
-    redirect('/')
-  }
+interface Stats {
+  totalProducts: number;
+  jetprintProducts: number;
+  nonJetprintProducts: number;
+  lastSync: string | null;
+}
 
-  // Get all products with their design associations
-  const products = await prisma.product.findMany({
-    include: {
-      design: true,
-    },
-    orderBy: { createdAt: 'desc' }
-  })
+export default function JetprintProductsPage() {
+  const { data: session, status } = useSession() || {};
+  const router = useRouter();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [stats, setStats] = useState<Stats>({
+    totalProducts: 0,
+    jetprintProducts: 0,
+    nonJetprintProducts: 0,
+    lastSync: null
+  });
 
-  // Get Jetprint webhook configuration (check for Jetprint-related webhooks)
-  const jetprintWebhook = await prisma.webhook.findFirst({
-    where: {
-      name: {
-        contains: 'jetprint',
-        mode: 'insensitive'
-      }
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
     }
-  })
 
-  // Filter products that could be POD products (have designs)
-  const podProducts = products.filter(p => p.designId)
-  const jetprintProducts = podProducts // All POD products are potentially Jetprint products
-  const nonJetprintProducts = products.filter(p => !p.designId)
+    if (session?.user?.role !== 'ADMIN') {
+      router.push('/');
+      return;
+    }
 
-  const stats = {
-    totalProducts: products.length,
-    jetprintProducts: jetprintProducts.length,
-    nonJetprintProducts: nonJetprintProducts.length,
-    activeWebhook: jetprintWebhook?.status === 'active' ? 'Active' : 'Inactive',
-    totalRevenue: 0, // You can calculate this from orders if needed
+    fetchProducts();
+  }, [session, status, router]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const allProducts = await response.json();
+        setProducts(allProducts);
+        
+        const podProducts = allProducts.filter((p: Product) => p.designId);
+        const nonPodProducts = allProducts.filter((p: Product) => !p.designId);
+        
+        setStats({
+          totalProducts: allProducts.length,
+          jetprintProducts: podProducts.length,
+          nonJetprintProducts: nonPodProducts.length,
+          lastSync: localStorage.getItem('jetprint_last_sync')
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      toast.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const response = await fetch('/api/admin/jetprint/sync', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success('Products synced successfully!');
+        localStorage.setItem('jetprint_last_sync', new Date().toISOString());
+        await fetchProducts(); // Refresh products
+      } else {
+        toast.error('Failed to sync products');
+      }
+    } catch (error) {
+      console.error('Sync error:', error);
+      toast.error('Failed to sync products');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  if (loading || status === 'loading') {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 max-w-7xl py-8">
+          <div className="flex items-center justify-center py-12">
+            <RefreshCw className="h-8 w-8 animate-spin" />
+          </div>
+        </div>
+      </div>
+    );
   }
+
+  const jetprintProducts = products.filter(p => p.designId);
+  const nonJetprintProducts = products.filter(p => !p.designId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,6 +157,14 @@ export default async function JetprintProductsPage() {
               </p>
             </div>
             <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={handleSync}
+                disabled={syncing}
+              >
+                <RefreshCw className={`mr-2 h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
+                {syncing ? 'Syncing...' : 'Sync Products'}
+              </Button>
               <Button variant="outline" asChild>
                 <Link href="/admin/woocommerce">
                   <LinkIcon className="mr-2 h-4 w-4" />
@@ -97,7 +182,7 @@ export default async function JetprintProductsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           
           <Card>
             <CardContent className="p-6">
@@ -143,43 +228,19 @@ export default async function JetprintProductsPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Webhook Status</p>
-                  <p className="text-2xl font-bold">{stats.activeWebhook}</p>
-                  <p className="text-xs text-muted-foreground">Order sync</p>
-                </div>
-                <div className={`w-12 h-12 ${jetprintWebhook?.status === 'active' ? 'bg-green-100 dark:bg-green-900/20' : 'bg-red-100 dark:bg-red-900/20'} rounded-full flex items-center justify-center`}>
-                  {jetprintWebhook?.status === 'active' ? (
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                  ) : (
-                    <AlertCircle className="h-6 w-6 text-red-600" />
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
-        {/* Integration Status Alert */}
-        {jetprintWebhook?.status !== 'active' && (
-          <Card className="mb-8 border-yellow-500/50 bg-yellow-500/5">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-yellow-600 mb-1">Webhook Not Configured</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Jetprint webhook is not active. Orders will not automatically sync to Jetprint for fulfillment.
+        {/* Last Sync Info */}
+        {stats.lastSync && (
+          <Card className="mb-8 border-green-500/50 bg-green-500/5">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-green-600">Last synced</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(stats.lastSync).toLocaleString()}
                   </p>
-                  <Button size="sm" variant="outline" asChild>
-                    <Link href="/admin/woocommerce/webhooks">
-                      Configure Webhook
-                    </Link>
-                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -199,10 +260,6 @@ export default async function JetprintProductsPage() {
                   Products created from uploaded designs (Print-on-Demand)
                 </p>
               </div>
-              <Button size="sm" variant="outline">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Sync with Jetprint
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -422,8 +479,17 @@ export default async function JetprintProductsPage() {
                   <li>Upload a design through the Design Management system</li>
                   <li>The system automatically generates POD products for all categories</li>
                   <li>Products are automatically available for Jetprint fulfillment</li>
-                  <li>Configure webhooks to sync orders with Jetprint automatically</li>
+                  <li>Use the "Sync Products" button to refresh product data from Jetprint</li>
                 </ol>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2">About Jetprint Integration</h4>
+                <p className="text-sm text-muted-foreground">
+                  Jetprint connects to your store through the WooCommerce API. When customers place orders, 
+                  Jetprint automatically receives them through the API connection. Use the sync button regularly 
+                  to keep your product catalog up to date.
+                </p>
               </div>
               
               <div className="flex gap-3 pt-4">
@@ -433,8 +499,8 @@ export default async function JetprintProductsPage() {
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/admin/woocommerce/webhooks">
-                    Webhook Settings
+                  <Link href="/admin/woocommerce">
+                    API Settings
                   </Link>
                 </Button>
               </div>

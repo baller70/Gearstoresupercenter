@@ -149,7 +149,21 @@ export default async function AdminPage() {
         </div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
+          <Link href="/admin/jetprint">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-background">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <Package className="mr-2 h-5 w-5 text-blue-600" />
+                  Jetprint Products
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage Jetprint POD products and fulfillment integration
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
           <Link href="/admin/analytics">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>

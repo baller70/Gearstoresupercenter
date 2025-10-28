@@ -264,30 +264,76 @@ export default function WooCommerceIntegration() {
         <CardHeader>
           <CardTitle>Available API Endpoints</CardTitle>
           <CardDescription>
-            Your store now supports these WooCommerce-compatible endpoints
+            Your store supports both modern and legacy WooCommerce API paths
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2 font-mono text-sm">
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded">GET</span>
-              <code>/wp-json/wc/v3/orders</code>
+          <Alert className="mb-4">
+            <AlertDescription>
+              <p className="font-semibold mb-2">📌 Supported URL Formats:</p>
+              <div className="space-y-1 text-sm">
+                <p><strong>Modern (Recommended):</strong> <code className="bg-muted px-2 py-1 rounded">/wp-json/wc/v3/...</code></p>
+                <p><strong>Legacy (For Compatibility):</strong> <code className="bg-muted px-2 py-1 rounded">/wc-api/v3/...</code></p>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Both formats work identically. Use whichever format your POD company requires.
+              </p>
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold mb-2 text-sm">Orders Management</h4>
+              <div className="space-y-2 font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">GET</span>
+                  <code>/wp-json/wc/v3/orders</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/orders</code>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">GET</span>
+                  <code>/wp-json/wc/v3/orders/{'{'}id{'}'}</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/orders/{'{'}id{'}'}</code>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">PUT</span>
+                  <code>/wp-json/wc/v3/orders/{'{'}id{'}'}</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/orders/{'{'}id{'}'}</code>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded">GET</span>
-              <code>/wp-json/wc/v3/orders/{'{'} id{'}'}</code>
+
+            <div>
+              <h4 className="font-semibold mb-2 text-sm">Products Catalog</h4>
+              <div className="space-y-2 font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">GET</span>
+                  <code>/wp-json/wc/v3/products</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/products</code>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">GET</span>
+                  <code>/wp-json/wc/v3/products/{'{'}id{'}'}</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/products/{'{'}id{'}'}</code>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">PUT</span>
-              <code>/wp-json/wc/v3/orders/{'{'}id{'}'}</code>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded">GET</span>
-              <code>/wp-json/wc/v3/products</code>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded">GET</span>
-              <code>/wp-json/wc/v3/products/{'{'}id{'}'}</code>
+
+            <div>
+              <h4 className="font-semibold mb-2 text-sm">Webhooks</h4>
+              <div className="space-y-2 font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">GET</span>
+                  <code>/wp-json/wc/v3/webhooks</code>
+                  <span className="text-muted-foreground">or</span>
+                  <code>/wc-api/v3/webhooks</code>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>

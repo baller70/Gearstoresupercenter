@@ -1,5 +1,4 @@
 
-import { createCanvas, loadImage, Canvas, Image as CanvasImage } from 'canvas';
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -82,6 +81,9 @@ export class AdvancedMockupGenerator {
     customPosition?: MockupPosition
   ): Promise<Buffer> {
     console.log(`[Advanced Mockup] Generating ${productType} in ${colorHex}`);
+    
+    // Dynamically import canvas (avoids build-time errors)
+    const { createCanvas, loadImage } = await import('canvas');
     
     try {
       const templateFile = this.productTemplates[productType];

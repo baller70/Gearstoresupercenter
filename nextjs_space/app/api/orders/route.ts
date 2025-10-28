@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { NextRequest, NextResponse } from "next/server"
+import { createOrderWebhook } from "@/lib/webhooks"
 
 export const dynamic = "force-dynamic"
 
@@ -119,6 +120,34 @@ export async function POST(request: NextRequest) {
 
       return newOrder
     })
+
+    // Trigger webhooks for order creation (non-blocking)
+    createOrderWebhook({
+      id: order.id,
+      orderNumber: `ORD-${order.id.slice(-8)}`,
+      status: order.status,
+      total: order.total,
+      customerName: order.shippingName,
+      customerEmail: order.shippingEmail,
+      items: items.map((item: any) => ({
+        id: item.productId,
+        productId: item.productId,
+        productName: item.name || 'Product',
+        quantity: item.quantity,
+        price: item.price,
+        customization: item.customization,
+      })),
+      shippingAddress: {
+        name: order.shippingName,
+        street: order.shippingAddress,
+        city: order.shippingCity,
+        state: order.shippingState,
+        zipCode: order.shippingZip,
+        country: order.shippingCountry,
+      },
+    }).catch(error => {
+      console.error('Webhook trigger error (non-blocking):', error);
+    });
 
     return NextResponse.json(order)
 

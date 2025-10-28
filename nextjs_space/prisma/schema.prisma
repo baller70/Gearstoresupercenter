@@ -768,6 +768,19 @@ model ApiKey {
   @@index([key])
 }
 
+model Webhook {
+  id          String   @id @default(cuid())
+  name        String
+  topic       String   // e.g., "order.created", "order.updated"
+  deliveryUrl String   // URL to send webhook notifications
+  status      String   @default("active") // "active" or "paused"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([topic])
+  @@index([status])
+}
+
 model UserDesign {
   id               String   @id @default(cuid())
   userId           String

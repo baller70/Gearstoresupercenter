@@ -259,6 +259,31 @@ export default function WooCommerceIntegration() {
         </CardContent>
       </Card>
 
+      {/* Webhooks Section */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Webhook Management</CardTitle>
+          <CardDescription>
+            Configure automatic order notifications for Jetprint and other POD services
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">
+                Set up webhooks to automatically send order information to your print-on-demand service when orders are placed.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                This enables real-time order fulfillment and inventory management.
+              </p>
+            </div>
+            <Button onClick={() => router.push('/admin/woocommerce/webhooks')}>
+              Manage Webhooks
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* API Endpoints Card */}
       <Card className="mt-8">
         <CardHeader>

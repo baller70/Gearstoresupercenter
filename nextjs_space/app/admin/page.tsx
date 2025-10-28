@@ -164,6 +164,20 @@ export default async function AdminPage() {
             </Card>
           </Link>
 
+          <Link href="/admin/interestprint">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-background">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg">
+                  <Package className="mr-2 h-5 w-5 text-purple-600" />
+                  InterestPrint Products
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage InterestPrint POD products and fulfillment integration
+                </p>
+              </CardHeader>
+            </Card>
+          </Link>
+
           <Link href="/admin/analytics">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardHeader>

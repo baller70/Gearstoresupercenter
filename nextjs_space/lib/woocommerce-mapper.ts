@@ -148,6 +148,13 @@ export function mapWooCommerceStatus(wcStatus: string): string {
  * Map our Product to WooCommerce Product format
  */
 export function mapProductToWooCommerce(product: Product): any {
+  // Extract metadata
+  const metadata = (product.metadata as any) || {};
+  const productStatus = metadata.status || (product.inStock ? 'publish' : 'draft');
+  const productType = metadata.type || 'simple';
+  const salePrice = metadata.salePrice || '';
+  const regularPrice = metadata.regularPrice || product.price.toString();
+  
   return {
     id: product.id,
     name: product.name,
@@ -157,16 +164,16 @@ export function mapProductToWooCommerce(product: Product): any {
     date_created_gmt: product.createdAt.toISOString(),
     date_modified: product.updatedAt.toISOString(),
     date_modified_gmt: product.updatedAt.toISOString(),
-    type: 'simple',
-    status: 'publish',
+    type: productType,
+    status: productStatus,
     featured: product.featured,
     catalog_visibility: 'visible',
     description: product.description,
     short_description: product.description?.substring(0, 100) || '',
     sku: product.sku || product.id,
     price: product.price.toString(),
-    regular_price: product.price.toString(),
-    sale_price: '',
+    regular_price: regularPrice,
+    sale_price: salePrice,
     date_on_sale_from: null,
     date_on_sale_from_gmt: null,
     date_on_sale_to: null,
@@ -246,7 +253,7 @@ export function mapProductToWooCommerce(product: Product): any {
       }
     ],
     default_attributes: [],
-    variations: [],
+    variations: metadata.variations || [],
     grouped_products: [],
     menu_order: 0,
     meta_data: [
@@ -257,7 +264,21 @@ export function mapProductToWooCommerce(product: Product): any {
       {
         key: 'placement',
         value: product.placement || 'chest'
-      }
+      },
+      {
+        key: '_pod_provider',
+        value: metadata.podProvider || ''
+      },
+      {
+        key: '_pod_product_id',
+        value: metadata.podProductId || ''
+      },
+      {
+        key: '_pod_variant_id',
+        value: metadata.podVariantId || ''
+      },
+      // Include any additional metadata stored by POD providers
+      ...(metadata.metaData || [])
     ]
   };
 }

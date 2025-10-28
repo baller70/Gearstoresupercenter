@@ -63,6 +63,7 @@ model User {
   wishlists Wishlist[]
   discountUsages DiscountUsage[]
   bulkOrders BulkOrder[]
+  apiKeys ApiKey[]
   priceAlerts PriceAlert[]
 }
 
@@ -748,6 +749,23 @@ enum FitType {
   REGULAR
   RELAXED
   OVERSIZED
+}
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  key         String   @unique // Consumer Key (ck_xxxxx)
+  secret      String   // Consumer Secret (cs_xxxxx)
+  userId      String
+  name        String   @default("WooCommerce Integration")
+  permissions String[] // e.g., ["read", "write"]
+  lastUsed    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([key])
 }
 
 model UserDesign {

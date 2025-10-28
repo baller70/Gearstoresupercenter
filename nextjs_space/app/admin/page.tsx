@@ -206,15 +206,15 @@ export default async function AdminPage() {
             </Card>
           </Link>
 
-          <Link href="/admin/abandoned-carts">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Link href="/admin/woocommerce">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-primary/30">
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">
-                  <ShoppingBag className="mr-2 h-5 w-5 text-red-600" />
-                  Abandoned Carts
+                  <Settings className="mr-2 h-5 w-5 text-primary" />
+                  WooCommerce API
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Track and recover abandoned shopping carts
+                  Connect POD companies with WooCommerce API credentials
                 </p>
               </CardHeader>
             </Card>

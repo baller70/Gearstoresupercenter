@@ -83,21 +83,70 @@ export async function GET(request: NextRequest) {
  * POST /wc-api/v3/products
  * Create a new product (legacy endpoint)
  */
+async function logToDebuggerLegacy(logData: any) {
+  try {
+    await fetch('http://localhost:3000/api/admin/debug/logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(logData)
+    });
+  } catch (error) {
+    // Silently fail - debug logging shouldn't break the main flow
+  }
+}
+
 export async function POST(request: NextRequest) {
   console.log('[WooCommerce API - Legacy] POST /wc-api/v3/products');
   
+  // Log the raw headers for debugging
+  const headersList: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    headersList[key] = value;
+  });
+  console.log('[WooCommerce API - Legacy] Request headers:', JSON.stringify(headersList, null, 2));
+  
   // Verify authentication
   const auth = await verifyWooCommerceAuth(request);
+  console.log('[WooCommerce API - Legacy] Auth result:', { valid: auth.valid, userId: auth.userId });
+  
   if (!auth.valid) {
+    console.log('[WooCommerce API - Legacy] ❌ AUTH FAILED - Returning 401');
+    
+    // Log to debugger
+    await logToDebuggerLegacy({
+      method: 'POST',
+      url: '/wc-api/v3/products',
+      headers: headersList,
+      body: null,
+      status: 401,
+      response: { error: 'Authentication failed' },
+      error: 'Invalid or missing authentication credentials'
+    });
+    
     return createUnauthorizedResponse();
   }
   
+  let body: any;
   try {
-    const body = await request.json();
-    console.log('[WooCommerce API - Legacy] ===== NEW PRODUCT REQUEST =====');
-    console.log('[WooCommerce API - Legacy] Timestamp:', new Date().toISOString());
-    console.log('[WooCommerce API - Legacy] Auth User:', auth.userId);
-    console.log('[WooCommerce API - Legacy] Product data received:', JSON.stringify(body, null, 2));
+    body = await request.json();
+  } catch (jsonError) {
+    console.error('[WooCommerce API - Legacy] ❌ Failed to parse JSON body:', jsonError);
+    return NextResponse.json(
+      {
+        code: 'woocommerce_rest_invalid_json',
+        message: 'Invalid JSON in request body',
+        data: { status: 400 }
+      },
+      { status: 400 }
+    );
+  }
+  
+  console.log('[WooCommerce API - Legacy] ===== NEW PRODUCT REQUEST =====');
+  console.log('[WooCommerce API - Legacy] Timestamp:', new Date().toISOString());
+  console.log('[WooCommerce API - Legacy] Auth User:', auth.userId);
+  console.log('[WooCommerce API - Legacy] Product data received:', JSON.stringify(body, null, 2));
+  
+  try {
     
     // Extract product data from WooCommerce format
     const {
@@ -197,6 +246,16 @@ export async function POST(request: NextRequest) {
     // Map to WooCommerce format and return
     const wcProduct = mapProductToWooCommerce(product);
     
+    // Log success to debugger
+    await logToDebuggerLegacy({
+      method: 'POST',
+      url: '/wc-api/v3/products',
+      headers: headersList,
+      body,
+      status: 201,
+      response: wcProduct
+    });
+    
     return NextResponse.json(wcProduct, { status: 201 });
   } catch (error) {
     console.error('[WooCommerce API - Legacy] ❌ ERROR creating product');
@@ -204,16 +263,26 @@ export async function POST(request: NextRequest) {
     console.error('[WooCommerce API - Legacy] Error message:', error instanceof Error ? error.message : String(error));
     console.error('[WooCommerce API - Legacy] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
-    return NextResponse.json(
-      {
-        code: 'woocommerce_rest_error',
-        message: error instanceof Error ? error.message : 'Failed to create product',
-        data: { 
-          status: 500,
-          error_details: error instanceof Error ? error.message : String(error)
-        }
-      },
-      { status: 500 }
-    );
+    const errorResponse = {
+      code: 'woocommerce_rest_error',
+      message: error instanceof Error ? error.message : 'Failed to create product',
+      data: { 
+        status: 500,
+        error_details: error instanceof Error ? error.message : String(error)
+      }
+    };
+    
+    // Log error to debugger
+    await logToDebuggerLegacy({
+      method: 'POST',
+      url: '/wc-api/v3/products',
+      headers: headersList,
+      body,
+      status: 500,
+      response: errorResponse,
+      error: error instanceof Error ? error.stack || error.message : String(error)
+    });
+    
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

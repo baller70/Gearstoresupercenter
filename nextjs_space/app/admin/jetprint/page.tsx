@@ -17,7 +17,8 @@ import {
   RefreshCw,
   AlertCircle,
   Link as LinkIcon,
-  CheckCircle2
+  CheckCircle2,
+  Bug
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -157,6 +158,15 @@ export default function JetprintProductsPage() {
               </p>
             </div>
             <div className="flex gap-3">
+              <Button 
+                variant="destructive" 
+                asChild
+              >
+                <Link href="/admin/debug">
+                  <Bug className="mr-2 h-4 w-4" />
+                  Debug Jetprint
+                </Link>
+              </Button>
               <Button 
                 variant="outline" 
                 onClick={handleSync}

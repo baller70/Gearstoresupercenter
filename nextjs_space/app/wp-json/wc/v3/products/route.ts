@@ -78,22 +78,70 @@ export async function GET(request: NextRequest) {
  * POST /wp-json/wc/v3/products
  * Create a new product
  */
+async function logToDebugger(logData: any) {
+  try {
+    await fetch('http://localhost:3000/api/admin/debug/logs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(logData)
+    });
+  } catch (error) {
+    // Silently fail - debug logging shouldn't break the main flow
+  }
+}
+
 export async function POST(request: NextRequest) {
   console.log('[WooCommerce API] POST /wp-json/wc/v3/products');
   
+  // Log the raw headers for debugging
+  const headersList: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    headersList[key] = value;
+  });
+  console.log('[WooCommerce API] Request headers:', JSON.stringify(headersList, null, 2));
+  
   // Verify authentication
   const auth = await verifyWooCommerceAuth(request);
+  console.log('[WooCommerce API] Auth result:', { valid: auth.valid, userId: auth.userId });
+  
   if (!auth.valid) {
+    console.log('[WooCommerce API] ❌ AUTH FAILED - Returning 401');
+    
+    // Log to debugger
+    await logToDebugger({
+      method: 'POST',
+      url: '/wp-json/wc/v3/products',
+      headers: headersList,
+      body: null,
+      status: 401,
+      response: { error: 'Authentication failed' },
+      error: 'Invalid or missing authentication credentials'
+    });
+    
     return createUnauthorizedResponse();
   }
   
+  let body: any;
   try {
-    const body = await request.json();
-    console.log('[WooCommerce API] ===== NEW PRODUCT REQUEST =====');
-    console.log('[WooCommerce API] Timestamp:', new Date().toISOString());
-    console.log('[WooCommerce API] Auth User:', auth.userId);
-    console.log('[WooCommerce API] Product data received:', JSON.stringify(body, null, 2));
-    
+    body = await request.json();
+  } catch (jsonError) {
+    console.error('[WooCommerce API] ❌ Failed to parse JSON body:', jsonError);
+    return NextResponse.json(
+      {
+        code: 'woocommerce_rest_invalid_json',
+        message: 'Invalid JSON in request body',
+        data: { status: 400 }
+      },
+      { status: 400 }
+    );
+  }
+  
+  console.log('[WooCommerce API] ===== NEW PRODUCT REQUEST =====');
+  console.log('[WooCommerce API] Timestamp:', new Date().toISOString());
+  console.log('[WooCommerce API] Auth User:', auth.userId);
+  console.log('[WooCommerce API] Product data received:', JSON.stringify(body, null, 2));
+  
+  try {
     // Extract product data from WooCommerce format
     const {
       name,
@@ -192,6 +240,16 @@ export async function POST(request: NextRequest) {
     // Map to WooCommerce format and return
     const wcProduct = mapProductToWooCommerce(product);
     
+    // Log success to debugger
+    await logToDebugger({
+      method: 'POST',
+      url: '/wp-json/wc/v3/products',
+      headers: headersList,
+      body,
+      status: 201,
+      response: wcProduct
+    });
+    
     return NextResponse.json(wcProduct, { status: 201 });
   } catch (error) {
     console.error('[WooCommerce API] ❌ ERROR creating product');
@@ -199,16 +257,26 @@ export async function POST(request: NextRequest) {
     console.error('[WooCommerce API] Error message:', error instanceof Error ? error.message : String(error));
     console.error('[WooCommerce API] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
-    return NextResponse.json(
-      {
-        code: 'woocommerce_rest_error',
-        message: error instanceof Error ? error.message : 'Failed to create product',
-        data: { 
-          status: 500,
-          error_details: error instanceof Error ? error.message : String(error)
-        }
-      },
-      { status: 500 }
-    );
+    const errorResponse = {
+      code: 'woocommerce_rest_error',
+      message: error instanceof Error ? error.message : 'Failed to create product',
+      data: { 
+        status: 500,
+        error_details: error instanceof Error ? error.message : String(error)
+      }
+    };
+    
+    // Log error to debugger
+    await logToDebugger({
+      method: 'POST',
+      url: '/wp-json/wc/v3/products',
+      headers: headersList,
+      body,
+      status: 500,
+      response: errorResponse,
+      error: error instanceof Error ? error.stack || error.message : String(error)
+    });
+    
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

@@ -1,100 +1,141 @@
-import dotenv from 'dotenv';
+import https from 'https';
 import { PrismaClient } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
 
-dotenv.config();
+// Load environment variables
+const envPath = path.join(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    if (line && !line.startsWith('#')) {
+      const [key, ...valueParts] = line.split('=');
+      if (key && valueParts.length) {
+        process.env[key.trim()] = valueParts.join('=').trim();
+      }
+    }
+  });
+}
 
 const prisma = new PrismaClient();
 
 async function testJetprintPublish() {
-  console.log('=== Simulating Jetprint Product Publish ===\n');
-  
-  // Get the latest API key
-  const apiKey = await prisma.apiKey.findFirst({
-    where: {
-      name: { contains: 'jetprint', mode: 'insensitive' }
-    },
-    orderBy: { createdAt: 'desc' }
-  });
-  
-  if (!apiKey) {
-    console.error('❌ No Jetprint API key found!');
-    await prisma.$disconnect();
-    return;
-  }
-  
-  console.log('Using API Key:', apiKey.key.substring(0, 15) + '...');
-  console.log('');
-  
-  // Create Basic Auth header
-  const auth = Buffer.from(`${apiKey.key}:${apiKey.secret}`).toString('base64');
-  
-  // Simulate Jetprint product payload
-  const productPayload = {
-    name: 'Custom Basketball Jersey - Test',
-    type: 'simple',
-    status: 'publish',
-    description: 'High-quality basketball jersey with custom design',
-    short_description: 'Custom basketball jersey',
-    sku: 'jetprint-test-' + Date.now(),
-    regular_price: '49.99',
-    categories: [{ name: 'Athletic Apparel' }],
-    images: [
-      { src: 'https://example.com/jersey-front.jpg' },
-      { src: 'https://example.com/jersey-back.jpg' }
-    ],
-    meta_data: [
-      { key: '_pod_provider', value: 'jetprint' },
-      { key: '_pod_product_id', value: 'jp_12345' },
-      { key: '_pod_variant_id', value: 'jpv_67890' }
-    ]
-  };
-  
-  console.log('Product Payload:', JSON.stringify(productPayload, null, 2));
-  console.log('');
-  
-  // Test both endpoints
-  const endpoints = [
-    'http://localhost:3000/wp-json/wc/v3/products',
-    'http://localhost:3000/wc-api/v3/products'
-  ];
-  
-  for (const endpoint of endpoints) {
-    console.log(`\nTesting: ${endpoint}`);
-    console.log('='.repeat(60));
+  try {
+    // Get API credentials
+    const apiKey = await prisma.apiKey.findFirst({
+      orderBy: { createdAt: 'desc' }
+    });
     
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json'
+    if (!apiKey) {
+      console.log('❌ No API key found. Please connect Jetprint first.');
+      return;
+    }
+    
+    console.log('✅ Found API key:', apiKey.consumerKey.substring(0, 10) + '...');
+    
+    // Create auth header (Basic Auth with consumer_key:consumer_secret)
+    const auth = Buffer.from(`${apiKey.consumerKey}:${apiKey.consumerSecret}`).toString('base64');
+    
+    // Sample product data that Jetprint would send
+    const productData = {
+      name: "Test Basketball T-Shirt from Jetprint",
+      type: "simple",
+      status: "publish",
+      description: "Custom basketball apparel from Jetprint POD",
+      short_description: "Premium basketball tee",
+      sku: "JETPRINT-TEST-001",
+      regular_price: "29.99",
+      price: "29.99",
+      categories: [
+        { name: "POD Products" }
+      ],
+      images: [
+        {
+          src: "https://example.com/image.jpg"
+        }
+      ],
+      meta_data: [
+        {
+          key: "_pod_provider",
+          value: "jetprint"
         },
-        body: JSON.stringify(productPayload)
+        {
+          key: "_pod_product_id",
+          value: "jp_12345"
+        },
+        {
+          key: "_pod_variant_id",
+          value: "jp_var_67890"
+        }
+      ]
+    };
+    
+    console.log('\n=== Simulating Jetprint POST Request ===');
+    console.log('URL: https://basketballgearstore.abacusai.app/wp-json/wc/v3/products');
+    console.log('Auth: Basic', auth.substring(0, 20) + '...');
+    console.log('Product Data:', JSON.stringify(productData, null, 2));
+    
+    // Make the request
+    const postData = JSON.stringify(productData);
+    
+    const options = {
+      hostname: 'basketballgearstore.abacusai.app',
+      port: 443,
+      path: '/wp-json/wc/v3/products',
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData),
+        'User-Agent': 'Jetprint/1.0'
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
+      
+      console.log(`\n=== Response Status: ${res.statusCode} ===`);
+      console.log('Response Headers:', JSON.stringify(res.headers, null, 2));
+      
+      res.on('data', (chunk) => {
+        data += chunk;
       });
       
-      console.log(`Status: ${response.status} ${response.statusText}`);
-      
-      const responseText = await response.text();
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText);
-      } catch {
-        responseData = responseText;
-      }
-      
-      if (response.ok) {
-        console.log('✅ SUCCESS!');
-        console.log('Response:', JSON.stringify(responseData, null, 2));
-      } else {
-        console.log('❌ FAILED!');
-        console.log('Error Response:', JSON.stringify(responseData, null, 2));
-      }
-    } catch (error) {
-      console.log('❌ REQUEST ERROR:', error.message);
-    }
+      res.on('end', () => {
+        console.log('\n=== Response Body ===');
+        try {
+          const parsed = JSON.parse(data);
+          console.log(JSON.stringify(parsed, null, 2));
+          
+          // Check for the status field
+          if (parsed.status !== undefined) {
+            console.log(`\n✅ SUCCESS: status field is present: "${parsed.status}"`);
+          } else {
+            console.log('\n❌ ERROR: status field is UNDEFINED in response!');
+          }
+          
+          // Check for error
+          if (parsed.code) {
+            console.log(`\n❌ API Error: ${parsed.message}`);
+          }
+        } catch (e) {
+          console.log('Raw response:', data);
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      console.error('❌ Request Error:', error.message);
+    });
+    
+    req.write(postData);
+    req.end();
+    
+  } catch (error) {
+    console.error('❌ Test Error:', error);
+  } finally {
+    await prisma.$disconnect();
   }
-  
-  await prisma.$disconnect();
 }
 
-testJetprintPublish().catch(console.error);
+testJetprintPublish();

@@ -45,8 +45,11 @@ export async function GET(request: NextRequest) {
     
     console.log(`[WooCommerce API] Found ${products.length} products`);
     
-    // Map to WooCommerce format
-    const wcProducts = products.map(mapProductToWooCommerce);
+    // Get the base URL from request
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format with base URL for proper image URLs
+    const wcProducts = products.map(p => mapProductToWooCommerce(p, baseUrl));
     
     // Get total count for pagination headers
     const totalProducts = await prisma.product.count({ where });
@@ -238,8 +241,12 @@ export async function POST(request: NextRequest) {
     console.log(`[WooCommerce API] ✅ Created product: ${product.id} - ${product.name}`);
     console.log(`[WooCommerce API] Product metadata stored:`, JSON.stringify(product.metadata, null, 2));
     
-    // Map to WooCommerce format and return
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format and return with proper image URLs
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     // Explicitly log the critical fields that Jetprint needs
     console.log(`[WooCommerce API] Response includes:`);

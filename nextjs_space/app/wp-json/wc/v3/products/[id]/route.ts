@@ -38,7 +38,11 @@ export async function GET(
       );
     }
     
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     console.log(`[WooCommerce API] ✅ Returning product: ${product.id} - ${product.name}`);
     
@@ -181,8 +185,12 @@ export async function PUT(
     console.log(`[WooCommerce API] ✅ Updated product: ${updatedProduct.id} - ${updatedProduct.name}`);
     console.log(`[WooCommerce API] Updated metadata:`, JSON.stringify(updatedProduct.metadata, null, 2));
     
-    // Map to WooCommerce format and return
-    const wcProduct = mapProductToWooCommerce(updatedProduct);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format and return with proper image URLs
+    const wcProduct = mapProductToWooCommerce(updatedProduct, baseUrl);
     
     // Log critical response fields
     console.log(`[WooCommerce API] Update response includes:`);
@@ -261,8 +269,12 @@ export async function DELETE(
     
     console.log(`[WooCommerce API] ✅ Deleted product: ${productId}`);
     
-    // Return the deleted product data
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Return the deleted product data with proper image URLs
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     return NextResponse.json(wcProduct);
   } catch (error) {

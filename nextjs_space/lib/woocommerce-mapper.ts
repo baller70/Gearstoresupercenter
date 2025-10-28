@@ -145,9 +145,32 @@ export function mapWooCommerceStatus(wcStatus: string): string {
 }
 
 /**
+ * Convert an image URL/path to a proper accessible URL
+ * Handles S3 keys, local files, and full URLs
+ */
+function convertImageUrl(imagePathOrUrl: string, baseUrl: string = ''): string {
+  // If it's already a full URL, return as-is
+  if (imagePathOrUrl.startsWith('http://') || imagePathOrUrl.startsWith('https://')) {
+    return imagePathOrUrl;
+  }
+  
+  // If it's a local file or S3 key, convert to proxy URL
+  // Remove leading slash if present
+  const cleanPath = imagePathOrUrl.startsWith('/') ? imagePathOrUrl.slice(1) : imagePathOrUrl;
+  
+  // If baseUrl is provided, use it; otherwise use relative path
+  if (baseUrl) {
+    return `${baseUrl}/api/images/${cleanPath}`;
+  }
+  
+  // For relative URLs in responses, use the proxy endpoint
+  return `/api/images/${cleanPath}`;
+}
+
+/**
  * Map our Product to WooCommerce Product format
  */
-export function mapProductToWooCommerce(product: Product): any {
+export function mapProductToWooCommerce(product: Product, baseUrl?: string): any {
   // Extract metadata - ensure it's always an object
   const metadata = (product.metadata && typeof product.metadata === 'object' ? product.metadata : {}) as any;
   
@@ -164,11 +187,24 @@ export function mapProductToWooCommerce(product: Product): any {
   const salePrice = (metadata.salePrice && typeof metadata.salePrice === 'string') ? metadata.salePrice : '';
   const regularPrice = (metadata.regularPrice && typeof metadata.regularPrice === 'string') ? metadata.regularPrice : product.price.toString();
   
+  // Determine base URL for images if not provided
+  const imageBaseUrl = baseUrl || (typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL || 'https://basketballgearstore.abacusai.app');
+  
+  // Process all images through the proxy
+  const imageUrls = product.images
+    .filter((img) => img && img.trim().length > 0)
+    .map((img) => convertImageUrl(img, imageBaseUrl));
+  
+  // Ensure we have at least one image (use main imageUrl as fallback)
+  if (imageUrls.length === 0 && product.imageUrl) {
+    imageUrls.push(convertImageUrl(product.imageUrl, imageBaseUrl));
+  }
+  
   return {
     id: product.id,
     name: product.name,
     slug: product.name.toLowerCase().replace(/\s+/g, '-'),
-    permalink: `https://yourstore.com/products/${product.id}`,
+    permalink: `${imageBaseUrl}/products/${product.id}`,
     date_created: product.createdAt.toISOString(),
     date_created_gmt: product.createdAt.toISOString(),
     date_modified: product.updatedAt.toISOString(),
@@ -233,13 +269,13 @@ export function mapProductToWooCommerce(product: Product): any {
       }
     ],
     tags: [],
-    images: product.images.map((img, index) => ({
+    images: imageUrls.map((imgUrl, index) => ({
       id: index,
       date_created: product.createdAt.toISOString(),
       date_created_gmt: product.createdAt.toISOString(),
       date_modified: product.updatedAt.toISOString(),
       date_modified_gmt: product.updatedAt.toISOString(),
-      src: img.startsWith('http') ? img : `https://i.ytimg.com/vi/ygErZGWkeYk/maxresdefault.jpg`,
+      src: imgUrl,
       name: product.name,
       alt: product.name
     })),

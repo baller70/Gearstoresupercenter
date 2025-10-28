@@ -48,7 +48,11 @@ export async function GET(
       );
     }
     
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     console.log(`[WooCommerce API - Legacy] ✅ Returning product ${productId}`);
     
@@ -195,8 +199,12 @@ export async function PUT(
     
     console.log(`[WooCommerce API - Legacy] ✅ Updated product: ${product.id} - ${product.name}`);
     
-    // Map to WooCommerce format and return
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format and return with proper image URLs
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     return NextResponse.json(wcProduct);
   } catch (error) {

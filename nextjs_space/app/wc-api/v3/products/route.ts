@@ -50,8 +50,11 @@ export async function GET(request: NextRequest) {
     
     console.log(`[WooCommerce API - Legacy] Found ${products.length} products`);
     
-    // Map to WooCommerce format
-    const wcProducts = products.map(mapProductToWooCommerce);
+    // Get the base URL from request
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format with base URL for proper image URLs
+    const wcProducts = products.map(p => mapProductToWooCommerce(p, baseUrl));
     
     // Get total count for pagination headers
     const totalProducts = await prisma.product.count({ where });
@@ -243,8 +246,12 @@ export async function POST(request: NextRequest) {
     
     console.log(`[WooCommerce API - Legacy] ✅ Created product: ${product.id} - ${product.name}`);
     
-    // Map to WooCommerce format and return
-    const wcProduct = mapProductToWooCommerce(product);
+    // Get the base URL from request
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
+    
+    // Map to WooCommerce format and return with proper image URLs
+    const wcProduct = mapProductToWooCommerce(product, baseUrl);
     
     // Log success to debugger
     await logToDebuggerLegacy({

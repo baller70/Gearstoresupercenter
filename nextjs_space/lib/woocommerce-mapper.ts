@@ -21,7 +21,7 @@ export function mapOrderToWooCommerce(
       total: (item.price * item.quantity).toString(),
       total_tax: '0.00',
       price: item.price.toString(),
-      sku: product?.id || '',
+      sku: product?.sku || product?.id || '',
       meta_data: [
         {
           key: 'size',
@@ -163,7 +163,7 @@ export function mapProductToWooCommerce(product: Product): any {
     catalog_visibility: 'visible',
     description: product.description,
     short_description: product.description?.substring(0, 100) || '',
-    sku: product.id,
+    sku: product.sku || product.id,
     price: product.price.toString(),
     regular_price: product.price.toString(),
     sale_price: '',

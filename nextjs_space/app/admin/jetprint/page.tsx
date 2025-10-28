@@ -181,6 +181,60 @@ export default function JetprintProductsPage() {
           </div>
         </div>
 
+        {/* Connection Status & Troubleshooting */}
+        <Card className="mb-8 border-blue-500/50 bg-blue-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-600">
+              <CheckCircle2 className="h-5 w-5" />
+              Connection Status & Troubleshooting
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium mb-2">WooCommerce API Endpoints:</p>
+                <div className="space-y-1 text-xs font-mono bg-background p-3 rounded border">
+                  <div>Modern: <span className="text-blue-600">/wp-json/wc/v3/products</span></div>
+                  <div>Legacy: <span className="text-blue-600">/wc-api/v3/products</span></div>
+                  <div>Status: <span className="text-blue-600">/wp-json/wc/v3/system_status</span></div>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-medium mb-2">Store URL:</p>
+                <div className="text-xs font-mono bg-background p-3 rounded border break-all">
+                  {typeof window !== 'undefined' ? window.location.origin : 'https://basketballgearstore.abacusai.app'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-background p-4 rounded border space-y-3">
+              <p className="text-sm font-medium">Jetprint Integration Steps:</p>
+              <ol className="text-xs space-y-2 list-decimal list-inside">
+                <li>Complete OAuth authorization in Jetprint dashboard</li>
+                <li>Use one of the API endpoints above</li>
+                <li>Ensure your Jetprint account uses Basic Auth with the API key</li>
+                <li>Check that product pushes include SKU, name, price, and images</li>
+                <li>Monitor server logs for detailed error messages</li>
+              </ol>
+            </div>
+
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/admin/woocommerce">
+                  View API Keys
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => {
+                const url = typeof window !== 'undefined' ? window.location.origin : '';
+                navigator.clipboard.writeText(url);
+                toast.success('Store URL copied to clipboard!');
+              }}>
+                Copy Store URL
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           

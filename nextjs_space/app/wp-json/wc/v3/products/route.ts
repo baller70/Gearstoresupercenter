@@ -89,6 +89,9 @@ export async function POST(request: NextRequest) {
   
   try {
     const body = await request.json();
+    console.log('[WooCommerce API] ===== NEW PRODUCT REQUEST =====');
+    console.log('[WooCommerce API] Timestamp:', new Date().toISOString());
+    console.log('[WooCommerce API] Auth User:', auth.userId);
     console.log('[WooCommerce API] Product data received:', JSON.stringify(body, null, 2));
     
     // Extract product data from WooCommerce format
@@ -149,6 +152,11 @@ export async function POST(request: NextRequest) {
       productCategory = 'ACCESSORIES';
     }
     
+    // Generate SKU if not provided, but use provided SKU if available
+    const productSku = sku || `${podProvider}-${Date.now()}`;
+    
+    console.log('[WooCommerce API] Creating product with SKU:', productSku);
+    
     // Create the product
     const product = await prisma.product.create({
       data: {
@@ -159,7 +167,8 @@ export async function POST(request: NextRequest) {
         imageUrl: mainImage,
         images: imageUrls,
         stock: status === 'publish' ? 100 : 0,
-        sku: sku || `${podProvider}-${Date.now()}`,
+        sku: productSku,
+        inStock: status === 'publish',
         // Store POD metadata in JSON fields
         metadata: {
           podProvider,
@@ -172,7 +181,8 @@ export async function POST(request: NextRequest) {
           categories: categoryNames,
           attributes: attributes,
           variations: variations,
-          metaData: meta_data
+          metaData: meta_data,
+          originalSku: sku  // Store the original SKU from POD provider
         }
       }
     });
@@ -184,12 +194,19 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(wcProduct, { status: 201 });
   } catch (error) {
-    console.error('[WooCommerce API] Error creating product:', error);
+    console.error('[WooCommerce API] ❌ ERROR creating product');
+    console.error('[WooCommerce API] Error type:', error instanceof Error ? error.constructor.name : typeof error);
+    console.error('[WooCommerce API] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('[WooCommerce API] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
     return NextResponse.json(
       {
         code: 'woocommerce_rest_error',
         message: error instanceof Error ? error.message : 'Failed to create product',
-        data: { status: 500 }
+        data: { 
+          status: 500,
+          error_details: error instanceof Error ? error.message : String(error)
+        }
       },
       { status: 500 }
     );

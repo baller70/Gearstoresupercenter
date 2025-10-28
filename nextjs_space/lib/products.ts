@@ -124,7 +124,8 @@ export function getCategoryDisplayName(category: Category): string {
   const categoryNames = {
     PERFORMANCE_APPAREL: 'Performance Apparel',
     CASUAL_WEAR: 'Casual Wear',
-    ACCESSORIES: 'Accessories'
+    ACCESSORIES: 'Accessories',
+    POD_PRODUCTS: 'POD Products'
   }
   return categoryNames[category] ?? category
 }

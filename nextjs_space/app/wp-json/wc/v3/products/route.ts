@@ -136,13 +136,26 @@ export async function POST(request: NextRequest) {
     // Process categories - extract names
     const categoryNames = categories.map((cat: any) => cat.name || cat).filter(Boolean);
     
+    // Determine the category - default to POD_PRODUCTS for POD items
+    let productCategory: 'PERFORMANCE_APPAREL' | 'CASUAL_WEAR' | 'ACCESSORIES' | 'POD_PRODUCTS' = 'POD_PRODUCTS';
+    
+    // Try to map to existing categories if specified
+    const categoryString = categoryNames.join(' ').toLowerCase();
+    if (categoryString.includes('performance') || categoryString.includes('apparel') || categoryString.includes('athletic')) {
+      productCategory = 'PERFORMANCE_APPAREL';
+    } else if (categoryString.includes('casual') || categoryString.includes('wear')) {
+      productCategory = 'CASUAL_WEAR';
+    } else if (categoryString.includes('accessories') || categoryString.includes('accessory')) {
+      productCategory = 'ACCESSORIES';
+    }
+    
     // Create the product
     const product = await prisma.product.create({
       data: {
         name,
         description: description || short_description || '',
         price: parseFloat(finalPrice),
-        category: (categoryNames.join(', ') || 'POD Products') as any, // Cast to any to handle Category enum
+        category: productCategory,
         imageUrl: mainImage,
         images: imageUrls,
         stock: status === 'publish' ? 100 : 0,

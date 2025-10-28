@@ -212,6 +212,7 @@ enum Category {
   PERFORMANCE_APPAREL
   CASUAL_WEAR
   ACCESSORIES
+  POD_PRODUCTS
 }
 
 enum OrderStatus {

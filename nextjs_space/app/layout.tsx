@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "@/components/session-provider"
 import { Toaster } from "sonner"
 import Chatbot from "@/components/chatbot"
+import ErrorBoundary from "@/components/error-boundary"
 
 const audiowide = Audiowide({ 
   weight: "400",
@@ -64,7 +65,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SessionProvider>
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
             <Chatbot />
             <Toaster position="top-right" />
           </SessionProvider>

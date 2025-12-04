@@ -5,10 +5,10 @@ import { Order, Product, OrderItem } from '@prisma/client';
  * Map our Order to WooCommerce Order format
  */
 export function mapOrderToWooCommerce(
-  order: Order & { orderItems: OrderItem[] },
+  order: Order & { items: OrderItem[] },
   products: Product[]
 ): any {
-  const lineItems = order.orderItems.map(item => {
+  const lineItems = order.items.map(item => {
     const product = products.find(p => p.id === item.productId);
     
     return {

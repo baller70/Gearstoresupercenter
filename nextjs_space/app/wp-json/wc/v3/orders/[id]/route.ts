@@ -23,7 +23,7 @@ export async function GET(
   try {
     const order = await prisma.order.findUnique({
       where: { id: params.id },
-      include: { orderItems: true }
+      include: { items: true }
     });
     
     if (!order) {
@@ -38,7 +38,7 @@ export async function GET(
     }
     
     // Fetch products
-    const productIds = order.orderItems.map(i => i.productId);
+    const productIds = order.items.map(i => i.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } }
     });
@@ -83,7 +83,7 @@ export async function PUT(
     // Check if order exists
     const existingOrder = await prisma.order.findUnique({
       where: { id: params.id },
-      include: { orderItems: true }
+      include: { items: true }
     });
     
     if (!existingOrder) {
@@ -111,13 +111,13 @@ export async function PUT(
     const updatedOrder = await prisma.order.update({
       where: { id: params.id },
       data: updateData,
-      include: { orderItems: true }
+      include: { items: true }
     });
     
     console.log(`[WooCommerce API] ✅ Order ${params.id} updated`);
     
     // Fetch products and return updated order
-    const productIds = updatedOrder.orderItems.map(i => i.productId);
+    const productIds = updatedOrder.items.map(i => i.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } }
     });
@@ -159,10 +159,10 @@ export async function DELETE(
     const order = await prisma.order.update({
       where: { id: params.id },
       data: { status: 'CANCELLED' },
-      include: { orderItems: true }
+      include: { items: true }
     });
     
-    const productIds = order.orderItems.map(i => i.productId);
+    const productIds = order.items.map(i => i.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } }
     });

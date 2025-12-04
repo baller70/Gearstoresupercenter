@@ -29,16 +29,16 @@ export async function GET(request: NextRequest) {
         },
       },
     })
-    
+
     // Calculate performance metrics
     const designsWithMetrics = designs.map(design => {
       const products = design.products
       const totalProducts = products.length
-      
+
       // Calculate total revenue and sales
       let totalRevenue = 0
       let totalUnitsSold = 0
-      
+
       products.forEach(product => {
         product.orderItems.forEach(item => {
           totalRevenue += item.price * item.quantity

@@ -1,7 +1,15 @@
-
 import { prisma } from "@/lib/db"
 import { Category } from "@prisma/client"
 import { getImageProxyUrl } from "@/lib/s3"
+import {
+  getMockFeaturedProducts,
+  getMockProductsByCategory,
+  getMockProductById,
+  getMockAllProducts
+} from "@/lib/mock-data"
+
+// Flag to enable mock data fallback when database is unavailable
+const USE_MOCK_FALLBACK = process.env.NODE_ENV === 'development'
 
 function convertS3PathToProxyUrl(imageUrl: string): string {
   // If it's already a full URL, return as is
@@ -41,6 +49,11 @@ export async function getAllProducts() {
     return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching all products:', error)
+    // Fallback to mock data in development
+    if (USE_MOCK_FALLBACK) {
+      console.log('[Mock Data] Using mock products as fallback')
+      return getMockAllProducts()
+    }
     return []
   }
 }
@@ -55,6 +68,11 @@ export async function getFeaturedProducts() {
     return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching featured products:', error)
+    // Fallback to mock data in development
+    if (USE_MOCK_FALLBACK) {
+      console.log('[Mock Data] Using mock featured products as fallback')
+      return getMockFeaturedProducts()
+    }
     return []
   }
 }
@@ -69,6 +87,11 @@ export async function getProductsByCategory(category: Category, limit?: number) 
     return processProductImages(products ?? [])
   } catch (error) {
     console.error('Error fetching products by category:', error)
+    // Fallback to mock data in development
+    if (USE_MOCK_FALLBACK) {
+      console.log(`[Mock Data] Using mock products for category ${category} as fallback`)
+      return getMockProductsByCategory(category, limit)
+    }
     return []
   }
 }
@@ -78,11 +101,21 @@ export async function getProductById(id: string) {
     const product = await prisma.product.findUnique({
       where: { id }
     })
-    if (!product) return null
-    
+    if (!product) {
+      // Try mock data in development
+      if (USE_MOCK_FALLBACK) {
+        const mockProduct = getMockProductById(id)
+        if (mockProduct) {
+          console.log(`[Mock Data] Using mock product ${id} as fallback`)
+          return mockProduct
+        }
+      }
+      return null
+    }
+
     const proxyUrl = convertS3PathToProxyUrl(product.imageUrl)
     const images = product.images?.map((img: string) => convertS3PathToProxyUrl(img)) || [proxyUrl]
-    
+
     return {
       ...product,
       imageUrl: proxyUrl,
@@ -90,6 +123,14 @@ export async function getProductById(id: string) {
     }
   } catch (error) {
     console.error('Error fetching product by ID:', error)
+    // Fallback to mock data in development
+    if (USE_MOCK_FALLBACK) {
+      const mockProduct = getMockProductById(id)
+      if (mockProduct) {
+        console.log(`[Mock Data] Using mock product ${id} as fallback`)
+        return mockProduct
+      }
+    }
     return null
   }
 }
@@ -120,8 +161,8 @@ export function formatPrice(price: number): string {
   }).format(price ?? 0)
 }
 
-export function getCategoryDisplayName(category: Category): string {
-  const categoryNames = {
+export function getCategoryDisplayName(category: Category | string): string {
+  const categoryNames: Record<string, string> = {
     PERFORMANCE_APPAREL: 'Performance Apparel',
     CASUAL_WEAR: 'Casual Wear',
     ACCESSORIES: 'Accessories',

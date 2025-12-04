@@ -1,4 +1,3 @@
-
 /**
  * WooCommerce Legacy API Endpoint - /wc-api/v3/products
  * List all products (legacy endpoint)
@@ -8,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyWooCommerceAuth, createUnauthorizedResponse } from '@/lib/woocommerce-auth';
 import { mapProductToWooCommerce } from '@/lib/woocommerce-mapper';
 import { prisma } from '@/lib/db';
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants';
 
 /**
  * GET /wc-api/v3/products
@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
     // Create the product
     const product = await prisma.product.create({
       data: {
+        businessId: DEFAULT_BUSINESS_ID,
         name,
         description: description || short_description || '',
         price: parseFloat(finalPrice),

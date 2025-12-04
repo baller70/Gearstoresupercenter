@@ -35,7 +35,7 @@ export default async function AdminPage() {
   const [products, orders, users, designs] = await Promise.all([
     prisma.product.findMany({ orderBy: { createdAt: 'desc' } }),
     prisma.order.findMany({ 
-      include: { orderItems: true },
+      include: { items: true },
       orderBy: { createdAt: 'desc' } 
     }),
     prisma.user.findMany({ orderBy: { createdAt: 'desc' } }),
@@ -57,12 +57,18 @@ export default async function AdminPage() {
   const recentOrders = orders?.slice(0, 5) ?? []
   const lowStockProducts = products?.filter(product => !product?.inStock)?.slice(0, 5) ?? []
 
-  const statusConfig = {
+  const statusConfig: Record<string, { color: string; label: string }> = {
     PENDING: { color: "bg-yellow-500", label: "Pending" },
+    PENDING_PAYMENT: { color: "bg-amber-500", label: "Awaiting Payment" },
+    PAID: { color: "bg-green-500", label: "Paid" },
+    PAYMENT_FAILED: { color: "bg-red-500", label: "Payment Failed" },
     PROCESSING: { color: "bg-blue-500", label: "Processing" },
     SHIPPED: { color: "bg-purple-500", label: "Shipped" },
-    DELIVERED: { color: "bg-green-500", label: "Delivered" },
-    CANCELLED: { color: "bg-red-500", label: "Cancelled" }
+    DELIVERED: { color: "bg-green-600", label: "Delivered" },
+    CANCELLED: { color: "bg-red-500", label: "Cancelled" },
+    REFUNDED: { color: "bg-gray-500", label: "Refunded" },
+    FULFILLMENT_ERROR: { color: "bg-orange-500", label: "Fulfillment Error" },
+    ON_HOLD: { color: "bg-yellow-600", label: "On Hold" }
   }
 
   return (
@@ -333,7 +339,7 @@ export default async function AdminPage() {
                       <div className="text-right">
                         <div className="font-semibold">{formatPrice(order?.total ?? 0)}</div>
                         <div className="text-sm text-muted-foreground">
-                          {order?.orderItems?.length} item{order?.orderItems?.length !== 1 ? 's' : ''}
+                          {order?.items?.length} item{order?.items?.length !== 1 ? 's' : ''}
                         </div>
                       </div>
                     </div>

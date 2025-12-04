@@ -1,8 +1,10 @@
-
 import { PrismaClient, Category, FitType } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
+
+// Default business ID for seeding
+const DEFAULT_BUSINESS_ID = 'default-basketball-factory'
 
 const performanceApparelProducts = [
   {
@@ -366,17 +368,19 @@ async function main() {
     await prisma.product.create({
       data: {
         ...product,
+        businessId: DEFAULT_BUSINESS_ID,
         category: Category.PERFORMANCE_APPAREL
       }
     })
   }
 
-  // Seed Casual Wear products  
+  // Seed Casual Wear products
   console.log('👕 Seeding Casual Wear products...')
   for (const product of casualWearProducts) {
     await prisma.product.create({
       data: {
         ...product,
+        businessId: DEFAULT_BUSINESS_ID,
         category: Category.CASUAL_WEAR
       }
     })
@@ -388,6 +392,7 @@ async function main() {
     await prisma.product.create({
       data: {
         ...product,
+        businessId: DEFAULT_BUSINESS_ID,
         category: Category.ACCESSORIES
       }
     })
@@ -451,7 +456,12 @@ async function main() {
   ]
 
   for (const option of shippingOptions) {
-    await prisma.shippingOption.create({ data: option })
+    await prisma.shippingOption.create({
+      data: {
+        ...option,
+        businessId: DEFAULT_BUSINESS_ID,
+      }
+    })
   }
 
   // Seed Tax Rates

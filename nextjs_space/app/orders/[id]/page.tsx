@@ -35,7 +35,7 @@ interface Order {
   shippingCity: string;
   shippingState: string;
   shippingZip: string;
-  orderItems: OrderItem[];
+  items: OrderItem[];
 }
 
 interface TimelineStep {
@@ -220,7 +220,7 @@ export default function OrderTrackingPage() {
             <CardTitle>Order Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {order.orderItems.map((item) => (
+            {order.items.map((item) => (
               <div key={item.id} className="flex gap-4">
                 <div className="relative w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                   <Image

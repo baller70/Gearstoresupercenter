@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Verify order belongs to user
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      include: { orderItems: true },
+      include: { items: true },
     });
 
     if (!order || order.userId !== user.id) {

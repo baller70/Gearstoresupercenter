@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     const orders = await prisma.order.findMany({
       where,
       include: {
-        orderItems: true
+        items: true
       },
       orderBy: {
         createdAt: 'desc'
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     console.log(`[WooCommerce API - Legacy] Found ${orders.length} orders`);
     
     // Fetch all products referenced in orders
-    const productIds = [...new Set(orders.flatMap(o => o.orderItems.map(i => i.productId)))];
+    const productIds = [...new Set(orders.flatMap(o => o.items.map(i => i.productId)))];
     const products = await prisma.product.findMany({
       where: {
         id: {

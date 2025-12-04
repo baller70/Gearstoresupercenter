@@ -205,28 +205,51 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/orders', {
+      // Create Stripe checkout session
+      const response = await fetch('/api/checkout/create-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           total,
-          items: cartItems?.map(item => ({
-            productId: item?.product?.id,
-            quantity: item?.quantity,
-            price: item?.product?.price,
-            size: item?.size,
-            color: item?.color
-          }))
         })
       })
 
       if (response?.ok) {
-        const order = await response.json()
-        toast.success("Order placed successfully!")
-        router.push(`/orders/${order?.id}`)
+        const { url, sessionId, orderId } = await response.json()
+
+        if (url) {
+          // Redirect to Stripe Checkout
+          window.location.href = url
+        } else {
+          // Fallback if Stripe not configured - create order directly
+          const orderResponse = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...formData,
+              total,
+              items: cartItems?.map(item => ({
+                productId: item?.product?.id,
+                quantity: item?.quantity,
+                price: item?.product?.price,
+                size: item?.size,
+                color: item?.color
+              }))
+            })
+          })
+
+          if (orderResponse?.ok) {
+            const order = await orderResponse.json()
+            toast.success("Order placed successfully!")
+            router.push(`/orders/${order?.id}`)
+          } else {
+            toast.error("Failed to place order")
+          }
+        }
       } else {
-        toast.error("Failed to place order")
+        const error = await response.json()
+        toast.error(error.error || "Failed to create checkout session")
       }
     } catch (error) {
       console.error('Error placing order:', error)

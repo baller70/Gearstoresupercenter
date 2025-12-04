@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       include: {
         orders: {
           include: {
-            orderItems: true,
+            items: true,
           },
         },
       },

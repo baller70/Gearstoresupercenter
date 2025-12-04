@@ -3,12 +3,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Navigation } from "@/components/navigation"
-import { 
-  ShoppingBag, 
-  Zap, 
-  Shield, 
+import {
+  ShoppingBag,
+  Zap,
+  Shield,
   Trophy,
-  Star,
   ArrowRight,
   Circle,
   Users,
@@ -16,7 +15,6 @@ import {
   Award
 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 import { getFeaturedProducts, getProductsByCategory } from "@/lib/products"
 import { ProductGrid } from "@/components/product-grid"
 import ProductRecommendations from "@/components/product-recommendations"

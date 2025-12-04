@@ -1,9 +1,9 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateMockupWithLogo } from '@/lib/real-mockup-generator';
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants';
 import path from 'path';
 import fs from 'fs';
 
@@ -182,6 +182,7 @@ export async function POST(request: NextRequest) {
           
           const product = await prisma.product.create({
             data: {
+              businessId: design.businessId || DEFAULT_BUSINESS_ID,
               name: `${design.name} - ${productType.name}`,
               description: `Premium ${productType.name.toLowerCase()} featuring ${design.name} design in ${color.name}. Perfect for basketball teams and fans. High-quality materials with custom logo placement.`,
               price: productType.price,

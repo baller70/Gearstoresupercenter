@@ -36,7 +36,7 @@ export async function GET(
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: {
-        orderItems: true
+        items: true
       }
     });
     
@@ -52,7 +52,7 @@ export async function GET(
     }
     
     // Fetch products for order items
-    const productIds = order.orderItems.map((i: any) => i.productId);
+    const productIds = order.items.map((i: any) => i.productId);
     const products = await prisma.product.findMany({
       where: {
         id: {
@@ -127,12 +127,12 @@ export async function PUT(
       where: { id: orderId },
       data: updateData,
       include: {
-        orderItems: true
+        items: true
       }
     });
     
     // Fetch products for order items
-    const productIds = order.orderItems.map((i: any) => i.productId);
+    const productIds = order.items.map((i: any) => i.productId);
     const products = await prisma.product.findMany({
       where: {
         id: {

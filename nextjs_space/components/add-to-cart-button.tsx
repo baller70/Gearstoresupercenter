@@ -3,14 +3,21 @@
 
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Plus, Minus } from "lucide-react"
-import { Product } from "@prisma/client"
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
+// Minimal product interface for cart functionality
+interface CartProduct {
+  id: string
+  name: string
+  price: number
+  inStock: boolean
+}
+
 interface AddToCartButtonProps {
-  product: Product
+  product: CartProduct | null
 }
 
 export function AddToCartButton({ product }: AddToCartButtonProps) {

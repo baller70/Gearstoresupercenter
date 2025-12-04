@@ -1,10 +1,10 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { uploadFile, downloadFile } from '@/lib/s3'
 import { prisma } from '@/lib/db'
 import { advancedMockupGenerator } from '@/lib/advanced-mockup-generator'
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants'
 import path from 'path'
 import fs from 'fs/promises'
 import os from 'os'
@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
     // Create design record in database
     const design = await prisma.design.create({
       data: {
+        businessId: DEFAULT_BUSINESS_ID,
         name: name || file.name,
         brand: brand,
         imageUrl: logoStoragePath,
@@ -144,6 +145,7 @@ export async function POST(request: NextRequest) {
           
           const product = await prisma.product.create({
             data: {
+              businessId: DEFAULT_BUSINESS_ID,
               name: productName,
               description: `Premium ${garmentType} featuring ${name} design in ${color.name}. Perfect for basketball players and fans. Made with high-quality materials for comfort and durability.`,
               price: garmentType === 'hoodie' ? 64.99 : garmentType === 'jersey' ? 54.99 : 39.99,

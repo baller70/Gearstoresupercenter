@@ -1,10 +1,10 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateAllMockups } from '@/lib/real-mockup-generator';
 import { uploadFile } from '@/lib/s3';
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -140,6 +140,7 @@ Respond with raw JSON only.`
     // Save design to database with S3 key
     const design = await prisma.design.create({
       data: {
+        businessId: DEFAULT_BUSINESS_ID,
         name: designName,
         logoUrl: logoS3Key,
         imageUrl: logoS3Key,

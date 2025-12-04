@@ -1,8 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants';
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
 
     const discount = await prisma.discountCode.create({
       data: {
+        businessId: DEFAULT_BUSINESS_ID,
         code: code.toUpperCase(),
         description,
         discountType,

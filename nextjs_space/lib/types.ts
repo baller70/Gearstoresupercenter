@@ -27,3 +27,28 @@ declare module "next-auth/jwt" {
     role: "USER" | "ADMIN"
   }
 }
+
+// Product types
+export interface Product {
+  id: string
+  name: string
+  description: string
+  price: number
+  category: string
+  imageUrl: string
+  images: string[]
+  sizes: string[]
+  colors: string[]
+  stock: number
+  inStock: boolean
+  featured: boolean
+  brand?: string
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+// API Response types
+export interface ApiError {
+  error: string
+  message?: string
+}

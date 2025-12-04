@@ -2,13 +2,108 @@
 generator client {
     provider = "prisma-client-js"
     binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
-    output = "/home/ubuntu/basketball_ecommerce_platform/nextjs_space/node_modules/.prisma/client"
 }
 
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
 }
+
+// ============================================
+// MULTI-TENANT BUSINESS MODEL
+// ============================================
+
+model Business {
+  id          String   @id @default(cuid())
+  name        String   // "Rise as One AAU" or "The Basketball Factory Inc"
+  slug        String   @unique // URL-friendly identifier (rise-as-one, basketball-factory)
+  description String?  @db.Text
+
+  // Branding
+  logoUrl     String?
+  primaryColor   String   @default("#FF6B00") // Orange
+  secondaryColor String   @default("#1A1A2E") // Dark blue
+
+  // Contact Information
+  email       String
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  country     String   @default("US")
+  website     String?
+
+  // Business Settings
+  timezone    String   @default("America/New_York")
+  currency    String   @default("USD")
+  taxEnabled  Boolean  @default(true)
+
+  // Domain Configuration
+  customDomain String?  @unique // e.g., "riseasone.com"
+  subdomain    String?  @unique // e.g., "rise" for rise.platform.com
+
+  // Status
+  active      Boolean  @default(true)
+  verified    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  credentials BusinessCredential?
+  users       User[]
+  products    Product[]
+  orders      Order[]
+  designs     Design[]
+  discountCodes DiscountCode[]
+  emailCampaigns EmailCampaign[]
+  bulkOrders  BulkOrder[]
+  giftCards   GiftCard[]
+  shippingOptions ShippingOption[]
+
+  @@index([slug])
+  @@index([active])
+}
+
+model BusinessCredential {
+  id          String   @id @default(cuid())
+  businessId  String   @unique
+
+  // Stripe Configuration (encrypted)
+  stripePublishableKey  String?  @db.Text
+  stripeSecretKey       String?  @db.Text
+  stripeWebhookSecret   String?  @db.Text
+  stripeAccountId       String?  // For Stripe Connect
+
+  // Resend Email Configuration
+  resendApiKey    String?  @db.Text
+  emailFromName   String?
+  emailFromAddress String?
+
+  // Printify POD Configuration
+  printifyApiKey  String?  @db.Text
+  printifyShopId  String?
+  printifyWebhookSecret String? @db.Text
+
+  // AWS S3 Configuration (optional per-business)
+  awsAccessKeyId     String?  @db.Text
+  awsSecretAccessKey String?  @db.Text
+  awsBucketName      String?
+  awsRegion          String   @default("us-east-1")
+
+  // Webhook Secrets
+  webhookSecret    String?  @db.Text // General webhook verification
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// USER & AUTHENTICATION MODELS
+// ============================================
 
 model Account {
   id                String  @id @default(cuid())
@@ -39,6 +134,7 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
+  businessId    String?   // Null for super admins, required for business users
   email         String    @unique
   firstName     String?
   lastName      String?
@@ -50,6 +146,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // Marketing automation
+  abandonedCartEmailSentAt DateTime?
+  lastLoginAt              DateTime?
+
+  business Business? @relation(fields: [businessId], references: [id])
   accounts Account[]
   sessions Session[]
   orders   Order[]
@@ -65,6 +166,8 @@ model User {
   bulkOrders BulkOrder[]
   apiKeys ApiKey[]
   priceAlerts PriceAlert[]
+
+  @@index([businessId])
 }
 
 model VerificationToken {
@@ -77,6 +180,7 @@ model VerificationToken {
 
 model Product {
   id          String   @id @default(cuid())
+  businessId  String   // Required - every product belongs to a business
   name        String
   description String   @db.Text
   price       Float
@@ -98,14 +202,23 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // POD Provider Integration (Printify)
+  printifyProductId  String?  // Product ID in Printify
+  printifyVariantId  Int?     // Default variant ID for this product
+  printifyBlueprintId Int?    // Blueprint ID for creating new products
+
+  business   Business   @relation(fields: [businessId], references: [id])
   design     Design?    @relation(fields: [designId], references: [id])
   cartItems  CartItem[]
   orderItems OrderItem[]
   views      ProductView[]
+
+  @@index([businessId])
 }
 
 model Design {
   id                 String       @id @default(cuid())
+  businessId         String       // Required - every design belongs to a business
   name               String
   brand              String?      // Brand name (Rise as One AAU or The Basketball Factory Inc)
   imageUrl           String       // Uploaded design file URL
@@ -123,7 +236,10 @@ model Design {
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
+  business Business   @relation(fields: [businessId], references: [id])
   products Product[]
+
+  @@index([businessId])
 }
 
 // AI Learning model - stores learned position preferences per product type
@@ -162,42 +278,59 @@ model CartItem {
 
 model Order {
   id          String      @id @default(cuid())
+  businessId  String      // Required - every order belongs to a business
   userId      String
   total       Float
   status      OrderStatus @default(PENDING)
-  
+
   // Shipping Information
   shippingName      String
-  shippingEmail     String
-  shippingAddress   String
-  shippingCity      String
-  shippingState     String
-  shippingZip       String
+  shippingEmail     String?
+  shippingAddress   String?
+  shippingCity      String?
+  shippingState     String?
+  shippingZip       String?
   shippingCountry   String @default("US")
-  
-  // Billing Information  
-  billingName       String
-  billingAddress    String
-  billingCity       String
-  billingState      String
-  billingZip        String
+
+  // Billing Information
+  billingName       String?
+  billingAddress    String?
+  billingCity       String?
+  billingState      String?
+  billingZip        String?
   billingCountry    String @default("US")
-  
+
+  // Payment Information (Stripe)
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+
+  // Fulfillment Information (Printify/POD)
+  printifyOrderId String?
+  trackingNumber  String?
+  carrier         String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  notes           String?  @db.Text
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  business   Business    @relation(fields: [businessId], references: [id])
   user       User        @relation(fields: [userId], references: [id])
-  orderItems OrderItem[]
+  items      OrderItem[]
+
+  @@index([businessId])
 }
 
 model OrderItem {
-  id        String @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Float // Price at time of order
-  size      String?
-  color     String?
+  id            String @id @default(cuid())
+  orderId       String
+  productId     String
+  quantity      Int
+  price         Float // Price at time of order
+  size          String?
+  color         String?
+  customization Json?  // Custom design data (logo URL, position, etc.)
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
@@ -205,7 +338,9 @@ model OrderItem {
 
 enum UserRole {
   USER
-  ADMIN
+  BUSINESS_ADMIN  // Admin for a specific business
+  SUPER_ADMIN     // Platform admin with access to all businesses
+  ADMIN           // Legacy - treat as BUSINESS_ADMIN
 }
 
 enum Category {
@@ -217,10 +352,16 @@ enum Category {
 
 enum OrderStatus {
   PENDING
+  PENDING_PAYMENT
+  PAID
+  PAYMENT_FAILED
   PROCESSING
   SHIPPED
   DELIVERED
   CANCELLED
+  REFUNDED
+  FULFILLMENT_ERROR
+  ON_HOLD
 }
 
 enum DesignStatus {
@@ -346,7 +487,8 @@ model Wishlist {
 
 model DiscountCode {
   id               String         @id @default(cuid())
-  code             String         @unique
+  businessId       String         // Required - discount codes are per business
+  code             String
   description      String
   discountType     DiscountType
   discountValue    Float          // Percentage or fixed amount
@@ -362,10 +504,13 @@ model DiscountCode {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
-  usages DiscountUsage[]
+  business Business       @relation(fields: [businessId], references: [id])
+  usages   DiscountUsage[]
 
+  @@unique([businessId, code]) // Code must be unique within a business
   @@index([code])
   @@index([active])
+  @@index([businessId])
 }
 
 model DiscountUsage {
@@ -385,7 +530,8 @@ model DiscountUsage {
 
 model GiftCard {
   id          String          @id @default(cuid())
-  code        String          @unique
+  businessId  String          // Required - gift cards are per business
+  code        String
   initialValue Float
   balance     Float
   purchasedBy String?         // User who purchased it
@@ -394,10 +540,13 @@ model GiftCard {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
+  business     Business           @relation(fields: [businessId], references: [id])
   transactions GiftCardTransaction[]
 
+  @@unique([businessId, code]) // Code must be unique within a business
   @@index([code])
   @@index([status])
+  @@index([businessId])
 }
 
 model GiftCardTransaction {
@@ -416,6 +565,7 @@ model GiftCardTransaction {
 
 model BulkOrder {
   id          String         @id @default(cuid())
+  businessId  String         // Required - bulk orders are per business
   userId      String
   teamName    String
   status      BulkOrderStatus @default(PENDING)
@@ -424,9 +574,11 @@ model BulkOrder {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
-  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items BulkOrderItem[]
+  business Business        @relation(fields: [businessId], references: [id])
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items    BulkOrderItem[]
 
+  @@index([businessId])
   @@index([userId])
   @@index([status])
 }
@@ -448,6 +600,7 @@ model BulkOrderItem {
 
 model EmailCampaign {
   id          String              @id @default(cuid())
+  businessId  String              // Required - email campaigns are per business
   name        String
   subject     String
   content     String              @db.Text
@@ -460,20 +613,28 @@ model EmailCampaign {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@index([businessId])
   @@index([status])
 }
 
 model ShippingOption {
   id            String  @id @default(cuid())
+  businessId    String  // Required - shipping options are per business
   name          String
   description   String
   basePrice     Float
   estimatedDays String  // e.g., "3-5 business days"
   active        Boolean @default(true)
   priority      Int     @default(0) // Display order
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@index([businessId])
 }
 
 model PriceAlert {

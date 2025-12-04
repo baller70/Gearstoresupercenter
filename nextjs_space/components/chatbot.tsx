@@ -129,7 +129,7 @@ export default function Chatbot() {
           <MessageCircle className="h-5 w-5" />
           <div>
             <h3 className="font-semibold">Support Chat</h3>
-            <p className="text-xs opacity-90">We're here to help!</p>
+            <p className="text-xs opacity-90">We&apos;re here to help!</p>
           </div>
         </div>
         <Button

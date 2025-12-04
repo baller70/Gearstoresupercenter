@@ -1,0 +1,17 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/process-orders",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/abandoned-carts",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/daily-report",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
+

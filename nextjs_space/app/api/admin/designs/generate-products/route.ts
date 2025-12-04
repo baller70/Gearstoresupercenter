@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { mockupGenerator } from '@/lib/mockup-generator'
+import { DEFAULT_BUSINESS_ID } from '@/lib/constants'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
         
         const product = await prisma.product.create({
           data: {
+            businessId: design.businessId || DEFAULT_BUSINESS_ID,
             name: `${design.name} - ${template.name}`,
             description: `Premium ${template.name} featuring custom ${design.name} design. ${analysis.designStyle ? `${analysis.designStyle} style.` : ''} Perfect for basketball players and fans.`,
             price: template.basePrice,

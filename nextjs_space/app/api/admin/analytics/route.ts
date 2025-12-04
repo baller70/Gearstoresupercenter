@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        orderItems: {
+        items: {
           include: {
             product: {
               include: {
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     
     // Top products
     const productSales = orders.flatMap(order =>
-      order.orderItems.map(item => ({
+      order.items.map(item => ({
         productId: item.productId,
         productName: item.product.name,
         quantity: item.quantity,
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     
     // Sales by category
     const categorySales = orders.flatMap(order =>
-      order.orderItems.map(item => ({
+      order.items.map(item => ({
         category: item.product.category,
         revenue: item.price * item.quantity,
       }))

@@ -2,12 +2,10 @@
 
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { formatPrice, getCategoryDisplayName } from "@/lib/products"
-import { ShoppingCart, Star, ArrowLeft, Truck, Shield, RotateCcw } from "lucide-react"
+import { Star, ArrowLeft, Truck, Shield, RotateCcw } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import ProductViewTracker from "@/components/product-view-tracker"
 import ProductRecommendations from "@/components/product-recommendations"
@@ -16,6 +14,7 @@ import { WishlistButton } from "@/components/wishlist-button"
 import { ProductImageGallery } from "@/components/product-image-gallery"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { Product } from "@/lib/types"
 
 interface ProductPageProps {
   params: {
@@ -25,7 +24,7 @@ interface ProductPageProps {
 
 export default function ProductPage({ params }: ProductPageProps) {
   const router = useRouter()
-  const [product, setProduct] = useState<any>(null)
+  const [product, setProduct] = useState<Product | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)

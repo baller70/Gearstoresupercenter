@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const orders = await prisma.order.findMany({
       where: { userId: session.user.id },
       include: {
-        orderItems: {
+        items: {
           include: { product: true },
         },
       },
@@ -41,8 +41,8 @@ export async function GET(request: NextRequest) {
 
     // Extract categories and products the user has interacted with
     const viewedProductIds = recentViews.map((v: { productId: string }) => v.productId);
-    const purchasedProductIds = orders.flatMap((o: { orderItems: any[] }) => 
-      o.orderItems.map((i: { productId: string }) => i.productId)
+    const purchasedProductIds = orders.flatMap((o: { items: any[] }) => 
+      o.items.map((i: { productId: string }) => i.productId)
     );
     const allInteractedIds = [...new Set([...viewedProductIds, ...purchasedProductIds])];
 

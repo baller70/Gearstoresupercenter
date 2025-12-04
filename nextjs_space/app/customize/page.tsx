@@ -225,7 +225,7 @@ export default function CustomizePage() {
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                By submitting, you agree to our terms. We'll contact you within 24 hours.
+                By submitting, you agree to our terms. We&apos;ll contact you within 24 hours.
               </p>
             </form>
           </CardContent>

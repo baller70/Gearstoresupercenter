@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
         status: { in: ['DELIVERED', 'SHIPPED'] },
       },
       include: {
-        orderItems: {
+        items: {
           include: {
             product: true,
           },
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       const date = order.createdAt.toISOString().split('T')[0];
       salesByDay[date] = (salesByDay[date] || 0) + order.total;
 
-      order.orderItems.forEach((item: any) => {
+      order.items.forEach((item: any) => {
         const category = item.product.category;
         salesByCategory[category] = (salesByCategory[category] || 0) + (item.price * item.quantity);
       });

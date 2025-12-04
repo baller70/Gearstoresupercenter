@@ -39,7 +39,7 @@ export default async function AccountPage() {
   const orders = await prisma.order.findMany({
     where: { userId: user.id },
     include: {
-      orderItems: {
+      items: {
         include: { product: true }
       }
     },
@@ -60,12 +60,18 @@ export default async function AccountPage() {
     delivered: orders?.filter(order => order?.status === 'DELIVERED')?.length ?? 0
   }
 
-  const statusConfig = {
+  const statusConfig: Record<string, { color: string; label: string }> = {
     PENDING: { color: "bg-yellow-500", label: "Pending" },
+    PENDING_PAYMENT: { color: "bg-amber-500", label: "Awaiting Payment" },
+    PAID: { color: "bg-green-500", label: "Paid" },
+    PAYMENT_FAILED: { color: "bg-red-500", label: "Payment Failed" },
     PROCESSING: { color: "bg-blue-500", label: "Processing" },
     SHIPPED: { color: "bg-purple-500", label: "Shipped" },
-    DELIVERED: { color: "bg-green-500", label: "Delivered" },
-    CANCELLED: { color: "bg-red-500", label: "Cancelled" }
+    DELIVERED: { color: "bg-green-600", label: "Delivered" },
+    CANCELLED: { color: "bg-red-500", label: "Cancelled" },
+    REFUNDED: { color: "bg-gray-500", label: "Refunded" },
+    FULFILLMENT_ERROR: { color: "bg-orange-500", label: "Fulfillment Error" },
+    ON_HOLD: { color: "bg-yellow-600", label: "On Hold" }
   }
 
   return (
@@ -235,11 +241,11 @@ export default async function AccountPage() {
                                   </div>
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                  {order?.orderItems?.length} item{order?.orderItems?.length !== 1 ? 's' : ''} • {new Date(order?.createdAt ?? '').toLocaleDateString()}
+                                  {order?.items?.length} item{order?.items?.length !== 1 ? 's' : ''} • {new Date(order?.createdAt ?? '').toLocaleDateString()}
                                 </div>
                                 <div className="text-xs text-muted-foreground">
-                                  {order?.orderItems?.slice(0, 2)?.map(item => item?.product?.name)?.join(', ')}
-                                  {(order?.orderItems?.length ?? 0) > 2 && ` and ${(order?.orderItems?.length ?? 0) - 2} more`}
+                                  {order?.items?.slice(0, 2)?.map(item => item?.product?.name)?.join(', ')}
+                                  {(order?.items?.length ?? 0) > 2 && ` and ${(order?.items?.length ?? 0) - 2} more`}
                                 </div>
                               </div>
                               <div className="text-right">

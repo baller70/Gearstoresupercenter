@@ -112,7 +112,7 @@ export default function DesignStudioPage() {
             <Loader2 className="h-16 w-16 mx-auto text-primary animate-spin mb-4" />
             <h3 className="text-xl font-semibold mb-2">Processing Your Logo</h3>
             <p className="text-muted-foreground mb-6">
-              We're analyzing your logo and preparing it for mockup generation...
+              We&apos;re analyzing your logo and preparing it for mockup generation...
             </p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center justify-center gap-2">

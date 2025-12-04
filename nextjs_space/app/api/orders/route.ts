@@ -1,4 +1,3 @@
-
 import { prisma } from "@/lib/db"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
@@ -6,6 +5,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { createOrderWebhook } from "@/lib/webhooks"
 
 export const dynamic = "force-dynamic"
+
+// Default business ID for the platform
+const DEFAULT_BUSINESS_ID = 'default-basketball-factory'
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,6 +62,7 @@ export async function POST(request: NextRequest) {
       // Create the order
       const newOrder = await tx.order.create({
         data: {
+          businessId: user.businessId || DEFAULT_BUSINESS_ID,
           userId: user.id,
           total,
           shippingName: shippingName || '',
@@ -185,7 +188,7 @@ export async function GET(request: NextRequest) {
     const orders = await prisma.order.findMany({
       where: { userId: user.id },
       include: {
-        orderItems: {
+        items: {
           include: { product: true }
         }
       },

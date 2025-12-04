@@ -36,12 +36,12 @@ export default async function DesignsPage() {
       createdAt: 'desc',
     },
   })
-  
+
   // Calculate performance metrics for each design and get signed URLs
   const designsWithMetrics = await Promise.all(designs.map(async (design) => {
     let totalRevenue = 0
     let totalUnitsSold = 0
-    
+
     design.products.forEach(product => {
       product.orderItems.forEach(item => {
         totalRevenue += item.price * item.quantity

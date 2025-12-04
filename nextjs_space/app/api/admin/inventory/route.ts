@@ -29,11 +29,11 @@ export async function GET(request: NextRequest) {
         { stock: 'asc' },
       ],
     })
-    
+
     // Calculate sales velocity and reorder suggestions
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    
+
     const productsWithMetrics = products.map(product => {
       // Calculate sales in last 30 days
       const recentSales = product.orderItems

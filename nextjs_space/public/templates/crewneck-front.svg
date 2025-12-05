@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <defs>
+    <linearGradient id="crew-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/>
+      <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
+      <stop offset="100%" style="stop-color:rgba(0,0,0,0.07)"/>
+    </linearGradient>
+    <filter id="crew-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+  
+  <!-- Crew Neck Body -->
+  <g filter="url(#crew-shadow)">
+    <!-- Main body -->
+    <path class="shirt-body" fill="currentColor" d="
+      M75,125 
+      L25,155 L15,235 L55,250 L65,170 L65,435 
+      C65,455 90,465 200,465 
+      C310,465 335,455 335,435 
+      L335,170 L345,250 L385,235 L375,155 L325,125
+      C305,105 260,90 200,90 
+      C140,90 95,105 75,125 Z
+    "/>
+    
+    <!-- Left sleeve -->
+    <path class="shirt-body" fill="currentColor" d="
+      M75,125 L25,155 L15,235 L55,250 L65,170 L75,125 Z
+    "/>
+    
+    <!-- Right sleeve -->
+    <path class="shirt-body" fill="currentColor" d="
+      M325,125 L375,155 L385,235 L345,250 L335,170 L325,125 Z
+    "/>
+    
+    <!-- Ribbed collar -->
+    <ellipse cx="200" cy="92" rx="50" ry="15" fill="currentColor"/>
+    <ellipse cx="200" cy="92" rx="48" ry="13" fill="rgba(0,0,0,0.08)"/>
+    <ellipse cx="200" cy="92" rx="35" ry="8" fill="rgba(0,0,0,0.15)"/>
+    
+    <!-- Ribbed cuffs and hem (subtle indication) -->
+    <rect x="15" y="228" width="42" height="12" rx="2" fill="rgba(0,0,0,0.05)"/>
+    <rect x="343" y="228" width="42" height="12" rx="2" fill="rgba(0,0,0,0.05)"/>
+    <path d="M65,455 Q200,468 335,455" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="10"/>
+  </g>
+  
+  <!-- Fabric texture -->
+  <path fill="url(#crew-gradient)" d="
+    M75,125 
+    L25,155 L15,235 L55,250 L65,170 L65,435 
+    C65,455 90,465 200,465 
+    C310,465 335,455 335,435 
+    L335,170 L345,250 L385,235 L375,155 L325,125
+    C305,105 260,90 200,90 
+    C140,90 95,105 75,125 Z
+  "/>
+  
+  <!-- Seam lines -->
+  <g stroke="rgba(0,0,0,0.06)" stroke-width="1" fill="none">
+    <line x1="200" y1="100" x2="200" y2="465"/>
+    <path d="M65,180 Q200,190 335,180"/>
+  </g>
+  
+  <!-- Print area -->
+  <rect class="print-area" x="120" y="150" width="160" height="170" 
+        fill="none" stroke="none" data-area="front-center"/>
+</svg>
+

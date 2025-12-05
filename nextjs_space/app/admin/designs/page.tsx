@@ -19,8 +19,7 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  LayoutGrid,
-  ExternalLink
+  LayoutGrid
 } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { DesignActions } from '@/components/design-actions'
@@ -98,9 +97,9 @@ export default async function DesignsPage() {
           </div>
           <div className="flex gap-3">
             <Button variant="outline" asChild>
-              <Link href="/design" target="_blank">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Preview Designer
+              <Link href="/admin/designer">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Product Designer
               </Link>
             </Button>
             <Button asChild>
@@ -211,14 +210,14 @@ export default async function DesignsPage() {
             </Link>
           </Card>
           <Card className="border-dashed border-2 hover:border-primary/50 transition-colors group cursor-pointer">
-            <Link href="/design" target="_blank">
+            <Link href="/admin/designer">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-3 rounded-xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
                   <Sparkles className="h-6 w-6 text-purple-500" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">Merchandise Designer</h3>
-                  <p className="text-sm text-muted-foreground">Create with 4-step wizard</p>
+                  <h3 className="font-semibold">Product Designer</h3>
+                  <p className="text-sm text-muted-foreground">Create custom merchandise</p>
                 </div>
                 <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-500 transition-colors" />
               </CardContent>
@@ -268,7 +267,7 @@ export default async function DesignsPage() {
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link href="/design">
+                  <Link href="/admin/designer">
                     <Sparkles className="mr-2 h-4 w-4" />
                     Use Designer
                   </Link>

@@ -238,21 +238,31 @@ export default function AdminDesignerPage() {
                     {MOCKUP_PRODUCTS.filter(p => p.category === category).map(product => (
                       <Card
                         key={product.id}
-                        className="cursor-pointer hover:shadow-xl transition-all group overflow-hidden"
+                        className="cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all group overflow-hidden border-2 border-transparent hover:border-primary/30"
                         onClick={() => selectProduct(product)}
                       >
-                        <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-                          {/* Product mockup placeholder - would be real image */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div
-                              className="w-3/4 h-3/4 rounded-lg shadow-inner"
-                              style={{ backgroundColor: PRO_COLORS[5].hex }}
+                        <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+                          {/* Product mockup image */}
+                          {product.thumbnailUrl ? (
+                            <img
+                              src={product.thumbnailUrl}
+                              alt={product.name}
+                              className="absolute inset-0 w-full h-full object-contain p-4 transition-transform group-hover:scale-105"
                             />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Package className="w-16 h-16 text-gray-300" />
+                            </div>
+                          )}
+                          {/* Hover overlay */}
+                          <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors flex items-center justify-center">
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">
+                              Select Product
+                            </span>
                           </div>
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                         </div>
                         <CardContent className="p-4">
-                          <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
+                          <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">{product.name}</h3>
                           <p className="text-sm text-gray-500 mb-3 line-clamp-2">{product.description}</p>
                           <div className="flex items-center justify-between">
                             <span className="text-xl font-bold text-primary">${product.basePrice}</span>
@@ -739,21 +749,24 @@ function DesignCanvas({ state, updateState, updateElement, canvasRef, isDragging
             onMouseLeave={handleMouseUp}
             onClick={() => updateState({ selectedElementId: null })}
           >
-            {/* Product Base with Color */}
+            {/* Product Base with Color Background */}
             <div
               className="absolute inset-0"
               style={{ backgroundColor: productColor }}
-            >
-              {/* Fabric texture overlay for realism */}
-              <div
-                className="absolute inset-0"
+            />
+
+            {/* Product Mockup Image */}
+            {state.product && (
+              <img
+                src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
+                alt={state.product.name}
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
                 style={{
-                  backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")',
-                  opacity: 0.03,
-                  mixBlendMode: 'overlay',
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.1)',
                 }}
               />
-            </div>
+            )}
 
             {/* Print Area Guide */}
             {state.showGuides && state.product && (

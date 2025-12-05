@@ -7,6 +7,7 @@ export interface MockupProduct {
   category: 'tops' | 'bottoms' | 'accessories';
   description: string;
   basePrice: number;
+  thumbnailUrl?: string; // Thumbnail image for product selection
   views: MockupView[];
   printableArea: PrintableArea;
 }
@@ -94,9 +95,11 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'tops',
     description: 'Premium 100% cotton t-shirt. Pre-shrunk, relaxed fit.',
     basePrice: 24.99,
+    // Using actual mockup images that exist in the project
+    thumbnailUrl: '/mockups/basketball_tshirt_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/tshirt/front.png', maskUrl: '/mockups/tshirt/front-mask.png', shadowUrl: '/mockups/tshirt/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/tshirt/back.png', maskUrl: '/mockups/tshirt/back-mask.png', shadowUrl: '/mockups/tshirt/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_tshirt_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_tshirt_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 30, y: 22, width: 40, height: 50 },
   },
@@ -106,9 +109,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'tops',
     description: 'Fleece-lined hoodie with kangaroo pocket. 50/50 cotton-poly blend.',
     basePrice: 44.99,
+    thumbnailUrl: '/mockups/basketball_hoodie_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/hoodie/front.png', maskUrl: '/mockups/hoodie/front-mask.png', shadowUrl: '/mockups/hoodie/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/hoodie/back.png', maskUrl: '/mockups/hoodie/back-mask.png', shadowUrl: '/mockups/hoodie/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_hoodie_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_hoodie_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 28, y: 30, width: 44, height: 40 },
   },
@@ -118,9 +122,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'tops',
     description: 'Classic crew neck with soft fleece interior. 80/20 cotton-poly.',
     basePrice: 39.99,
+    thumbnailUrl: '/mockups/basketball_sweatshirt_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/crewneck/front.png', maskUrl: '/mockups/crewneck/front-mask.png', shadowUrl: '/mockups/crewneck/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/crewneck/back.png', maskUrl: '/mockups/crewneck/back-mask.png', shadowUrl: '/mockups/crewneck/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_sweatshirt_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_sweatshirt_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 28, y: 28, width: 44, height: 42 },
   },
@@ -130,9 +135,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'tops',
     description: 'Comfortable long sleeve cotton shirt. Ring-spun cotton.',
     basePrice: 29.99,
+    thumbnailUrl: '/mockups/basketball_jersey_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/longsleeve/front.png', maskUrl: '/mockups/longsleeve/front-mask.png', shadowUrl: '/mockups/longsleeve/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/longsleeve/back.png', maskUrl: '/mockups/longsleeve/back-mask.png', shadowUrl: '/mockups/longsleeve/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_jersey_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_jersey_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 30, y: 22, width: 40, height: 50 },
   },
@@ -142,9 +148,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'tops',
     description: 'Athletic fit tank top. Moisture-wicking fabric.',
     basePrice: 22.99,
+    thumbnailUrl: '/mockups/basketball_jersey_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/tank/front.png', maskUrl: '/mockups/tank/front-mask.png', shadowUrl: '/mockups/tank/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/tank/back.png', maskUrl: '/mockups/tank/back-mask.png', shadowUrl: '/mockups/tank/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_jersey_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_jersey_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 28, y: 20, width: 44, height: 55 },
   },
@@ -154,9 +161,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'bottoms',
     description: 'Lightweight athletic shorts. Moisture-wicking with side pockets.',
     basePrice: 27.99,
+    thumbnailUrl: '/mockups/basketball_shorts_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/shorts/front.png', maskUrl: '/mockups/shorts/front-mask.png', shadowUrl: '/mockups/shorts/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/shorts/back.png', maskUrl: '/mockups/shorts/back-mask.png', shadowUrl: '/mockups/shorts/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_shorts_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_shorts_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 32, y: 15, width: 36, height: 60 },
   },
@@ -166,9 +174,10 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     category: 'bottoms',
     description: 'Comfortable joggers with elastic cuffs. French terry fleece.',
     basePrice: 34.99,
+    thumbnailUrl: '/mockups/basketball_shorts_mockup.png',
     views: [
-      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/joggers/front.png', maskUrl: '/mockups/joggers/front-mask.png', shadowUrl: '/mockups/joggers/front-shadow.png' },
-      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/joggers/back.png', maskUrl: '/mockups/joggers/back-mask.png', shadowUrl: '/mockups/joggers/back-shadow.png' },
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/basketball_shorts_mockup.png', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/basketball_shorts_back_mockup.png', maskUrl: '', shadowUrl: '' },
     ],
     printableArea: { x: 35, y: 20, width: 30, height: 25 },
   },

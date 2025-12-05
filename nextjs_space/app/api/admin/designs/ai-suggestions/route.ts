@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (designId) {
       design = await prisma.design.findUnique({
         where: { id: designId },
-        include: { mockups: true },
+        include: { products: true },
       });
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Color suggestions
-    if (!design || design.mockups.length < 3) {
+    if (!design || design.products.length < 3) {
       suggestions.push({
         id: `sug-${Date.now()}-7`,
         type: 'color',
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       suggestions: suggestions.slice(0, 6), // Return top 6 suggestions
-      totalAnalyzed: design?.mockups?.length || 0,
+      totalAnalyzed: design?.products?.length || 0,
     });
   } catch (error) {
     console.error('AI suggestions error:', error);

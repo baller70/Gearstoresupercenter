@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     // Check if the imageUrl is an S3 key (doesn't start with / or http)
     if (!design.imageUrl.startsWith('/') && !design.imageUrl.startsWith('http')) {
       // Download from S3 to a temporary location
-      const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+      const { GetObjectCommand } = await import('@aws-sdk/client-s3');
       const { createS3Client, getBucketConfig } = await import('@/lib/aws-config');
       
       const s3Client = createS3Client();

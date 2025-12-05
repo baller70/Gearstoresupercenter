@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { getTemplateById } from '@/lib/product-templates';
 
 export interface SaveDesignRequest {
@@ -29,7 +28,7 @@ export interface SaveDesignRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: SaveDesignRequest = await request.json();
-    const { templateId, colorId, customColor, selectedSizes, layers, quantity, businessId } = body;
+    const { templateId, colorId, customColor, selectedSizes, layers, quantity } = body;
 
     // Validate template
     const template = getTemplateById(templateId);
@@ -38,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate sizes
-    const validSizes = selectedSizes.filter(size => 
+    const validSizes = selectedSizes.filter(size =>
       template.availableSizes.some(s => s.id === size)
     );
     if (validSizes.length === 0) {
@@ -49,32 +48,28 @@ export async function POST(request: NextRequest) {
     const basePrice = template.basePrice;
     const totalPrice = basePrice * quantity;
 
-    // Create user design record
-    const userDesign = await prisma.userDesign.create({
-      data: {
-        name: `Custom ${template.name}`,
-        productType: templateId,
-        logoUrl: layers.find(l => l.type === 'logo')?.content || '',
-        positions: layers as any,
-        metadata: {
-          templateId,
-          colorId,
-          customColor,
-          selectedSizes: validSizes,
-          quantity,
-          basePrice,
-          totalPrice,
-        },
-        businessId: businessId || undefined,
-      },
-    });
+    // Generate a unique design ID (for session-based storage)
+    const designId = `design_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+    // Return design configuration (can be stored in session/localStorage on client)
+    // This allows the design to be added to cart without requiring user authentication
     return NextResponse.json({
       success: true,
-      designId: userDesign.id,
+      designId,
+      design: {
+        id: designId,
+        name: `Custom ${template.name}`,
+        templateId,
+        colorId,
+        customColor,
+        layers,
+        selectedSizes: validSizes,
+        quantity,
+      },
       template: {
         id: template.id,
         name: template.name,
+        category: template.category,
       },
       color: customColor || colorId,
       sizes: validSizes,
@@ -82,6 +77,7 @@ export async function POST(request: NextRequest) {
       pricing: {
         basePrice,
         totalPrice,
+        perItem: basePrice,
         currency: 'USD',
       },
     });

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <linearGradient id="sock-gradient-back" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/>
+      <stop offset="50%" style="stop-color:rgba(0,0,0,0)"/>
+      <stop offset="100%" style="stop-color:rgba(0,0,0,0.05)"/>
+    </linearGradient>
+    <filter id="sock-shadow-back" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="-2" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  
+  <!-- Athletic Crew Sock - Back View -->
+  <g filter="url(#sock-shadow-back)">
+    <!-- Main sock body -->
+    <path class="shirt-body" fill="currentColor" d="
+      M60,20 L140,20 
+      C145,20 150,25 150,35 
+      L150,280 
+      C150,300 145,320 130,340 
+      L120,360 C115,375 100,385 85,385 
+      L70,385 C55,385 45,370 50,350 
+      L55,320 C50,300 50,290 50,280 
+      L50,35 
+      C50,25 55,20 60,20 Z
+    "/>
+    
+    <!-- Ribbed top band -->
+    <rect x="50" y="20" width="100" height="30" rx="3" fill="rgba(0,0,0,0.06)"/>
+    
+    <!-- Heel reinforcement (back view emphasis) -->
+    <path fill="rgba(0,0,0,0.08)" d="
+      M55,260 C55,290 65,320 85,330 C105,320 115,290 115,260 L55,260 Z
+    "/>
+    
+    <!-- Toe area -->
+    <ellipse cx="95" cy="370" rx="35" ry="15" fill="rgba(0,0,0,0.04)"/>
+    
+    <!-- Back seam line -->
+    <path fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1.5" d="
+      M100,50 L100,250
+    "/>
+    
+    <!-- Arch support line -->
+    <path fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2" d="
+      M60,180 Q100,185 140,180
+    "/>
+  </g>
+  
+  <!-- Fabric texture -->
+  <path fill="url(#sock-gradient-back)" d="
+    M60,20 L140,20 
+    C145,20 150,25 150,35 
+    L150,280 
+    C150,300 145,320 130,340 
+    L120,360 C115,375 100,385 85,385 
+    L70,385 C55,385 45,370 50,350 
+    L55,320 C50,300 50,290 50,280 
+    L50,35 
+    C50,25 55,20 60,20 Z
+  "/>
+  
+  <!-- Stripe decorations (optional, subtle) -->
+  <g stroke="rgba(0,0,0,0.05)" stroke-width="8" fill="none">
+    <line x1="50" y1="60" x2="150" y2="60"/>
+    <line x1="50" y1="80" x2="150" y2="80"/>
+  </g>
+  
+  <!-- Print area -->
+  <rect class="print-area" x="60" y="100" width="80" height="120" 
+        fill="none" stroke="none" data-area="calf-area-back"/>
+</svg>
+

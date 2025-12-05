@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { uploadFile, downloadFile } from '@/lib/s3'
+import { uploadFile, downloadFile } from '@/lib/storage.server'
 import { prisma } from '@/lib/db'
 import { advancedMockupGenerator } from '@/lib/advanced-mockup-generator'
 import { DEFAULT_BUSINESS_ID } from '@/lib/constants'

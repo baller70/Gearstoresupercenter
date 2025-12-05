@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateAllMockups } from '@/lib/real-mockup-generator';
-import { uploadFile } from '@/lib/s3';
+import { uploadFile } from '@/lib/storage.server';
 import { DEFAULT_BUSINESS_ID } from '@/lib/constants';
 import fs from 'fs';
 import path from 'path';
@@ -43,15 +43,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Logo file and design name are required' }, { status: 400 });
     }
 
-    // Save logo to S3
+    // Save logo (S3 or local storage fallback)
     const logoBuffer = Buffer.from(await logoFile.arrayBuffer());
     const logoFileExtension = path.extname(logoFile.name) || '.png';
-    const logoS3Key = await uploadFile(
-      logoBuffer,
-      `designs/${Date.now()}-${designName.replace(/[^a-zA-Z0-9]/g, '-')}${logoFileExtension}`
-    );
-    
-    console.log('[Upload with AI] Logo uploaded to S3:', logoS3Key);
+    const logoFileName = `designs/${Date.now()}-${designName.replace(/[^a-zA-Z0-9]/g, '-')}${logoFileExtension}`;
+
+    let logoStoragePath: string;
+    try {
+      logoStoragePath = await uploadFile(logoBuffer, logoFileName);
+      console.log('[Upload with AI] Logo uploaded:', logoStoragePath);
+    } catch (uploadError) {
+      console.error('[Upload with AI] Logo upload failed:', uploadError);
+      return NextResponse.json({
+        error: 'Failed to save logo file',
+        details: uploadError instanceof Error ? uploadError.message : 'Unknown error'
+      }, { status: 500 });
+    }
     
     // Create temp logo file for mockup generation (will be deleted after use)
     const tempLogoPath = path.join(os.tmpdir(), `logo-${Date.now()}${logoFileExtension}`);
@@ -137,13 +144,13 @@ Respond with raw JSON only.`
       ? scores.reduce((sum, score) => sum + score, 0) / scores.length 
       : 0;
 
-    // Save design to database with S3 key
+    // Save design to database with storage path (S3 key or local path)
     const design = await prisma.design.create({
       data: {
         businessId: DEFAULT_BUSINESS_ID,
         name: designName,
-        logoUrl: logoS3Key,
-        imageUrl: logoS3Key,
+        logoUrl: logoStoragePath,
+        imageUrl: logoStoragePath,
         status: averageScore >= 7 ? 'APPROVED' : 'PENDING',
         aiAnalysis: JSON.stringify(analyses),
         averageScore: averageScore

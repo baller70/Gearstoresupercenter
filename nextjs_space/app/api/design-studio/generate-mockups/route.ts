@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { downloadFile, uploadFile } from '@/lib/s3';
+import { downloadFile, uploadFile } from '@/lib/storage.server';
 import { advancedMockupGenerator } from '@/lib/advanced-mockup-generator';
 import path from 'path';
 import fs from 'fs/promises';

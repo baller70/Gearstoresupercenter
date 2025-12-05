@@ -17,18 +17,18 @@ export async function GET(
     
     console.log(`[Image Proxy] Fetching image: ${key}`)
     
-    // Check if this is a local generated mockup
-    if (key.startsWith('generated-mockups/')) {
+    // Check if this is a local file (generated-mockups/ or uploads/)
+    if (key.startsWith('generated-mockups/') || key.startsWith('uploads/')) {
       const localPath = path.join(process.cwd(), 'public', key)
-      
+
       console.log(`[Image Proxy] Checking local file: ${localPath}`)
-      
+
       if (fs.existsSync(localPath)) {
         console.log(`[Image Proxy] Serving local file: ${localPath}`)
-        
+
         const buffer = fs.readFileSync(localPath)
         const contentType = getContentTypeFromKey(key)
-        
+
         return new NextResponse(buffer, {
           status: 200,
           headers: {

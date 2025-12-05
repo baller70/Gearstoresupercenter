@@ -279,10 +279,10 @@ export default async function AccountPage() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center">
                     <Sparkles className="mr-2 h-5 w-5" />
-                    Custom Design Requests
+                    Custom Designs
                   </CardTitle>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/customize">New Request</Link>
+                    <Link href="/design">Design New Gear</Link>
                   </Button>
                 </div>
               </CardHeader>
@@ -293,13 +293,13 @@ export default async function AccountPage() {
                       <Sparkles className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="font-semibold">No custom requests yet</h3>
-                      <p className="text-muted-foreground">Create custom basketball apparel with AI assistance</p>
+                      <h3 className="font-semibold">No custom designs yet</h3>
+                      <p className="text-muted-foreground">Create custom basketball apparel with our 4-step designer</p>
                     </div>
                     <Button asChild>
-                      <Link href="/customize">
+                      <Link href="/design">
                         <Sparkles className="mr-2 h-4 w-4" />
-                        Create Custom Design
+                        Design Your Gear
                       </Link>
                     </Button>
                   </div>

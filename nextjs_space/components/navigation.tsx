@@ -5,17 +5,18 @@ import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-  ShoppingCart, 
-  User, 
-  LogOut, 
-  Settings, 
+import {
+  ShoppingCart,
+  User,
+  LogOut,
+  Settings,
   Menu,
   Circle,
   Home,
   Package,
   Heart,
-  Users
+  Users,
+  Sparkles
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -97,6 +98,7 @@ export function Navigation() {
 
   const navigationItems = [
     { name: "Home", href: "/", icon: Home },
+    { name: "Design Your Gear", href: "/design", icon: Sparkles },
     { name: "Performance Apparel", href: "/products?category=PERFORMANCE_APPAREL", icon: Package },
     { name: "Size Guide", href: "/size-guide", icon: Package },
     { name: "Casual Wear", href: "/products?category=CASUAL_WEAR", icon: Package },

@@ -188,6 +188,20 @@ export const MOCKUP_PRODUCTS: MockupProduct[] = [
     ],
     printableArea: { x: 35, y: 20, width: 30, height: 25 },
   },
+  {
+    id: 'socks',
+    name: 'Athletic Crew Socks',
+    category: 'accessories',
+    description: 'Cushioned athletic crew socks with arch support. Sold in pairs.',
+    basePrice: 14.99,
+    // Using new SVG mockup for socks
+    thumbnailUrl: '/mockups/socks_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/socks_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/socks_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 25, y: 10, width: 50, height: 55 },
+  },
 ];
 
 // Helper functions

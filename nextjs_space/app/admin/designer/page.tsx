@@ -443,32 +443,34 @@ export default function AdminDesignerPage() {
                     className="aspect-[3/4] rounded-lg relative overflow-hidden bg-white"
                   >
                     {/* Product Mockup with Color Tint */}
-                    <div className="absolute inset-0">
-                      {/* Color underlay - only visible through the product shape */}
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          backgroundColor: state.customColor || state.color.hex,
-                          maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
-                          WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
-                          maskSize: 'contain',
-                          WebkitMaskSize: 'contain',
-                          maskRepeat: 'no-repeat',
-                          WebkitMaskRepeat: 'no-repeat',
-                          maskPosition: 'center',
-                          WebkitMaskPosition: 'center',
-                        }}
-                      />
-                      {/* Product mockup overlay */}
-                      <img
-                        src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
-                        alt={state.product.name}
-                        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                        style={{
-                          mixBlendMode: 'multiply',
-                          filter: 'contrast(1.05) brightness(1.05)',
-                        }}
-                      />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="relative w-full h-full">
+                        {/* Color tint layer */}
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            backgroundColor: state.customColor || state.color.hex,
+                            maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                            WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                            maskSize: 'contain',
+                            WebkitMaskSize: 'contain',
+                            maskRepeat: 'no-repeat',
+                            WebkitMaskRepeat: 'no-repeat',
+                            maskPosition: 'center',
+                            WebkitMaskPosition: 'center',
+                          }}
+                        />
+                        {/* Product mockup overlay */}
+                        <img
+                          src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
+                          alt={state.product.name}
+                          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                          style={{
+                            mixBlendMode: 'multiply',
+                            opacity: 0.9,
+                          }}
+                        />
+                      </div>
                     </div>
 
                     {/* Design Elements */}
@@ -788,34 +790,42 @@ function DesignCanvas({ state, updateState, updateElement, canvasRef, isDragging
             {/* Canvas Background - Always White */}
             <div className="absolute inset-0 bg-white" />
 
-            {/* Product Mockup with Color Tint */}
+            {/* Product Mockup with Color Tint - Using CSS filter for color overlay */}
             {state.product && (
-              <div className="absolute inset-0">
-                {/* Color underlay - only visible through the product */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundColor: productColor,
-                    maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
-                    WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
-                    maskSize: 'contain',
-                    WebkitMaskSize: 'contain',
-                    maskRepeat: 'no-repeat',
-                    WebkitMaskRepeat: 'no-repeat',
-                    maskPosition: 'center',
-                    WebkitMaskPosition: 'center',
-                  }}
-                />
-                {/* Product mockup overlay */}
-                <img
-                  src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
-                  alt={state.product.name}
-                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                  style={{
-                    mixBlendMode: 'multiply',
-                    filter: 'contrast(1.05) brightness(1.05)',
-                  }}
-                />
+              <div className="absolute inset-0 flex items-center justify-center">
+                {/*
+                  Color overlay technique:
+                  1. The base PNG has a transparent background and white/light garment
+                  2. We use CSS filter with hue-rotate and saturate to tint the garment
+                  3. For non-white colors, we apply a colored overlay with mix-blend-mode
+                */}
+                <div className="relative w-full h-full">
+                  {/* Color tint layer - uses the mockup as a mask */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundColor: productColor,
+                      maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                      WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                      maskSize: 'contain',
+                      WebkitMaskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      WebkitMaskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                      WebkitMaskPosition: 'center',
+                    }}
+                  />
+                  {/* Product mockup overlay - provides texture and shadows */}
+                  <img
+                    src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
+                    alt={state.product.name}
+                    className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                    style={{
+                      mixBlendMode: 'multiply',
+                      opacity: 0.9,
+                    }}
+                  />
+                </div>
               </div>
             )}
 

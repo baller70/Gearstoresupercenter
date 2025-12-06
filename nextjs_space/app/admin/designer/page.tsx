@@ -85,15 +85,22 @@ export default function AdminDesignerPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
 
-  // Auth check
+  // Auth check - bypass in development when BYPASS_AUTH is set
+  const isDevBypass = process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_BYPASS_AUTH === 'true';
+
   useEffect(() => {
+    // Skip auth checks if dev bypass is enabled
+    if (isDevBypass) {
+      console.log('[Designer] Dev auth bypass enabled');
+      return;
+    }
     if (status === 'unauthenticated') {
       redirect('/auth/signin');
     }
     if (status === 'authenticated' && session?.user?.role !== 'ADMIN') {
       redirect('/');
     }
-  }, [status, session]);
+  }, [status, session, isDevBypass]);
 
   // Get selected element
   const selectedElement = state.elements.find(e => e.id === state.selectedElementId);

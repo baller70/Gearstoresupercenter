@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, ArrowLeft, CreditCard } from "lucide-react"
 import Link from "next/link"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { getDevSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
 export default async function CartPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getDevSession()
 
   if (!session) {
     redirect('/auth/signin')

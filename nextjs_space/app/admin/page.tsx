@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/db"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { getDevSession } from "@/lib/auth"
 import { formatPrice } from "@/lib/products"
 import {
   Settings,
@@ -40,7 +39,7 @@ import Image from "next/image"
 import { redirect } from "next/navigation"
 
 export default async function AdminPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getDevSession()
 
   if (!session || session?.user?.role !== 'ADMIN') {
     redirect('/')

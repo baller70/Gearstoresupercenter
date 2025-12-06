@@ -1,5 +1,4 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { getDevSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { Navigation } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
@@ -27,7 +26,7 @@ import Image from 'next/image'
 import { getImageProxyUrl } from '@/lib/s3'
 
 export default async function DesignsPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getDevSession()
 
   if (!session?.user || session.user.role !== 'ADMIN') {
     redirect('/auth/signin')

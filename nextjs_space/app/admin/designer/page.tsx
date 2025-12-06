@@ -433,10 +433,39 @@ export default function AdminDesignerPage() {
                 </CardHeader>
                 <CardContent>
                   <div
-                    className="aspect-[3/4] rounded-lg relative overflow-hidden"
-                    style={{ backgroundColor: state.customColor || state.color.hex }}
+                    className="aspect-[3/4] rounded-lg relative overflow-hidden bg-white"
                   >
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    {/* Product Mockup with Color Tint */}
+                    <div className="absolute inset-0">
+                      {/* Color underlay - only visible through the product shape */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backgroundColor: state.customColor || state.color.hex,
+                          maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                          WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                          maskSize: 'contain',
+                          WebkitMaskSize: 'contain',
+                          maskRepeat: 'no-repeat',
+                          WebkitMaskRepeat: 'no-repeat',
+                          maskPosition: 'center',
+                          WebkitMaskPosition: 'center',
+                        }}
+                      />
+                      {/* Product mockup overlay */}
+                      <img
+                        src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
+                        alt={state.product.name}
+                        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                        style={{
+                          mixBlendMode: 'multiply',
+                          filter: 'contrast(1.05) brightness(1.05)',
+                        }}
+                      />
+                    </div>
+
+                    {/* Design Elements */}
+                    <div className="absolute inset-0">
                       {state.elements.filter(e => e.visible).map(el => (
                         <div
                           key={el.id}
@@ -463,7 +492,7 @@ export default function AdminDesignerPage() {
                   </div>
                   <div className="mt-4 text-center">
                     <Badge variant="secondary" className="text-lg px-4 py-1">
-                      {state.product.name} - {state.color.name}
+                      {state.product.name} - {state.customColor ? 'Custom' : state.color.name}
                     </Badge>
                   </div>
                 </CardContent>
@@ -749,23 +778,38 @@ function DesignCanvas({ state, updateState, updateElement, canvasRef, isDragging
             onMouseLeave={handleMouseUp}
             onClick={() => updateState({ selectedElementId: null })}
           >
-            {/* Product Base with Color Background */}
-            <div
-              className="absolute inset-0"
-              style={{ backgroundColor: productColor }}
-            />
+            {/* Canvas Background - Always White */}
+            <div className="absolute inset-0 bg-white" />
 
-            {/* Product Mockup Image */}
+            {/* Product Mockup with Color Tint */}
             {state.product && (
-              <img
-                src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
-                alt={state.product.name}
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                style={{
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.1)',
-                }}
-              />
+              <div className="absolute inset-0">
+                {/* Color underlay - only visible through the product */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundColor: productColor,
+                    maskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                    WebkitMaskImage: `url(${state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl})`,
+                    maskSize: 'contain',
+                    WebkitMaskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                    WebkitMaskPosition: 'center',
+                  }}
+                />
+                {/* Product mockup overlay */}
+                <img
+                  src={state.product.views.find((v: any) => v.angle === state.view)?.mockupUrl || state.product.thumbnailUrl}
+                  alt={state.product.name}
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                  style={{
+                    mixBlendMode: 'multiply',
+                    filter: 'contrast(1.05) brightness(1.05)',
+                  }}
+                />
+              </div>
             )}
 
             {/* Print Area Guide */}

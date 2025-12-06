@@ -29,3 +29,50 @@
   </g>
 </svg>
 
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shorts-back-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shorts-back-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="2" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#shorts-back-shadow)">
+    <!-- Shorts back body -->
+    <path d="M300,250 L724,250 L724,280 Q724,300 710,300 L680,300 L680,700 Q680,720 660,720 L580,720 
+             Q560,720 560,740 L560,850 L464,850 L464,740 Q464,720 444,720 L364,720 Q344,720 344,700 
+             L344,300 L314,300 Q300,300 300,280 Z"
+          fill="url(#shorts-back-fabric)" stroke="#cccccc" stroke-width="2.5"/>
+    
+    <!-- Waistband -->
+    <rect x="300" y="250" width="424" height="30" rx="5" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Back pockets -->
+    <rect x="370" y="340" width="80" height="90" rx="8" 
+          fill="none" stroke="#cccccc" stroke-width="1.5"/>
+    <rect x="574" y="340" width="80" height="90" rx="8" 
+          fill="none" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Inseam -->
+    <path d="M512,300 L512,720" stroke="#cccccc" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Fabric texture -->
+    <path d="M344,480 Q512,485 680,480" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M344,580 Q512,585 680,580" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M344,650 Q512,655 680,650" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

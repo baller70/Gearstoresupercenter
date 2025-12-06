@@ -29,3 +29,58 @@
   </g>
 </svg>
 
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="longsleeve-back-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="longsleeve-back-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="2" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#longsleeve-back-shadow)">
+    <!-- Long sleeve back body -->
+    <path d="M280,200 L320,160 L420,140 L480,130 Q512,125 544,130 L604,140 L704,160 L744,200
+             L820,250 L850,340 L790,370 L740,330 L740,880 Q740,900 720,900 L304,900 Q284,900 284,880 
+             L284,330 L234,370 L174,340 L204,250 Z"
+          fill="url(#longsleeve-back-fabric)" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Left long sleeve -->
+    <path d="M280,200 L204,250 L174,340 L140,450 L120,560 L140,580 L180,570 L220,480 L234,370 L284,330 L284,200" 
+          fill="url(#longsleeve-back-fabric)" stroke="#cccccc" stroke-width="1.5" opacity="0.95"/>
+    
+    <!-- Right long sleeve -->
+    <path d="M744,200 L820,250 L850,340 L884,450 L904,560 L884,580 L844,570 L804,480 L790,370 L740,330 L740,200" 
+          fill="url(#longsleeve-back-fabric)" stroke="#cccccc" stroke-width="1.5" opacity="0.95"/>
+    
+    <!-- Back neck line -->
+    <path d="M442,140 Q512,135 582,140" 
+          stroke="#cccccc" stroke-width="2" fill="none"/>
+    
+    <!-- Left cuff -->
+    <ellipse cx="160" cy="575" rx="20" ry="12" 
+             fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Right cuff -->
+    <ellipse cx="864" cy="575" rx="20" ry="12" 
+             fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Fabric texture lines -->
+    <path d="M320,400 Q512,405 704,400" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M320,500 Q512,505 704,500" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M320,600 Q512,605 704,600" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M320,700 Q512,705 704,700" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

@@ -26,3 +26,57 @@
   </g>
 </svg>
 
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tank-back-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="tank-back-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="2" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#tank-back-shadow)">
+    <!-- Tank top back body -->
+    <path d="M340,180 L380,160 L440,150 L480,145 Q512,143 544,145 L584,150 L644,160 L684,180
+             L700,200 L700,880 Q700,900 680,900 L344,900 Q324,900 324,880 L324,200 Z"
+          fill="url(#tank-back-fabric)" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Left shoulder strap -->
+    <path d="M340,180 L360,140 L380,120 L400,140 L420,180 L380,160 Z" 
+          fill="url(#tank-back-fabric)" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Right shoulder strap -->
+    <path d="M684,180 L664,140 L644,120 L624,140 L604,180 L644,160 Z" 
+          fill="url(#tank-back-fabric)" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Back neck line -->
+    <path d="M420,180 Q512,170 604,180" 
+          stroke="#cccccc" stroke-width="2" fill="none"/>
+    
+    <!-- Armhole left -->
+    <path d="M340,180 L324,200 L324,320 Q330,310 340,300" 
+          fill="none" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Armhole right -->
+    <path d="M684,180 L700,200 L700,320 Q694,310 684,300" 
+          fill="none" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Fabric texture lines -->
+    <path d="M360,400 Q512,405 664,400" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M360,500 Q512,505 664,500" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M360,600 Q512,605 664,600" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M360,700 Q512,705 664,700" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

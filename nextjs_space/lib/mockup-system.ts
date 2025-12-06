@@ -222,3 +222,110 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
   } : null;
 }
 
+
+export const MOCKUP_PRODUCTS: MockupProduct[] = [
+  {
+    id: 'tshirt',
+    name: 'Classic T-Shirt',
+    category: 'tops',
+    description: 'Premium 100% cotton t-shirt. Pre-shrunk, relaxed fit.',
+    basePrice: 24.99,
+    thumbnailUrl: '/mockups/tshirt_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/tshirt_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/tshirt_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 30, y: 22, width: 40, height: 50 },
+  },
+  {
+    id: 'hoodie',
+    name: 'Pullover Hoodie',
+    category: 'tops',
+    description: 'Fleece-lined hoodie with kangaroo pocket. 50/50 cotton-poly blend.',
+    basePrice: 44.99,
+    thumbnailUrl: '/mockups/hoodie_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/hoodie_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/hoodie_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 28, y: 30, width: 44, height: 40 },
+  },
+  {
+    id: 'crewneck',
+    name: 'Crew Neck Sweatshirt',
+    category: 'tops',
+    description: 'Classic crew neck with soft fleece interior. 80/20 cotton-poly.',
+    basePrice: 39.99,
+    thumbnailUrl: '/mockups/crewneck_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/crewneck_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/crewneck_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 28, y: 28, width: 44, height: 42 },
+  },
+  {
+    id: 'longsleeve',
+    name: 'Long Sleeve Shirt',
+    category: 'tops',
+    description: 'Comfortable long sleeve cotton shirt. Ring-spun cotton.',
+    basePrice: 29.99,
+    thumbnailUrl: '/mockups/longsleeve_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/longsleeve_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/longsleeve_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 30, y: 22, width: 40, height: 50 },
+  },
+  {
+    id: 'tank',
+    name: 'Tank Top',
+    category: 'tops',
+    description: 'Athletic fit tank top. Moisture-wicking fabric.',
+    basePrice: 22.99,
+    thumbnailUrl: '/mockups/tank_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/tank_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/tank_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 28, y: 20, width: 44, height: 55 },
+  },
+  {
+    id: 'shorts',
+    name: 'Athletic Shorts',
+    category: 'bottoms',
+    description: 'Lightweight athletic shorts. Moisture-wicking with side pockets.',
+    basePrice: 27.99,
+    thumbnailUrl: '/mockups/shorts_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/shorts_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/shorts_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 32, y: 15, width: 36, height: 60 },
+  },
+  {
+    id: 'joggers',
+    name: 'Jogger Sweatpants',
+    category: 'bottoms',
+    description: 'Comfortable joggers with elastic cuffs. French terry fleece.',
+    basePrice: 34.99,
+    thumbnailUrl: '/mockups/joggers_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/joggers_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/joggers_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 35, y: 20, width: 30, height: 25 },
+  },
+  {
+    id: 'socks',
+    name: 'Athletic Crew Socks',
+    category: 'accessories',
+    description: 'Cushioned athletic crew socks with arch support. Sold in pairs.',
+    basePrice: 14.99,
+    thumbnailUrl: '/mockups/socks_mockup_front.svg',
+    views: [
+      { id: 'front', name: 'Front', angle: 'front', mockupUrl: '/mockups/socks_mockup_front.svg', maskUrl: '', shadowUrl: '' },
+      { id: 'back', name: 'Back', angle: 'back', mockupUrl: '/mockups/socks_mockup_back.svg', maskUrl: '', shadowUrl: '' },
+    ],
+    printableArea: { x: 25, y: 10, width: 50, height: 55 },
+  },
+];

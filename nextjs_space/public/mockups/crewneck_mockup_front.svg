@@ -31,3 +31,63 @@
   </g>
 </svg>
 
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="crewneck-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="crewneck-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="2" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#crewneck-shadow)">
+    <!-- Sweatshirt body -->
+    <path d="M270,210 L310,170 L410,150 L470,140 Q512,135 554,140 L614,150 L714,170 L754,210
+             L830,260 L860,350 L800,380 L750,340 L750,910 Q750,930 730,930 L294,930 Q274,930 274,910 
+             L274,340 L224,380 L164,350 L194,260 Z"
+          fill="url(#crewneck-fabric)" stroke="#cccccc" stroke-width="2.5"/>
+    
+    <!-- Left sleeve -->
+    <path d="M270,210 L194,260 L164,350 L224,380 L274,340 L274,210" 
+          fill="url(#crewneck-fabric)" stroke="#cccccc" stroke-width="2" opacity="0.95"/>
+    
+    <!-- Right sleeve -->
+    <path d="M754,210 L830,260 L860,350 L800,380 L750,340 L750,210" 
+          fill="url(#crewneck-fabric)" stroke="#cccccc" stroke-width="2" opacity="0.95"/>
+    
+    <!-- Ribbed crew neck -->
+    <ellipse cx="512" cy="155" rx="75" ry="25" 
+             fill="#eeeeee" stroke="#cccccc" stroke-width="2.5"/>
+    <path d="M437,155 Q512,160 587,155" stroke="#e0e0e0" stroke-width="1" opacity="0.6" fill="none"/>
+    <path d="M437,165 Q512,170 587,165" stroke="#e0e0e0" stroke-width="1" opacity="0.6" fill="none"/>
+    
+    <!-- Ribbed cuffs (left) -->
+    <rect x="164" y="340" width="60" height="30" rx="5" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Ribbed cuffs (right) -->
+    <rect x="800" y="340" width="60" height="30" rx="5" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Ribbed hem -->
+    <rect x="294" y="910" width="436" height="20" rx="3" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Fabric texture -->
+    <path d="M310,480 Q512,485 714,480" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M310,620 Q512,625 714,620" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M310,760 Q512,765 714,760" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

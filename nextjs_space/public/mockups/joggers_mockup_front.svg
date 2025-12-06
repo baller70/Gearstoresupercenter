@@ -35,3 +35,70 @@
   </g>
 </svg>
 
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="joggers-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="joggers-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="2" dy="5" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#joggers-shadow)">
+    <!-- Joggers body -->
+    <path d="M310,220 L714,220 L714,250 Q714,270 700,270 L680,270 L680,820 Q680,840 670,850 
+             L620,900 Q610,910 590,910 L570,910 Q550,910 550,930 L550,950 L474,950 L474,930 
+             Q474,910 454,910 L434,910 Q414,910 404,900 L354,850 Q344,840 344,820 
+             L344,270 L324,270 Q310,270 310,250 Z"
+          fill="url(#joggers-fabric)" stroke="#cccccc" stroke-width="2.5"/>
+    
+    <!-- Waistband with elastic -->
+    <rect x="310" y="220" width="404" height="30" rx="5" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="2"/>
+    <path d="M330,235 L694,235" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+    
+    <!-- Drawstring -->
+    <circle cx="480" cy="235" r="6" fill="#dddddd" stroke="#cccccc" stroke-width="1"/>
+    <circle cx="544" cy="235" r="6" fill="#dddddd" stroke="#cccccc" stroke-width="1"/>
+    <path d="M480,235 L460,260" stroke="#cccccc" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M544,235 L564,260" stroke="#cccccc" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Side pockets -->
+    <path d="M360,300 L360,400 Q360,410 370,410 L420,410 Q430,410 430,400 L430,300" 
+          fill="none" stroke="#cccccc" stroke-width="1.5"/>
+    <path d="M594,300 L594,400 Q594,410 604,410 L654,410 Q664,410 664,400 L664,300" 
+          fill="none" stroke="#cccccc" stroke-width="1.5"/>
+    
+    <!-- Inseam -->
+    <path d="M512,270 L512,850" stroke="#cccccc" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Left ankle cuff -->
+    <rect x="434" y="910" width="40" height="40" rx="3" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    <path d="M439,925 L469,925" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+    <path d="M439,935 L469,935" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+    
+    <!-- Right ankle cuff -->
+    <rect x="550" y="910" width="40" height="40" rx="3" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+    <path d="M555,925 L585,925" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+    <path d="M555,935 L585,935" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+    
+    <!-- Fabric texture -->
+    <path d="M360,450 Q512,455 664,450" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M360,580 Q512,585 664,580" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M360,710 Q512,715 664,710" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

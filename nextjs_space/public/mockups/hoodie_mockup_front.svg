@@ -1,0 +1,55 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hoodie-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="hoodie-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dx="2" dy="5" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#hoodie-shadow)">
+    <!-- Hoodie body -->
+    <path d="M260,220 L300,180 L400,155 L460,145 Q512,140 564,145 L624,155 L724,180 L764,220
+             L840,270 L870,360 L810,390 L760,350 L760,920 Q760,940 740,940 L284,940 Q264,940 264,920 
+             L264,350 L214,390 L154,360 L184,270 Z"
+          fill="url(#hoodie-fabric)" stroke="#cccccc" stroke-width="2.5"/>
+    
+    <!-- Left sleeve -->
+    <path d="M260,220 L184,270 L154,360 L214,390 L264,350 L264,220" 
+          fill="url(#hoodie-fabric)" stroke="#cccccc" stroke-width="2" opacity="0.95"/>
+    
+    <!-- Right sleeve -->
+    <path d="M764,220 L840,270 L870,360 L810,390 L760,350 L760,220" 
+          fill="url(#hoodie-fabric)" stroke="#cccccc" stroke-width="2" opacity="0.95"/>
+    
+    <!-- Hood -->
+    <path d="M380,160 Q512,120 644,160 L644,240 Q512,200 380,240 Z" 
+          fill="url(#hoodie-fabric)" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Kangaroo pocket -->
+    <path d="M360,520 L664,520 Q680,520 680,536 L680,680 Q680,696 664,696 L360,696 Q344,696 344,680 L344,536 Q344,520 360,520 Z" 
+          fill="#eeeeee" stroke="#cccccc" stroke-width="2"/>
+    
+    <!-- Drawstrings -->
+    <circle cx="460" cy="200" r="8" fill="#dddddd" stroke="#cccccc" stroke-width="1"/>
+    <circle cx="564" cy="200" r="8" fill="#dddddd" stroke="#cccccc" stroke-width="1"/>
+    <path d="M460,200 L440,240" stroke="#cccccc" stroke-width="3" stroke-linecap="round"/>
+    <path d="M564,200 L584,240" stroke="#cccccc" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Fabric texture -->
+    <path d="M300,450 Q512,455 724,450" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M300,600 Q512,605 724,600" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+    <path d="M300,750 Q512,755 724,750" stroke="#e0e0e0" stroke-width="1" opacity="0.5" fill="none"/>
+  </g>
+</svg>

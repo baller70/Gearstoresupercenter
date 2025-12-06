@@ -13,6 +13,39 @@ interface PrintfulVariant {
   color: string;
   color_code: string;
   size: string;
+  price: string;
+  retail_price?: string;
+  currency: string;
+  in_stock: boolean;
+}
+
+interface PrintfulCatalogProduct {
+  id: number;
+  type: string;
+  type_name: string;
+  brand: string;
+  model: string;
+  image: string;
+  variant_count: number;
+  currency: string;
+  files: PrintfulFileSpec[];
+  options: PrintfulOption[];
+  dimensions: any;
+}
+
+interface PrintfulFileSpec {
+  id: string;
+  type: string;
+  title: string;
+  additional_price: string;
+}
+
+interface PrintfulOption {
+  id: string;
+  title: string;
+  type: string;
+  values: { [key: string]: string };
+  additional_price: string;
 }
 
 interface MockupGenerationTask {
@@ -46,6 +79,59 @@ interface PrintfulFile {
     top: number;
     left: number;
   };
+}
+
+interface PrintfulOrderItem {
+  variant_id: number;
+  quantity: number;
+  retail_price?: string;
+  name?: string;
+  files?: Array<{
+    url: string;
+  }>;
+}
+
+interface PrintfulOrderRecipient {
+  name: string;
+  address1: string;
+  city: string;
+  state_code: string;
+  country_code: string;
+  zip: string;
+  email?: string;
+  phone?: string;
+}
+
+interface PrintfulOrderRequest {
+  recipient: PrintfulOrderRecipient;
+  items: PrintfulOrderItem[];
+  retail_costs?: {
+    currency: string;
+    subtotal: string;
+    discount?: string;
+    shipping: string;
+    tax?: string;
+  };
+}
+
+interface PrintfulOrder {
+  id: number;
+  external_id?: string;
+  status: string;
+  shipping: string;
+  created: number;
+  updated: number;
+  recipient: PrintfulOrderRecipient;
+  items: any[];
+  costs: any;
+  retail_costs: any;
+  shipments: Array<{
+    carrier: string;
+    service: string;
+    tracking_number: string;
+    tracking_url: string;
+    created: number;
+  }>;
 }
 
 export const BASKETBALL_PRODUCTS = {
@@ -86,6 +172,18 @@ export class PrintfulClient {
     return data.result;
   }
 
+  // ============================================
+  // PRODUCT CATALOG SYNC
+  // ============================================
+
+  async getCatalogProducts(): Promise<PrintfulCatalogProduct[]> {
+    return this.request<PrintfulCatalogProduct[]>('/products');
+  }
+
+  async getCatalogProduct(productId: number): Promise<PrintfulCatalogProduct> {
+    return this.request<PrintfulCatalogProduct>(`/products/${productId}`);
+  }
+
   async getProduct(productId: number): Promise<PrintfulProduct> {
     return this.request<PrintfulProduct>(`/products/${productId}`);
   }
@@ -103,24 +201,16 @@ export class PrintfulClient {
     );
   }
 
+  // ============================================
+  // MOCKUP GENERATION
+  // ============================================
+
   async createMockupTask(
     productId: number,
     variantIds: number[],
     designUrl: string,
     placement: string = 'front'
   ): Promise<string> {
-    const files: PrintfulFile[] = [{
-      url: designUrl,
-      position: {
-        area_width: 1800,
-        area_height: 2400,
-        width: 1800,
-        height: 1800,
-        top: 300,
-        left: 0,
-      },
-    }];
-
     const body = {
       variant_ids: variantIds,
       files: [{
@@ -215,6 +305,116 @@ export class PrintfulClient {
     }
 
     return results;
+  }
+
+  // ============================================
+  // PRICING & VARIANTS
+  // ============================================
+
+  async getVariantPricing(variantId: number): Promise<{ cost: number; retail: number; currency: string }> {
+    const variants = await this.getProductVariants(Math.floor(variantId / 1000));
+    const variant = variants.find(v => v.id === variantId);
+    
+    if (!variant) {
+      throw new Error(`Variant ${variantId} not found`);
+    }
+
+    return {
+      cost: parseFloat(variant.price),
+      retail: variant.retail_price ? parseFloat(variant.retail_price) : parseFloat(variant.price) * 2,
+      currency: variant.currency,
+    };
+  }
+
+  async calculateProductPricing(
+    productId: number,
+    profitMarginPercent: number = 100
+  ): Promise<Map<number, { cost: number; retail: number; profit: number }>> {
+    const variants = await this.getProductVariants(productId);
+    const pricing = new Map<number, { cost: number; retail: number; profit: number }>();
+
+    for (const variant of variants) {
+      const cost = parseFloat(variant.price);
+      const retail = cost * (1 + profitMarginPercent / 100);
+      const profit = retail - cost;
+
+      pricing.set(variant.id, { cost, retail, profit });
+    }
+
+    return pricing;
+  }
+
+  // ============================================
+  // ORDER FULFILLMENT
+  // ============================================
+
+  async createOrder(orderData: PrintfulOrderRequest, externalId?: string): Promise<PrintfulOrder> {
+    const body: any = {
+      ...orderData,
+      external_id: externalId,
+    };
+
+    return this.request<PrintfulOrder>('/orders', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  async confirmOrder(orderId: number): Promise<PrintfulOrder> {
+    return this.request<PrintfulOrder>(`/orders/${orderId}/confirm`, {
+      method: 'POST',
+    });
+  }
+
+  async getOrder(orderId: number): Promise<PrintfulOrder> {
+    return this.request<PrintfulOrder>(`/orders/${orderId}`);
+  }
+
+  async getOrderByExternalId(externalId: string): Promise<PrintfulOrder> {
+    return this.request<PrintfulOrder>(`/orders/@${externalId}`);
+  }
+
+  async cancelOrder(orderId: number): Promise<PrintfulOrder> {
+    return this.request<PrintfulOrder>(`/orders/${orderId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async estimateOrderCosts(orderData: PrintfulOrderRequest): Promise<any> {
+    return this.request('/orders/estimate-costs', {
+      method: 'POST',
+      body: JSON.stringify(orderData),
+    });
+  }
+
+  // ============================================
+  // WEBHOOK VERIFICATION
+  // ============================================
+
+  verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+    const crypto = require('crypto');
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(payload);
+    const calculatedSignature = hmac.digest('hex');
+    return calculatedSignature === signature;
+  }
+
+  parseWebhookEvent(payload: any): {
+    type: string;
+    orderId?: number;
+    status?: string;
+    tracking?: { carrier: string; number: string; url: string };
+  } {
+    return {
+      type: payload.type,
+      orderId: payload.data?.order?.id,
+      status: payload.data?.order?.status,
+      tracking: payload.data?.shipment ? {
+        carrier: payload.data.shipment.carrier,
+        number: payload.data.shipment.tracking_number,
+        url: payload.data.shipment.tracking_url,
+      } : undefined,
+    };
   }
 }
 

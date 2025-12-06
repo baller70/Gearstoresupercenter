@@ -1,0 +1,29 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- Tank top body with wide arm holes -->
+    <path d="M340,180 L380,150 L430,140 L480,130 Q512,125 544,130 L594,140 L644,150 L684,180
+             L720,220 L720,880 L304,880 L304,220 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Left shoulder strap -->
+    <path d="M340,180 L380,150 L380,220 L340,250 Z" fill="url(#fabric)" stroke="#ddd"/>
+    <!-- Right shoulder strap -->  
+    <path d="M684,180 L644,150 L644,220 L684,250 Z" fill="url(#fabric)" stroke="#ddd"/>
+    <!-- Deep arm holes -->
+    <path d="M304,220 Q260,350 304,480" fill="none" stroke="#ddd" stroke-width="2"/>
+    <path d="M720,220 Q764,350 720,480" fill="none" stroke="#ddd" stroke-width="2"/>
+    <!-- Scoop neck -->
+    <path d="M380,150 Q512,200 644,150" fill="none" stroke="#ccc" stroke-width="3"/>
+  </g>
+</svg>
+

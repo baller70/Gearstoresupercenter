@@ -1,0 +1,33 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- Sweatshirt body (thicker/heavier than tshirt) -->
+    <path d="M280,210 L320,165 L410,145 L470,135 Q512,130 554,135 L614,145 L704,165 L744,210
+             L810,260 L840,360 L780,390 L740,350 L740,880 L284,880 L284,350 L244,390 L184,360 L214,260 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Left sleeve (longer) -->
+    <path d="M280,210 L214,260 L120,480 L90,680 L140,700 L200,490 L244,390 L284,350" 
+          fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Right sleeve (longer) -->
+    <path d="M744,210 L810,260 L904,480 L934,680 L884,700 L824,490 L780,390 L740,350" 
+          fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Ribbed cuffs -->
+    <rect x="80" y="670" width="70" height="40" rx="5" fill="#e5e5e5" stroke="#ccc"/>
+    <rect x="874" y="670" width="70" height="40" rx="5" fill="#e5e5e5" stroke="#ccc"/>
+    <!-- Ribbed hem -->
+    <rect x="284" y="860" width="456" height="25" fill="#e5e5e5" stroke="#ccc"/>
+    <!-- Thick crew neck collar -->
+    <ellipse cx="512" cy="150" rx="80" ry="28" fill="#e5e5e5" stroke="#ccc" stroke-width="3"/>
+  </g>
+</svg>
+

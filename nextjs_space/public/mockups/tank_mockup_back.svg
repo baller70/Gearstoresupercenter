@@ -1,0 +1,28 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- Tank top back with racerback style -->
+    <path d="M340,180 L380,155 L430,148 L480,145 Q512,143 544,145 L594,148 L644,155 L684,180
+             L720,220 L720,880 L304,880 L304,220 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Back shoulder straps -->
+    <path d="M340,180 L380,155 L380,220 L340,250 Z" fill="url(#fabric)" stroke="#ddd"/>
+    <path d="M684,180 L644,155 L644,220 L684,250 Z" fill="url(#fabric)" stroke="#ddd"/>
+    <!-- Deep arm holes -->
+    <path d="M304,220 Q260,350 304,480" fill="none" stroke="#ddd" stroke-width="2"/>
+    <path d="M720,220 Q764,350 720,480" fill="none" stroke="#ddd" stroke-width="2"/>
+    <!-- Back neck line -->
+    <path d="M380,155 Q512,145 644,155" fill="none" stroke="#ccc" stroke-width="2"/>
+  </g>
+</svg>
+

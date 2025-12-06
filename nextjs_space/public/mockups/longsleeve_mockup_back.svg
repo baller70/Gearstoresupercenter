@@ -1,0 +1,31 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- Long sleeve back -->
+    <path d="M300,200 L340,165 L420,150 L480,142 Q512,138 544,142 L604,150 L684,165 L724,200
+             L780,240 L800,320 L780,340 L750,320 L750,880 L274,880 L274,320 L244,340 L224,320 L244,240 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Back neck seam -->
+    <path d="M420,150 Q512,135 604,150" fill="none" stroke="#ccc" stroke-width="2"/>
+    <!-- Left long sleeve -->
+    <path d="M274,320 L274,200 L244,240 L130,500 L100,700 L140,720 L200,500 L244,340" 
+          fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Right long sleeve -->
+    <path d="M750,320 L750,200 L780,240 L894,500 L924,700 L884,720 L824,500 L780,340" 
+          fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Cuffs -->
+    <rect x="90" y="690" width="60" height="40" rx="5" fill="#e0e0e0" stroke="#ccc"/>
+    <rect x="874" y="690" width="60" height="40" rx="5" fill="#e0e0e0" stroke="#ccc"/>
+  </g>
+</svg>
+

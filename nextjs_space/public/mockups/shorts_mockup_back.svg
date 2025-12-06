@@ -1,0 +1,31 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- Athletic shorts back -->
+    <!-- Waistband -->
+    <rect x="260" y="180" width="504" height="50" rx="5" fill="#e5e5e5" stroke="#ccc" stroke-width="2"/>
+    <!-- Left leg -->
+    <path d="M260,230 L220,650 L320,680 L400,650 L470,450 L512,380"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Right leg -->
+    <path d="M764,230 L804,650 L704,680 L624,650 L554,450 L512,380"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Main body connecting legs -->
+    <path d="M260,230 L764,230 L764,380 Q640,420 512,380 Q384,420 260,380 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Side stripes -->
+    <line x1="260" y1="230" x2="220" y2="650" stroke="#ddd" stroke-width="8"/>
+    <line x1="764" y1="230" x2="804" y2="650" stroke="#ddd" stroke-width="8"/>
+  </g>
+</svg>
+

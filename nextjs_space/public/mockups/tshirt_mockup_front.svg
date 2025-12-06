@@ -1,0 +1,25 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fafafa"/>
+      <stop offset="50%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#e8e8e8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <g filter="url(#shadow)">
+    <!-- T-shirt body -->
+    <path d="M280,200 L320,160 L420,140 L480,130 Q512,125 544,130 L604,140 L704,160 L744,200
+             L820,250 L850,340 L790,370 L740,330 L740,880 L284,880 L284,330 L234,370 L174,340 L204,250 Z"
+          fill="url(#fabric)" stroke="#ddd" stroke-width="2"/>
+    <!-- Left sleeve -->
+    <path d="M280,200 L204,250 L174,340 L234,370 L284,330 L284,200" fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Right sleeve -->
+    <path d="M744,200 L820,250 L850,340 L790,370 L740,330 L740,200" fill="url(#fabric)" stroke="#ddd" stroke-width="1"/>
+    <!-- Crew neck -->
+    <ellipse cx="512" cy="145" rx="70" ry="22" fill="#e8e8e8" stroke="#ccc" stroke-width="2"/>
+  </g>
+</svg>

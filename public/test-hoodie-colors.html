@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoodie Color Test - Verify Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .mockup-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 10px;
+            display: inline-block;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .color-overlay {
+            position: absolute;
+            inset: 0;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            mask-position: center;
+            -webkit-mask-position: center;
+            mask-composite: intersect;
+            -webkit-mask-composite: source-in;
+        }
+        .mockup-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.7;
+        }
+        .color-label {
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .checklist {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .checklist ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Hoodie Color Change Test - PROFESSIONAL SELECTIVE COLOR REPLACEMENT</h1>
+
+    <div class="instructions">
+        <h3>📋 IMPROVED PIXEL TRANSFORMATION SYSTEM:</h3>
+        <p>This page tests the IMPROVED pixel manipulation algorithm with 100% solid color coverage. Each hoodie should show:</p>
+        <ul>
+            <li>✅ <strong>100% SOLID color coverage</strong> - ENTIRE hoodie fabric is uniformly colored with NO white patches</li>
+            <li>✅ <strong>Complete fabric transformation</strong> - all fabric areas changed to target color</li>
+            <li>✅ <strong>Preserved shadows</strong> - only deep shadows (brightness < 40) remain unchanged</li>
+            <li>✅ <strong>Uniform color distribution</strong> - consistent color across all fabric regions</li>
+            <li>✅ <strong>Professional quality</strong> - solid colors like manufactured garments</li>
+        </ul>
+    </div>
+
+    <div class="test-container">
+        <h2>🔴 Front View - COMPREHENSIVE PIXEL TRANSFORMATION</h2>
+        <div class="test-grid">
+            <!-- Red Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23FF0000&v=10" alt="Red Hoodie" class="mockup-image">
+                <div class="color-label">Red (#FF0000) - COMPOSITE LAYERING</div>
+            </div>
+
+            <!-- Blue Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%230066FF&v=2" alt="Blue Hoodie" class="mockup-image">
+                <div class="color-label">Blue (#0066FF) - PROFESSIONAL</div>
+            </div>
+
+            <!-- Black Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23000000&v=2" alt="Black Hoodie" class="mockup-image">
+                <div class="color-label">Black (#000000) - PROFESSIONAL</div>
+            </div>
+
+            <!-- Green Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%2300CC00&v=2" alt="Green Hoodie" class="mockup-image">
+                <div class="color-label">Green (#00CC00) - PROFESSIONAL</div>
+            </div>
+
+            <!-- Purple Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%238800FF&v=2" alt="Purple Hoodie" class="mockup-image">
+                <div class="color-label">Purple (#8800FF) - PROFESSIONAL</div>
+            </div>
+
+            <!-- Blue Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%230066FF" alt="Blue Hoodie" class="mockup-image">
+                <div class="color-label">Blue (#0066FF) - ANALYZE COVERAGE</div>
+            </div>
+
+            <!-- Black Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23000000" alt="Black Hoodie" class="mockup-image">
+                <div class="color-label">Black (#000000) - ANALYZE COVERAGE</div>
+            </div>
+
+            <!-- Green Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%2300CC00" alt="Green Hoodie" class="mockup-image">
+                <div class="color-label">Green (#00CC00) - ANALYZE COVERAGE</div>
+            </div>
+
+            <!-- Purple Hoodie -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%238800FF" alt="Purple Hoodie" class="mockup-image">
+                <div class="color-label">Purple (#8800FF) - ANALYZE COVERAGE</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🔵 Back View - COMPREHENSIVE PIXEL TRANSFORMATION</h2>
+        <div class="test-grid">
+            <!-- Red Hoodie Back -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_back_mockup.png&color=%23FF0000" alt="Red Hoodie Back" class="mockup-image">
+                <div class="color-label">Red Back (#FF0000) - SOLID</div>
+            </div>
+
+            <!-- Blue Hoodie Back -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_back_mockup.png&color=%230066FF" alt="Blue Hoodie Back" class="mockup-image">
+                <div class="color-label">Blue Back (#0066FF) - SOLID</div>
+            </div>
+
+            <!-- Black Hoodie Back -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_back_mockup.png&color=%23000000" alt="Black Hoodie Back" class="mockup-image">
+                <div class="color-label">Black Back (#000000) - SOLID</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🌈 Edge Case - COMPREHENSIVE PIXEL TRANSFORMATION</h2>
+        <div class="test-grid">
+            <!-- Yellow (Light Color) -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23FFFF00" alt="Yellow Hoodie" class="mockup-image">
+                <div class="color-label">Yellow (#FFFF00) - SOLID</div>
+            </div>
+
+            <!-- Navy (Dark Color) -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23001f3f" alt="Navy Hoodie" class="mockup-image">
+                <div class="color-label">Navy (#001f3f) - SOLID</div>
+            </div>
+
+            <!-- Orange -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23FF6600" alt="Orange Hoodie" class="mockup-image">
+                <div class="color-label">Orange (#FF6600) - SOLID</div>
+            </div>
+
+            <!-- Pink -->
+            <div class="mockup-container">
+                <img src="/api/mockup/color?mockup=/mockups/basketball_hoodie_mockup.png&color=%23FF69B4" alt="Pink Hoodie" class="mockup-image">
+                <div class="color-label">Pink (#FF69B4) - SOLID</div>
+            </div>
+
+            <!-- White (Original) -->
+            <div class="mockup-container">
+                <img src="/mockups/basketball_hoodie_mockup.png" alt="White Hoodie" class="mockup-image">
+                <div class="color-label">White (Original)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checklist">
+        <h3>✅ COMPREHENSIVE PIXEL TRANSFORMATION - Verification Checklist:</h3>
+        <ul>
+            <li>□ <strong>100% SOLID color coverage</strong> - ENTIRE hoodie fabric is uniformly colored with NO white patches</li>
+            <li>□ <strong>Complete fabric transformation</strong> - all fabric areas (brightness > 40) changed to target color</li>
+            <li>□ <strong>Preserved deep shadows</strong> - only very dark areas (brightness ≤ 40) remain unchanged</li>
+            <li>□ <strong>Uniform color distribution</strong> - consistent solid color across all fabric regions</li>
+            <li>□ <strong>Graduated intensity levels</strong> - bright areas 100%, mid-tones 70-90%, shadows 50%</li>
+            <li>□ <strong>Light colors work</strong> - yellow shows complete solid coverage</li>
+            <li>□ <strong>Dark colors work</strong> - navy and black show complete solid coverage</li>
+            <li>□ <strong>Professional quality</strong> - looks like solid-colored manufactured garments</li>
+            <li>□ <strong>Background unchanged</strong> - only garment pixels transformed</li>
+        </ul>
+        <p><strong>🚀 BREAKTHROUGH:</strong> Advanced pixel manipulation algorithm ensures 100% solid color coverage with NO white patches!</p>
+        <p><strong>Next:</strong> Test the actual designer interface at <a href="/admin/designer" target="_blank">/admin/designer</a></p>
+    </div>
+</body>
+</html>

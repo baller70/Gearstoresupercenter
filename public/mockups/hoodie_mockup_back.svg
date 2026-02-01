@@ -1,0 +1,45 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Optimized for CSS masking - using solid white fills -->
+    <filter id="hoodie-back-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="1" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#hoodie-back-shadow)">
+    <!-- Hoodie back body - solid white for masking -->
+    <path d="M260,220 L300,180 L400,155 L460,145 Q512,140 564,145 L624,155 L724,180 L764,220
+             L840,270 L870,360 L810,390 L760,350 L760,920 Q760,940 740,940 L284,940 Q264,940 264,920
+             L264,350 L214,390 L154,360 L184,270 Z"
+          fill="white" stroke="#d0d0d0" stroke-width="1"/>
+
+    <!-- Left sleeve -->
+    <path d="M260,220 L184,270 L154,360 L214,390 L264,350 L264,220"
+          fill="white" stroke="#d0d0d0" stroke-width="1"/>
+
+    <!-- Right sleeve -->
+    <path d="M764,220 L840,270 L870,360 L810,390 L760,350 L760,220"
+          fill="white" stroke="#d0d0d0" stroke-width="1"/>
+
+    <!-- Hood back -->
+    <path d="M380,160 Q512,120 644,160 L644,240 Q512,200 380,240 Z"
+          fill="white" stroke="#d0d0d0" stroke-width="1"/>
+
+    <!-- Back neck seam -->
+    <path d="M420,155 Q512,150 604,155"
+          stroke="#d0d0d0" stroke-width="1" fill="none"/>
+
+    <!-- Subtle texture lines -->
+    <path d="M300,450 Q512,455 724,450" stroke="#e8e8e8" stroke-width="0.5" fill="none"/>
+    <path d="M300,600 Q512,605 724,600" stroke="#e8e8e8" stroke-width="0.5" fill="none"/>
+    <path d="M300,750 Q512,755 724,750" stroke="#e8e8e8" stroke-width="0.5" fill="none"/>
+  </g>
+</svg>

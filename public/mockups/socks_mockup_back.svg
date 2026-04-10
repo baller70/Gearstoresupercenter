@@ -1,0 +1,145 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sockFabricBack" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f0f0f0"/>
+      <stop offset="50%" style="stop-color:#fafafa"/>
+      <stop offset="100%" style="stop-color:#f0f0f0"/>
+    </linearGradient>
+    <linearGradient id="sockCuffBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e5e5e5"/>
+      <stop offset="100%" style="stop-color:#ededed"/>
+    </linearGradient>
+    <filter id="sockShadowBack">
+      <feDropShadow dx="0" dy="8" stdDeviation="15" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#f8f8f8"/>
+  
+  <!-- Left Sock Back View -->
+  <g filter="url(#sockShadowBack)" transform="translate(180, 100)">
+    <!-- Main sock body -->
+    <path d="M100,0 Q120,0 140,0 
+             L155,10 Q165,25 165,50 
+             L165,450 Q165,480 150,500 L140,550 
+             Q120,620 90,680 L60,720 
+             Q30,740 20,720 L15,680 
+             Q10,640 30,600 L50,550 
+             Q40,520 35,480 L35,50 
+             Q35,25 45,10 Z"
+          fill="url(#sockFabricBack)" stroke="#e0e0e0" stroke-width="2"/>
+    <!-- Cuff ribbing -->
+    <rect x="35" y="0" width="130" height="60" rx="5" fill="url(#sockCuffBack)" stroke="#ddd" stroke-width="1"/>
+    <!-- Ribbing lines -->
+    <line x1="50" y1="5" x2="50" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="70" y1="5" x2="70" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="90" y1="5" x2="90" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="110" y1="5" x2="110" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="130" y1="5" x2="130" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="150" y1="5" x2="150" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <!-- Heel back panel -->
+    <path d="M50,450 Q100,430 150,450 L145,560 Q100,580 55,560 Z" 
+          fill="#ececec" stroke="#e0e0e0" stroke-width="1"/>
+  </g>
+  
+  <!-- Right Sock Back View -->
+  <g filter="url(#sockShadowBack)" transform="translate(544, 100)">
+    <!-- Main sock body - mirrored -->
+    <path d="M100,0 Q80,0 60,0 
+             L45,10 Q35,25 35,50 
+             L35,450 Q35,480 50,500 L60,550 
+             Q80,620 110,680 L140,720 
+             Q170,740 180,720 L185,680 
+             Q190,640 170,600 L150,550 
+             Q160,520 165,480 L165,50 
+             Q165,25 155,10 Z"
+          fill="url(#sockFabricBack)" stroke="#e0e0e0" stroke-width="2"/>
+    <!-- Cuff ribbing -->
+    <rect x="35" y="0" width="130" height="60" rx="5" fill="url(#sockCuffBack)" stroke="#ddd" stroke-width="1"/>
+    <!-- Ribbing lines -->
+    <line x1="50" y1="5" x2="50" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="70" y1="5" x2="70" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="90" y1="5" x2="90" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="110" y1="5" x2="110" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="130" y1="5" x2="130" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <line x1="150" y1="5" x2="150" y2="55" stroke="#e0e0e0" stroke-width="2"/>
+    <!-- Heel back panel -->
+    <path d="M50,450 Q100,430 150,450 L145,560 Q100,580 55,560 Z" 
+          fill="#ececec" stroke="#e0e0e0" stroke-width="1"/>
+  </g>
+</svg>
+
+
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="socks-back-fabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#eeeeee;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="socks-back-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.25"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#socks-back-shadow)">
+    <!-- Left sock back view -->
+    <g>
+      <!-- Leg portion -->
+      <path d="M280,200 L380,200 L380,600 Q380,620 370,630 L350,650 Q340,660 320,660 L300,660 
+               Q280,660 270,650 L250,630 Q240,620 240,600 L240,220 Q240,200 260,200 Z"
+            fill="url(#socks-back-fabric)" stroke="#cccccc" stroke-width="2"/>
+      
+      <!-- Cuff ribbing -->
+      <rect x="240" y="200" width="140" height="40" rx="5" 
+            fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+      <path d="M250,215 L370,215" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+      <path d="M250,225 L370,225" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+      
+      <!-- Heel back -->
+      <ellipse cx="310" cy="660" rx="40" ry="30" 
+               fill="#eeeeee" stroke="#cccccc" stroke-width="2"/>
+      <path d="M280,660 Q310,670 340,660" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+      
+      <!-- Achilles seam -->
+      <path d="M310,240 L310,660" stroke="#cccccc" stroke-width="1.5" opacity="0.5"/>
+    </g>
+    
+    <!-- Right sock back view -->
+    <g>
+      <!-- Leg portion -->
+      <path d="M644,200 L744,200 L744,220 Q744,600 744,600 Q744,620 754,630 L774,650 Q784,660 804,660 
+               L824,660 Q844,660 854,650 L874,630 Q884,620 884,600 L884,220 Q884,200 864,200 Z"
+            fill="url(#socks-back-fabric)" stroke="#cccccc" stroke-width="2"/>
+      
+      <!-- Cuff ribbing -->
+      <rect x="644" y="200" width="140" height="40" rx="5" 
+            fill="#eeeeee" stroke="#cccccc" stroke-width="1.5"/>
+      <path d="M654,215 L774,215" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+      <path d="M654,225 L774,225" stroke="#e0e0e0" stroke-width="1" opacity="0.6"/>
+      
+      <!-- Heel back -->
+      <ellipse cx="814" cy="660" rx="40" ry="30" 
+               fill="#eeeeee" stroke="#cccccc" stroke-width="2"/>
+      <path d="M784,660 Q814,670 844,660" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+      
+      <!-- Achilles seam -->
+      <path d="M814,240 L814,660" stroke="#cccccc" stroke-width="1.5" opacity="0.5"/>
+    </g>
+    
+    <!-- Arch support bands (left) -->
+    <path d="M250,450 Q310,445 370,450" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+    <path d="M250,480 Q310,475 370,480" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+    
+    <!-- Arch support bands (right) -->
+    <path d="M654,450 Q714,445 774,450" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+    <path d="M654,480 Q714,475 774,480" stroke="#e0e0e0" stroke-width="1.5" opacity="0.6" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoodie Color Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .color-test {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .color-overlay {
+            position: absolute;
+            inset: 0;
+            mask-image: url('/mockups/hoodie_mockup_front.svg');
+            -webkit-mask-image: url('/mockups/hoodie_mockup_front.svg');
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            mask-position: center;
+            -webkit-mask-position: center;
+            mask-composite: intersect;
+            -webkit-mask-composite: source-in;
+        }
+        .mockup-overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.85;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        h3 {
+            margin: 10px 0;
+            color: #555;
+        }
+        .red { background-color: #ff0000; }
+        .blue { background-color: #0066ff; }
+        .green { background-color: #00cc00; }
+        .black { background-color: #000000; }
+        .purple { background-color: #8800ff; }
+        .orange { background-color: #ff6600; }
+    </style>
+</head>
+<body>
+    <h1>Hoodie Color Change Test</h1>
+    <p>This test verifies that the hoodie SVG masking works correctly with different colors.</p>
+    
+    <div class="test-container">
+        <div class="color-test">
+            <h3>Red Hoodie</h3>
+            <div class="color-overlay red"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+        
+        <div class="color-test">
+            <h3>Blue Hoodie</h3>
+            <div class="color-overlay blue"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+        
+        <div class="color-test">
+            <h3>Green Hoodie</h3>
+            <div class="color-overlay green"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+        
+        <div class="color-test">
+            <h3>Black Hoodie</h3>
+            <div class="color-overlay black"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+        
+        <div class="color-test">
+            <h3>Purple Hoodie</h3>
+            <div class="color-overlay purple"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+        
+        <div class="color-test">
+            <h3>Orange Hoodie</h3>
+            <div class="color-overlay orange"></div>
+            <img src="/mockups/hoodie_mockup_front.svg" alt="Hoodie" class="mockup-overlay">
+        </div>
+    </div>
+    
+    <h2>Instructions:</h2>
+    <ol>
+        <li>Each hoodie should show the full garment (body, sleeves, hood, pocket) in the specified color</li>
+        <li>NO white areas should remain visible on the garment</li>
+        <li>The texture and shadows should be preserved through the multiply blend mode</li>
+        <li>If you see white areas, the masking is not working correctly</li>
+    </ol>
+</body>
+</html>

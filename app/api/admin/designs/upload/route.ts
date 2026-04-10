@@ -22,6 +22,13 @@ const BRAND_COLORS: Record<string, Array<{ name: string; hex: string }>> = {
     { name: 'Black', hex: '#000000' },
     { name: 'Navy', hex: '#1E3A8A' },
     { name: 'Gold', hex: '#F59E0B' }
+  ],
+  'TBF Skillz': [
+    { name: 'Black', hex: '#000000' },
+    { name: 'White', hex: '#FFFFFF' },
+    { name: 'Navy', hex: '#1E3A8A' },
+    { name: 'Gold', hex: '#F59E0B' },
+    { name: 'Red', hex: '#DC2626' }
   ]
 };
 

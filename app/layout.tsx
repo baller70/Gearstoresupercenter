@@ -7,6 +7,7 @@ import { SessionProvider } from "@/components/session-provider"
 import { Toaster } from "sonner"
 import Chatbot from "@/components/chatbot"
 import ErrorBoundary from "@/components/error-boundary"
+import { VoiceChat } from "@/components/voice-chat"
 
 const audiowide = Audiowide({ 
   weight: "400",
@@ -69,6 +70,7 @@ export default function RootLayout({
               {children}
             </ErrorBoundary>
             <Chatbot />
+            <VoiceChat />
             <Toaster position="top-right" />
           </SessionProvider>
         </ThemeProvider>

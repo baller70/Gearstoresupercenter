@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
     // Get brand-specific colors
     const brandColors = design.brand === 'The Basketball Factory Inc'
       ? ['White', 'Black', 'Navy', 'Gold']
+      : design.brand === 'TBF Skillz'
+      ? ['Black', 'White', 'Navy', 'Gold', 'Red']
       : ['Black', 'White', 'Red', 'Grey']
     
     // Product templates for each category
